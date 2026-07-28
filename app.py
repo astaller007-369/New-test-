@@ -345,7 +345,7 @@ with tab_pred:
             # ==============================================================================
 # SEGMENT 9 OF 15: EXTENDED ODDS GRID & STRATEGIC OVERRIDES PANEL
 # ==============================================================================
-             st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
+                st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
                 w_col1, w_col2, w_col3 = st.columns(3)
                 with w_col1: weather_condition_selection = st.selectbox("Current Weather:", ["Optimal / Indoor Dome", "Heavy Rain / Slick Pitch", "Extreme High Wind"])
                 with w_col2: tournament_framework_selection = st.selectbox("Competition Stage:", ["Standard Domestic League Match", "🏆 Neutral-Site Tournament Group Stage", "💀 Knockout Round (Extra-Time Risk)"])
