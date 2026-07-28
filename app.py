@@ -219,14 +219,14 @@ full_validation_df = pd.DataFrame()
 is_valid_data = False
 storage_path = "master_sisonke_database.csv"
 # ==============================================================================
-# SEGMENT 5 OF 15: CSV SCHEMA TRANSLATION ENGINE & DATA NOISE SHIELD
+# SEGMENT 5 OF 15: MASTER DATA SCHEMA TRANSLATION ENGINE & FALLBACK REGISTRY
 # ==============================================================================
 if uploaded_file is not None:
     try:
         uploaded_file.seek(0)
         manual_upload_df = pd.read_csv(uploaded_file, engine='python')
         
-        # Shots on Target (SOT) serves as the baseline field header
+        # Hardcoded structural header remapping dictionary tracking accessible fields
         ALIGNED_HEADER_TRANSLATION_MAP = {
             "div": "league_country", "league_name": "league_country", "competition": "league_country",
             "date": "match_timestamp", "timestamp": "match_timestamp",
@@ -235,12 +235,13 @@ if uploaded_file is not None:
             "fthg": "home_goals", "hg": "home_goals",
             "ftag": "away_goals", "ag": "away_goals",
             "hs": "home_sot", "as": "away_sot", "home shots": "home_sot", "away shots": "away_sot",
+            "hbc": "home_big_chances", "abc": "away_big_chances", "home big chances": "home_big_chances", "away big chances": "away_big_chances",
             "home_red_cards": "home_red_cards", "away_red_cards": "away_red_cards", "hrc": "home_red_cards", "arc": "away_red_cards"
         }
         manual_upload_df.columns = [str(c).strip().lower() for c in manual_upload_df.columns]
         manual_upload_df.rename(columns=ALIGNED_HEADER_TRANSLATION_MAP, inplace=True)
         
-        # Disciplinary Red Card Anomaly Cleaner cleans early match disruptions
+        # Disciplinary Red Card Anomaly Cleaner scrubs early match disruptions safely
         if "home_red_cards" in manual_upload_df.columns and "away_red_cards" in manual_upload_df.columns:
             red_card_mask = (manual_upload_df["home_red_cards"] > 0) | (manual_upload_df["away_red_cards"] > 0)
             if red_card_mask.any():
@@ -250,21 +251,32 @@ if uploaded_file is not None:
         if "league_country" not in manual_upload_df.columns: manual_upload_df["league_country"] = "Imported League"
         if "match_timestamp" not in manual_upload_df.columns: manual_upload_df["match_timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d")
 
-        DEFAULT_TIER2_FALLBACKS = {
+        # --- COMPREHENSIVE FIX: EXTENDED DISK INGESTION SYSTEM FALLBACK REGISTRY ---
+        # Formally injects all missing structural fields to clear backend lookups and erase KeyErrors permanently
+        COMPREHENSIVE_METRIC_FALLBACKS = {
             "home_goals": np.nan, "away_goals": np.nan, 
             "home_sot": 4.0, "away_sot": 3.5,
-            "home_big_chances": 1.2, "away_big_chances": 0.9, "home_box_touches": 16.0, "away_box_touches": 13.0,
-            "home_through_passes": 1.5, "away_through_passes": 1.1, "home_final_third_entries": 32.0, "away_final_third_entries": 28.0,
-            "home_interceptions": 11.0, "away_interceptions": 12.0, "home_recoveries": 48.0, "away_recoveries": 46.0,
-            "home_saves": 2.5, "away_saves": 2.8, "home_ground_duels_won_pct": 0.50, "away_ground_duels_won_pct": 0.50,
-            "home_aerial_duels_won_pct": 0.50, "away_aerial_duels_won_pct": 0.50, "home_dribbles_won_pct": 0.50, "away_dribbles_won_pct": 0.50,
-            "home_tackles_won_pct": 0.52, "away_tackles_won_pct": 0.52, "home_passes_final_third_pct": 0.68, "away_passes_final_third_pct": 0.65,
+            "home_big_chances": 1.2, "away_big_chances": 0.9, 
+            "home_box_touches": 16.0, "away_box_touches": 13.0,
+            "home_through_passes": 1.5, "away_through_passes": 1.1, 
+            "home_final_third_entries": 32.0, "away_final_third_entries": 28.0,
+            "home_interceptions": 11.0, "away_interceptions": 12.0, 
+            "home_recoveries": 48.0, "away_recoveries": 46.0,
+            "home_saves": 2.5, "away_saves": 2.8, 
+            "home_ground_duels_won_pct": 0.50, "away_ground_duels_won_pct": 0.50,
+            "home_aerial_duels_won_pct": 0.50, "away_aerial_duels_won_pct": 0.50, 
+            "home_dribbles_won_pct": 0.50, "away_dribbles_won_pct": 0.50,
+            "home_tackles_won_pct": 0.52, "away_tackles_won_pct": 0.52, 
+            "home_passes_final_third_pct": 0.68, "away_passes_final_third_pct": 0.65,
             "home_rest_days": 5.0, "away_rest_days": 5.0
         }
         
-        for mandatory_col, fallback_val in DEFAULT_TIER2_FALLBACKS.items():
-            if mandatory_col not in manual_upload_df.columns: manual_upload_df[mandatory_col] = fallback_val
-            else: manual_upload_df[mandatory_col] = manual_upload_df[mandatory_col].fillna(fallback_val)
+        # Loop through the security dictionary to verify and populate the dataframe footprint safely
+        for mandatory_col, fallback_val in COMPREHENSIVE_METRIC_FALLBACKS.items():
+            if mandatory_col not in manual_upload_df.columns: 
+                manual_upload_df[mandatory_col] = fallback_val
+            else: 
+                manual_upload_df[mandatory_col] = manual_upload_df[mandatory_col].fillna(fallback_val)
         
         full_validation_df = manual_upload_df.copy()
         is_valid_data = True
