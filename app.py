@@ -624,8 +624,16 @@ with o_col2:
     odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
     odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
 
-# Infill secondary retail odds anchors for manifestation tracking layers
-odds_1X, odds_X2, odds_12, odds_btts_y, odds_btts_n, odds_dnb1, odds_dnb2, odds_home_over_15, odds_home_under_15, odds_away_over_15, odds_away_under_15, odds_ah_home_minus_15, odds_ah_away_plus_15, odds_ah_home_plus_15, odds_ah_minus_15, odds_home_cs_y, odds_away_cs_y = 1.3, 1.6, 1.25, 1.8, 1.9, 1.5, 2.4, 2.1, 1.6, 3.1, 1.3, 3.8, 1.25, 1.18, 6.5, 2.6, 3.9
+# --- FIXED: INJECTED ALL INTERMEDIATE RETAIL ODDS TRACKING VARIABLES ---
+odds_1X, odds_X2, odds_12 = 1.35, 1.65, 1.25
+odds_btts_y, odds_btts_n = 1.80, 1.95
+odds_dnb1, odds_dnb2 = 1.50, 2.45
+odds_home_over_15, odds_home_under_15 = 2.10, 1.65
+odds_away_over_15, odds_away_under_15 = 3.10, 1.35
+odds_ah_home_minus_15, odds_ah_away_plus_15 = 3.80, 1.25
+odds_ah_home_plus_15, odds_ah_away_minus_15 = 1.18, 5.50 # Aligned missing variable definition cleanly
+odds_home_cs_y, odds_away_cs_y = 2.60, 3.90
+
 h_status, a_status = "stable", "stable"
 league_key = selected_league_filter.lower().strip()
 baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
