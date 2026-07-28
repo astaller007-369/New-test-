@@ -346,11 +346,11 @@ with tab_pred:
 # SEGMENT 9 OF 15: NESTED STRATEGIC OVERRIDES PANEL
 # ==============================================================================
 
-                st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
-                w_col1, w_col2, w_col3 = st.columns(3)
-                with w_col1:
-                    weather_condition_selection = st.selectbox(
-                        "Current Matchday Weather Climate:",
+             st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
+             w_col1, w_col2, w_col3 = st.columns(3)
+             with w_col1:
+                  weather_condition_selection = st.selectbox(
+                       "Current Matchday Weather Climate:",
                         ["Optimal / Standard Ambient / Indoor Dome", "Heavy Rain / High Pitch Slick Surface", "Extreme High Wind / Aerodynamic Drag Line"]
                     )
                 with w_col2:
