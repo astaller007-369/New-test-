@@ -361,25 +361,39 @@ league_key = selected_league_filter.lower().strip()
 baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
 is_fr = st.session_state.freeze_matrix.get(league_key, False)
 # ==============================================================================
-# SEGMENT 10A OF 15: FLAT GLOBAL DYNAMIC MOTIVATION STANDINGS LOOPS
+# SEGMENT 10A OF 15: FLAT DYNAMIC MOTIVATION STANDINGS LOOPS & SAFETY SHIELD
 # ==============================================================================
+
+# --- FIXED: EXPLICIT MEMORY NAMESPACE VALIDATION SHIELD ---
+# Checks the global dictionary directory to handle variable scope shifts cleanly
+resolved_standings_df = globals().get("live_standings_df", pd.DataFrame())
+resolved_neutral_active = globals().get("tournament_neutral_active", False)
+resolved_framework = globals().get("tournament_framework_selection", "Standard Domestic League Match")
+resolved_vol_dampener = globals().get("vol_dampener", 1.0)
+resolved_coach_vol = globals().get("coach_volatility_expansion", 1.0)
+resolved_knockout_vol = globals().get("knockout_volatility_boost", 1.0)
+resolved_referee_vol = globals().get("referee_volatility_expansion", 1.0)
+
 home_motivation_multiplier = 1.00
 away_motivation_multiplier = 1.00
-tournament_neutral_active = "Neutral" in tournament_framework_selection or "Knockout" in tournament_framework_selection
-knockout_volatility_boost = 1.15 if "Knockout" in tournament_framework_selection else 1.00
+tournament_neutral_active = "Neutral" in resolved_framework or "Knockout" in resolved_framework
+knockout_volatility_boost = 1.15 if "Knockout" in resolved_framework else 1.00
 
-if live_standings_df is not None and not live_standings_df.empty and not tournament_neutral_active:
-    live_standings_df.columns = [str(c).strip().lower() for c in live_standings_df.columns]
-    live_standings_df.rename(columns={"team": "Team", "p": "P", "played": "P", "pld": "P"}, inplace=True)
+if not resolved_standings_df.empty and not resolved_neutral_active:
+    # Safely format data frame strings to avoid column alignment corruption loops
+    resolved_standings_df.columns = [str(c).strip().lower() for c in resolved_standings_df.columns]
+    resolved_standings_df.rename(columns={"team": "Team", "p": "P", "played": "P", "pld": "P"}, inplace=True)
     
-    if "Team" in live_standings_df.columns:
-        live_standings_df["Team"] = live_standings_df["Team"].astype(str).str.strip().lower()
-        home_match_row = live_standings_df[live_standings_df["Team"] == str(target["home_team"]).strip().lower()]
+    if "Team" in resolved_standings_df.columns and 'target' in globals():
+        resolved_standings_df["Team"] = resolved_standings_df["Team"].astype(str).str.strip().lower()
+        home_match_row = resolved_standings_df[resolved_standings_df["Team"] == str(target["home_team"]).strip().lower()]
         if not home_match_row.empty:
             home_position = int(home_match_row.index) + 1
-            if home_position <= 4: home_motivation_multiplier = 1.12
-            elif home_position >= (len(live_standings_df) - 3): home_motivation_multiplier = 1.15
-            # ==============================================================================
+            if home_position <= 4: 
+                home_motivation_multiplier = 1.12
+            elif home_position >= (len(resolved_standings_df) - 3): 
+                home_motivation_multiplier = 1.15
+                # ==============================================================================
 # SEGMENT 10B OF 15: MULTI-VARIABLE PROCESSOR CORE & POISSON SHIELD
 # ==============================================================================
 if tournament_neutral_active:
