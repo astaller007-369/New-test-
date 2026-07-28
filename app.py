@@ -394,13 +394,25 @@ if not resolved_standings_df.empty and not resolved_neutral_active:
             elif home_position >= (len(resolved_standings_df) - 3): 
                 home_motivation_multiplier = 1.15
                 # ==============================================================================
-# SEGMENT 10B OF 15: MULTI-VARIABLE PROCESSOR CORE & POISSON SHIELD
+# SEGMENT 10B OF 15: COMBINATORIAL PROCESSOR CORE & NAMESPACE SAFETY SHIELD
 # ==============================================================================
+
+# --- FIXED: EXPLICIT MEMORY NAMESPACE VALIDATION SHIELD ---
+# Queries the global directory to handle startup scope shifts cleanly
+resolved_standings_df = globals().get("live_standings_df", pd.DataFrame())
+resolved_neutral_active = globals().get("tournament_neutral_active", False)
+resolved_framework = globals().get("tournament_framework_selection", "Standard Domestic League Match")
+resolved_vol_dampener = globals().get("vol_dampener", 1.0)
+resolved_coach_vol = globals().get("coach_volatility_expansion", 1.0)
+resolved_knockout_vol = globals().get("knockout_volatility_boost", 1.0)
+resolved_referee_vol = globals().get("referee_volatility_expansion", 1.0)
+
 if tournament_neutral_active:
     home_motivation_multiplier, away_motivation_multiplier = 1.00, 1.00
 
 calibrated_baseline_goals = baseline_goals * weather_goals_multiplier * preseason_turnover_rate
-if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
+if "Knockout" in tournament_framework_selection: 
+    calibrated_baseline_goals *= 0.88
 
 # --- PYTHAGOREAN EXPECTATION LUCK FILTER TRACKS ---
 h_past_sot = filtered_df[filtered_df["home_team"] == target["home_team"]]["home_sot"].mean() if len(filtered_df) > 0 else 4.0
@@ -409,28 +421,33 @@ h_past_bc = filtered_df[filtered_df["home_team"] == target["home_team"]]["home_b
 a_past_bc = filtered_df[filtered_df["away_team"] == target["away_team"]]["away_big_chances"].mean() if len(filtered_df) > 0 else 0.9
 
 pythagorean_luck_ratio = (h_past_sot ** 2) / (h_past_sot ** 2 + a_past_sot ** 2) if (h_past_sot + a_past_sot) > 0 else 0.50
-if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
+if pythagorean_luck_ratio > 0.65: 
+    calibrated_baseline_goals *= 0.95 
 
-# --- OPPONENT STRENGTH OF SCHEDULE (SoS) EQUALIZER TRACKS ---
+# --- PATCHED: OPPONENT STRENGTH OF SCHEDULE (SoS) EQUALIZER NAMESPACE TRACK ---
 home_sos_equalizer, away_sos_equalizer = 1.00, 1.00
-if live_standings_df is not None and not live_standings_df.empty and "Team" in live_standings_df.columns:
-    total_table_teams = len(live_standings_df)
-    home_opponents = filtered_df[(filtered_df["home_team"] == target["home_team"]) | (filtered_df["away_team"] == target["home_team"])].tail(5)
-    away_opponents = filtered_df[(filtered_df["home_team"] == target["away_team"]) | (filtered_df["away_team"] == target["away_team"])].tail(5)
+if not resolved_standings_df.empty:
+    resolved_standings_df.columns = [str(c).strip().lower() for c in resolved_standings_df.columns]
+    resolved_standings_df.rename(columns={"team": "Team", "p": "P", "played": "P", "pld": "P"}, inplace=True)
     
-    def compute_sos_index(opp_df, active_team):
-        positions = []
-        for _, gm in opp_df.iterrows():
-            opp = str(gm["away_team"]).strip().lower() if str(gm["home_team"]).strip().lower() == active_team.lower() else str(gm["home_team"]).strip().lower()
-            look = live_standings_df[live_standings_df["Team"] == opp]
-            if not look.empty: positions.append(int(look.index) + 1)
-        if positions:
-            avg_opp_pos = sum(positions) / len(positions)
-            return 1.10 if avg_opp_pos <= (total_table_teams * 0.35) else (0.90 if avg_opp_pos >= (total_table_teams * 0.65) else 1.00)
-        return 1.00
+    if "Team" in resolved_standings_df.columns:
+        total_table_teams = len(resolved_standings_df)
+        home_opponents = filtered_df[(filtered_df["home_team"] == target["home_team"]) | (filtered_df["away_team"] == target["home_team"])].tail(5)
+        away_opponents = filtered_df[(filtered_df["home_team"] == target["away_team"]) | (filtered_df["away_team"] == target["away_team"])].tail(5)
+        
+        def compute_sos_index(opp_df, active_team):
+            positions = []
+            for _, gm in opp_df.iterrows():
+                opp = str(gm["away_team"]).strip().lower() if str(gm["home_team"]).strip().lower() == active_team.lower() else str(gm["home_team"]).strip().lower()
+                look = resolved_standings_df[resolved_standings_df["Team"] == opp]
+                if not look.empty: positions.append(int(look.index) + 1)
+            if positions:
+                avg_opp_pos = sum(positions) / len(positions)
+                return 1.10 if avg_opp_pos <= (total_table_teams * 0.35) else (0.90 if avg_opp_pos >= (total_table_teams * 0.65) else 1.00)
+            return 1.00
 
-    home_sos_equalizer = compute_sos_index(home_opponents, target["home_team"])
-    away_sos_equalizer = compute_sos_index(away_opponents, target["away_team"])
+        home_sos_equalizer = compute_sos_index(home_opponents, target["home_team"])
+        away_sos_equalizer = compute_sos_index(away_opponents, target["away_team"])
 
 # --- SHOT QUALITY RATIO PROXY CORE ---
 home_shot_quality_ratio = (h_past_bc + 1.0) / (h_past_sot + 1.0)
@@ -440,16 +457,19 @@ away_shot_quality_ratio = (a_past_bc + 1.0) / (a_past_sot + 1.0)
 home_style_modifier = 1.00
 away_style_modifier = 1.00
 if home_tactical_style == "High-Possession Pressing" and away_tactical_style == "Fast Transition Counter-Attack":
-    home_style_modifier, away_style_modifier = 0.88, 1.10
+    home_style_modifier = 0.88
+    away_style_modifier = 1.10
     st.sidebar.warning("🛡️ Tactical Mismatch: Pressing host exposed to Counter-Attack matrix tracks.")
 elif home_tactical_style == "Deep Ultra-Defensive Low-Block" and away_tactical_style == "High-Possession Pressing":
     away_style_modifier = 0.90
+    st.sidebar.info("🛡️ Tactical Mismatch: Low-Block defense suffocating traveling possession volume.")
 
-vol_dampener_adjusted = vol_dampener * coach_volatility_expansion * knockout_volatility_boost * referee_volatility_expansion
+vol_dampener_adjusted = resolved_vol_dampener * resolved_coach_vol * resolved_knockout_vol * resolved_referee_vol
 if derby_match_active and not tournament_neutral_active:
     home_motivation_multiplier *= 0.85
     vol_dampener_adjusted *= 1.10
 
+# --- UNIFIED COMPOUNDED PREDICTIVE FORMULA GRID PASS ---
 calibrated_home_attack = home_motivation_multiplier * home_shot_quality_ratio * home_sos_equalizer * coach_attack_multiplier * home_injury_penalty * home_travel_multiplier * home_style_modifier * home_lookahead_penalty
 calibrated_away_attack = away_motivation_multiplier * away_shot_quality_ratio * away_sos_equalizer * away_injury_penalty * away_travel_multiplier * away_style_modifier * away_lookahead_penalty * visitor_surface_penalty
 
@@ -461,7 +481,8 @@ prob_home, prob_draw, prob_away = res["market_probabilities"]["1 (Home Win)"], r
 prob_matrix = res["raw_matrix"]
 over_25_p, btts_yes_p, home_cs_p, away_cs_p = 0.0, 0.0, 0.0, 0.0
 
-max_r, max_a = int(prob_matrix.shape[0]), int(prob_matrix.shape[1])
+max_r = int(prob_matrix.shape)
+max_a = int(prob_matrix.shape)
 
 for r_idx in range(max_r):
     for a_idx in range(max_a):
