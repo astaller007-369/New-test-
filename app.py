@@ -46,7 +46,7 @@ st.markdown("<p style='font-style: italic; color: #94a3b8; font-size: 18px; marg
 # Administrative global memory tracking matrix variable initialization pass
 if "freeze_matrix" not in st.session_state:
     st.session_state.freeze_matrix = {"last_error": None}
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 2 OF 15: MASTER INITIALIZATION MATRIX & NAMESPACE GUARDS
 # ==============================================================================
 
@@ -147,7 +147,7 @@ with st.sidebar:
                 phase_tag = "⏳ PRE-SEASON (ANCHOR REQ)" if settled_count == 0 else ("🌱 EARLY SEASON (HYBRID)" if settled_count < 20 else "🟢 IN-PROGRESS (DECAY)")
                 radar_rows.append({"Target Competition": str(lg).upper(), "Settled": settled_count, "Upcoming": upcoming_count, "Database Status Room": phase_tag})
             st.dataframe(pd.DataFrame(radar_rows), use_container_width=True, hide_index=True)
-    # ==============================================================================
+            # ==============================================================================
 # SEGMENT 3B OF 15: INGESTION SETTINGS & PRE-SEASON CALIBRATION SIDEBAR SLIDERS
 # ==============================================================================
     st.markdown("---")
@@ -189,7 +189,7 @@ with st.sidebar:
     ui_email_recipient = st.text_input("Primary Email:", value="vvuyo007@gmail.com")
     ui_sms_recipient = st.text_input("Mobile SMS:", value="0750739223@sms.telkom.co.za")
     ui_google_app_password = st.text_input("Password Key:", type="password", value="your_free_google_app_password")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 4A OF 15: JSON UNPACKING & NAMESPACE SAFETY SHIELD
 # ==============================================================================
 resolved_payload_string = globals().get("api_data_payload_string", "")
@@ -211,7 +211,7 @@ if api_sync_triggered and resolved_payload_string:
         elif "response" in api_data:
             target_fixtures = api_data["response"]
         total_fixtures = len(target_fixtures)
-# ==============================================================================
+        # ==============================================================================
 # SEGMENT 4B OF 15: CLEAN JSON LOOP COMPILER & INGESTION HANDSHAKE GUARD
 # ==============================================================================
         if 'target_fixtures' in locals() and target_fixtures:
@@ -220,7 +220,7 @@ if api_sync_triggered and resolved_payload_string:
         st.session_state.freeze_matrix["last_error"] = f"API Payload Parsing Exception: {str(api_parse_structural_error)}"
 
 is_valid_data = False
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
 if uploaded_file is not None:
@@ -304,8 +304,8 @@ if uploaded_file is not None:
         full_validation_df = st.session_state["full_validation_df"]
         is_valid_data = True
     except Exception as e: st.error(f"Manual Ingestion Shield Error: {e}")
-# ==============================================================================
-# SEGMENT 6 OF 15: MEMORY-ISOLATED INGESTION SHIELD & INFINITE LOOP STATE LOCK
+    # ==============================================================================
+# SEGMENT 6 OF 15: MEMORY-ISOLATED INGESTION LAYER & RIGID NUMERIC PARSING ARMOR
 # ==============================================================================
 processed_execution_rows = []
 historical_reference_df = pd.DataFrame()
@@ -314,56 +314,84 @@ historical_reference_df = pd.DataFrame()
 if "processed_cache_success" not in st.session_state:
     st.session_state["processed_cache_success"] = False
 
-# Read historical references purely as an in-memory buffer if the backup file exists
+# Read and immediately standardize the historical reference sheet dates if it exists on disk
 if os.path.exists(storage_path):
     try:
-        historical_reference_df = pd.read_csv(storage_path)
+        historical_reference_df = pd.read_csv(storage_path, on_bad_lines='skip')
         historical_reference_df.columns = [str(c).strip().lower() for c in historical_reference_df.columns]
-        historical_reference_df["match_timestamp"] = pd.to_datetime(historical_reference_df["match_timestamp"], errors='coerce')
+        # Robust datetime standardization pass over hard drive database records
+        historical_reference_df["match_timestamp"] = pd.to_datetime(historical_reference_df["match_timestamp"], errors='coerce', dayfirst=True)
     except: pass
 
-# --- FIXED: STATE LOCK CHECK PLUGGED IN ---
-# Bypasses the calculation array instantly if this file has already been processed
+# Process your uploaded spreadsheet file entirely in RAM if it hasn't successfully executed yet
 if is_valid_data and not full_validation_df.empty and not api_sync_triggered and not st.session_state["processed_cache_success"]:
     st.sidebar.caption("🟢 Mode Status: Compiling Isolated RAM Fatigue Matrix...")
     progress_bar = st.progress(0)
     status_text = st.empty()
     total_upload_records = len(full_validation_df)
     
+    # Pre-clean the incoming uploaded dataframe timestamps globally to neutralize mixed date layouts
+    full_validation_df["match_timestamp"] = pd.to_datetime(full_validation_df["match_timestamp"], errors='coerce', dayfirst=True)
+    
     for index, row in full_validation_df.iterrows():
         h_name = str(row["home_team"]).strip()
         a_name = str(row["away_team"]).strip()
-        current_match_time = pd.to_datetime(row["match_timestamp"], errors='coerce')
-        if pd.isnull(current_match_time): current_match_time = pd.Timestamp.now()
+        
+        current_match_time = row["match_timestamp"]
+        if pd.isnull(current_match_time): 
+            current_match_time = pd.Timestamp.now()
             
         status_text.text(f"Processing File Rows {index+1}/{total_upload_records}: {h_name} vs {a_name}")
         calculated_home_rest_days = 5.0
         calculated_away_rest_days = 5.0
         
         if not historical_reference_df.empty:
-            home_past_records = historical_reference_df[((historical_reference_df["home_team"] == h_name) | (historical_reference_df["away_team"] == h_name))].copy()
+            # Settle the home team lookback track, enforcing explicit datetime typing comparisons
+            home_past_records = historical_reference_df[
+                ((historical_reference_df["home_team"] == h_name) | (historical_reference_df["away_team"] == h_name))
+            ].copy()
+            
             if not home_past_records.empty:
-                home_past_records["match_timestamp"] = pd.to_datetime(home_past_records["match_timestamp"], errors='coerce')
+                home_past_records["match_timestamp"] = pd.to_datetime(home_past_records["match_timestamp"], errors='coerce', dayfirst=True)
                 home_past_records = home_past_records[(home_past_records["match_timestamp"].notna()) & (home_past_records["match_timestamp"] < current_match_time)]
                 if not home_past_records.empty:
                     days_diff = (current_match_time - home_past_records["match_timestamp"].max()).days
                     calculated_home_rest_days = float(days_diff) if days_diff <= 14 else 5.0
                 
-            away_past_records = historical_reference_df[((historical_reference_df["home_team"] == a_name) | (historical_reference_df["away_team"] == a_name))].copy()
+            # Settle the away team lookback track, enforcing explicit datetime typing comparisons
+            away_past_records = historical_reference_df[
+                ((historical_reference_df["home_team"] == a_name) | (historical_reference_df["away_team"] == a_name))
+            ].copy()
+            
             if not away_past_records.empty:
-                away_past_records["match_timestamp"] = pd.to_datetime(away_past_records["match_timestamp"], errors='coerce')
+                away_past_records["match_timestamp"] = pd.to_datetime(away_past_records["match_timestamp"], errors='coerce', dayfirst=True)
                 away_past_records = away_past_records[(away_past_records["match_timestamp"].notna()) & (away_past_records["match_timestamp"] < current_match_time)]
                 if not away_past_records.empty:
                     days_diff = (current_match_time - away_past_records["match_timestamp"].max()).days
                     calculated_away_rest_days = float(days_diff) if days_diff <= 14 else 5.0
 
+        # Helper extraction utility pass to convert text spaces safely into floats without crashes
+        def parse_safe_float(val, fallback):
+            if pd.isna(val): return fallback
+            val_str = str(val).strip().replace(" ", "")
+            try: return float(val_str) if val_str != "" else fallback
+            except: return fallback
+
         processed_execution_rows.append({
-            "league_country": row.get("league_country", "Imported League"), "match_timestamp": current_match_time.isoformat(),
-            "home_team": h_name, "away_team": a_name, "home_goals": row.get("home_goals"), "away_goals": row.get("away_goals"),
-            "home_sot": float(row.get("home_sot", 4.0)), "away_sot": float(row.get("away_sot", 3.5)),
-            "home_big_chances": float(row.get("home_big_chances", 1.2)), "away_big_chances": float(row.get("away_big_chances", 0.9)),
-            "home_box_touches": float(row.get("home_box_touches", 16.0)), "away_box_touches": float(row.get("away_box_touches", 13.0)),
-            "home_rest_days": calculated_home_rest_days, "away_rest_days": calculated_away_rest_days
+            "league_country": row.get("league_country", "Imported League"), 
+            "match_timestamp": current_match_time.isoformat(),
+            "home_team": h_name, 
+            "away_team": a_name, 
+            "home_goals": row.get("home_goals"), 
+            "away_goals": row.get("away_goals"),
+            "home_sot": parse_safe_float(row.get("home_sot"), 4.0), 
+            "away_sot": parse_safe_float(row.get("away_sot"), 3.5),
+            "home_big_chances": parse_safe_float(row.get("home_big_chances"), 1.2), 
+            "away_big_chances": parse_safe_float(row.get("away_big_chances"), 0.9),
+            "home_box_touches": parse_safe_float(row.get("home_box_touches"), 16.0), 
+            "away_box_touches": parse_safe_float(row.get("away_box_touches"), 13.0),
+            "home_rest_days": calculated_home_rest_days, 
+            "away_rest_days": calculated_away_rest_days
         })
         progress_bar.progress((index + 1) / total_upload_records)
         
@@ -372,11 +400,9 @@ if is_valid_data and not full_validation_df.empty and not api_sync_triggered and
 
     if processed_execution_rows:
         st.session_state["full_validation_df"] = pd.DataFrame(processed_execution_rows)
-        # Flip the state lock to True before triggering rerun to permanently sever the loop trap
         st.session_state["processed_cache_success"] = True
         st.rerun()
 
-# Reset the state lock immediately if the user clears out or removes their file upload block
 if uploaded_file is None and st.session_state["processed_cache_success"]:
     st.session_state["processed_cache_success"] = False
     # ==============================================================================
@@ -468,7 +494,7 @@ with tab_pred:
             s_col1, s_col2 = st.columns(2)
             with s_col1: st.info(f"📊 {target['home_team']} Home Streak Index: {home_streak_score:+} Units")
             with s_col2: st.info(f"📊 {target['away_team']} Away Streak Index: {away_streak_score:+} Units")
-# ==============================================================================
+            # ==============================================================================
 # SEGMENT 9 OF 15: FLAT GLOBAL STRATEGIC OVERRIDES PANEL & ODDS INPUT GRID
 # ==============================================================================
 st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
@@ -595,7 +621,7 @@ h_status, a_status = "stable", "stable"
 league_key = selected_league_filter.lower().strip()
 baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
 is_fr = st.session_state.freeze_matrix.get(league_key, False)
-                       # ==============================================================================
+# ==============================================================================
 # SEGMENT 10A OF 15: FLAT DYNAMIC MOTIVATION STANDINGS LOOPS & SAFETY SHIELD
 # ==============================================================================
 
@@ -639,7 +665,7 @@ if not resolved_standings_df.empty and not resolved_neutral_active:
                     home_motivation_multiplier = 1.12
                 elif home_position >= (len(resolved_standings_df) - 3): 
                     home_motivation_multiplier = 1.15
-# ==============================================================================
+                    # ==============================================================================
 # SEGMENT 10B OF 15: COMBINATORIAL PROCESSOR CORE & 22-MARKET INTERMEDIATE INTERCPT
 # ==============================================================================
 
@@ -858,7 +884,7 @@ for r_idx in range(max_r):
 
 if graph_data_dict:
     st.bar_chart(pd.DataFrame(list(graph_data_dict.items()), columns=["Scoreline", "Probability (%)"]).set_index("Scoreline"), use_container_width=True)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 13 OF 15: FLAT GLOBAL MESSAGING RELAYS & CALIBRATED COUPON COUPLING
 # ==============================================================================
 
@@ -883,7 +909,7 @@ with c_col_l:
     
     # Render automated textual insights based on calibrated Shot Quality proxies
     st.markdown(f"• **Dominant Threat Metrics Trace**: Home team recent shooting efficiency averages **{h_past_bc:.2f} big chances** from **{h_past_sot:.2f} SOT** relative to Traveling Road parameters of **{a_past_bc:.2f} big chances** from **{a_past_sot:.2f} SOT**. This forms the core anchor of the Poisson matrix grid splits.")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 14 OF 15: MEMORY-ISOLATED PERFORMANCE TRACKER (NO DISK SAVES)
 # ==============================================================================
 with c_col_r:
@@ -957,7 +983,7 @@ with c_col_r:
         st.line_chart(display_ledger_df["Cumulative_Units"], use_container_width=True)
     else:
         st.info("No tickets recorded inside this temporary session timeline yet.")
-    # ==============================================================================
+        # ==============================================================================
 # SEGMENT 15A OF 15: OUTRIGHT ARBITRAGE MATRIX & SQUAD OVERRIDES PANEL
 # ==============================================================================
 
@@ -1025,7 +1051,7 @@ with tab_tables:
             else:
                 for team in all_participating_teams:
                     transfer_boost_map[team] = 1.0; departure_decay_map[team] = 1.0; depth_index_map[team] = 1.00; congestion_map[team] = False; sack_floor_map[team] = 1.10; pitch_width_map[team] = 1.00; bookmaker_odds_map[team] = 25.0
-    # ==============================================================================
+                    # ==============================================================================
 # SEGMENT 15B OF 15: MONTE CARLO SIMULATION ENGINE & BACKTESTER AUXILIARY PANELS
 # ==============================================================================
 
@@ -1147,3 +1173,4 @@ with tab_past:
             st.dataframe(past_h.sort_values(by="match_timestamp", ascending=False).reset_index(drop=True)[["match_timestamp", "home_team", "away_team", "home_goals", "away_goals"]], use_container_width=True)
         else: st.info("No historical matches found for this filter combination.")
     else: st.info("Database matrix workspace is currently unpopulated.")
+    
