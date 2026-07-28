@@ -346,8 +346,8 @@ with tab_pred:
 # SEGMENT 9 OF 15: NESTED STRATEGIC OVERRIDES & BLIND-SPOT CONTROL PANEL
 # ==============================================================================
 
-            st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
-            w_col1, w_col2, w_col3 = st.columns(3)
+                st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
+                w_col1, w_col2, w_col3 = st.columns(3)
                 with w_col1:
                     weather_condition_selection = st.selectbox(
                         "Current Matchday Weather Climate:",
