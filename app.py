@@ -80,6 +80,8 @@ if "is_profile_view" not in st.session_state:
     st.session_state["is_profile_view"] = False
 if "is_aggregate_stats_view" not in st.session_state:
     st.session_state["is_aggregate_stats_view"] = False
+if "full_validation_df" not in st.session_state:
+    st.session_state["full_validation_df"] = pd.DataFrame()
 
 # Bind local alias pointers to maintain down-stream script harmony seamlessly
 live_standings_df = st.session_state["live_standings_df"]
@@ -93,6 +95,7 @@ home_injury_penalty = st.session_state["home_injury_penalty"]
 away_injury_penalty = st.session_state["away_injury_penalty"]
 is_profile_view = st.session_state["is_profile_view"]
 is_aggregate_stats_view = st.session_state["is_aggregate_stats_view"]
+full_validation_df = st.session_state["full_validation_df"]
 
 # Core structural mappings for international sports metrics ingestion pipelines
 API_LEAGUE_ID_MAP = {
@@ -104,25 +107,26 @@ API_LEAGUE_ID_MAP = {
 # Ensure baseline variables default cleanly if API parameters are untriggered
 api_sync_triggered = False
 total_fixtures = 0
+storage_path = "master_sisonke_database.csv"
 # ==============================================================================
 # SEGMENT 3A OF 15: SIDEBAR CONTROL ROOM & MULTI-LEAGUE INGESTION STATUS RADAR
 # ==============================================================================
 with st.sidebar:
     st.markdown("### 📂 Data Control Room")
     uploaded_file = st.file_uploader("Upload Master Match CSV", type=["csv"])
-    storage_path = "master_sisonke_database.csv"
     active_radar_df = pd.DataFrame()
     
-    # Check for active file upload configurations safely
-    if uploaded_file is not None:
+    # Check memory session state first, falling back to optional disk buffer safely
+    if not full_validation_df.empty:
+        active_radar_df = full_validation_df.copy()
+    elif uploaded_file is not None:
         try:
             uploaded_file.seek(0)
-            active_radar_df = pd.read_csv(uploaded_file, engine='python')
+            active_radar_df = pd.read_csv(uploaded_file, engine='python', on_bad_lines='skip')
             uploaded_file.seek(0)
         except: pass
     elif os.path.exists(storage_path):
-        try:
-            active_radar_df = pd.read_csv(storage_path)
+        try: active_radar_df = pd.read_csv(storage_path, on_bad_lines='skip')
         except: pass
 
     # Render dynamic ingestion radar to isolate early/in-progress league states
@@ -215,16 +219,14 @@ if api_sync_triggered and resolved_payload_string:
     except Exception as api_parse_structural_error:
         st.session_state.freeze_matrix["last_error"] = f"API Payload Parsing Exception: {str(api_parse_structural_error)}"
 
-full_validation_df = pd.DataFrame()
 is_valid_data = False
-storage_path = "master_sisonke_database.csv"
 # ==============================================================================
-# SEGMENT 5 OF 15: CSV SCHEMA TRANSLATION ENGINE & QUOTE SHIELD
+# SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & QUOTE SHIELD
 # ==============================================================================
 if uploaded_file is not None:
     try:
         uploaded_file.seek(0)
-        # --- FIXED: ADDED SEPARATOR AND QUOTING GUARDS TO SHIELD STRAY COMMAS ---
+        # Quote shield enables the model to take ALL CSV files without choking on extra text commas
         manual_upload_df = pd.read_csv(uploaded_file, engine='python', on_bad_lines='skip')
         
         ALIGNED_HEADER_TRANSLATION_MAP = {
@@ -250,6 +252,7 @@ if uploaded_file is not None:
         if "league_country" not in manual_upload_df.columns: manual_upload_df["league_country"] = "Imported League"
         if "match_timestamp" not in manual_upload_df.columns: manual_upload_df["match_timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d")
 
+        # Dynamic fallback matrix maps full field layouts for all CSV versions instantly
         COMPREHENSIVE_METRIC_FALLBACKS = {
             "home_goals": np.nan, "away_goals": np.nan, 
             "home_sot": 4.0, "away_sot": 3.5,
@@ -274,22 +277,26 @@ if uploaded_file is not None:
             else: 
                 manual_upload_df[mandatory_col] = manual_upload_df[mandatory_col].fillna(fallback_val)
         
-        full_validation_df = manual_upload_df.copy()
+        st.session_state["full_validation_df"] = manual_upload_df.copy()
+        full_validation_df = st.session_state["full_validation_df"]
         is_valid_data = True
     except Exception as e: st.error(f"Manual Ingestion Shield Error: {e}")
     # ==============================================================================
-# SEGMENT 6 OF 15: DUAL-TRACK INGESTION LAYER & TIMESTAMP NORMALIZER
+# SEGMENT 6 OF 15: MEMORY-ISOLATED INGESTION SHIELD & DORMANT API ROUTER
 # ==============================================================================
 processed_execution_rows = []
-historical_reference_df = pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame()
+historical_reference_df = pd.DataFrame()
 
-# --- FIXED: FORCE DATETIME TYPE CASTING OVER MASTER BACKUP SHEET ---
-if not historical_reference_df.empty:
-    historical_reference_df.columns = [str(c).strip().lower() for c in historical_reference_df.columns]
-    historical_reference_df["match_timestamp"] = pd.to_datetime(historical_reference_df["match_timestamp"], errors='coerce')
+# Read historical references purely as an in-memory buffer if the backup file exists, but NEVER overwrite it
+if os.path.exists(storage_path):
+    try:
+        historical_reference_df = pd.read_csv(storage_path)
+        historical_reference_df.columns = [str(c).strip().lower() for c in historical_reference_df.columns]
+        historical_reference_df["match_timestamp"] = pd.to_datetime(historical_reference_df["match_timestamp"], errors='coerce')
+    except: pass
 
 if is_valid_data and not full_validation_df.empty and not api_sync_triggered:
-    st.sidebar.caption("🟢 Mode Status: Running 100% Offline Local CSV Processing Track")
+    st.sidebar.caption("🟢 Mode Status: Running 100% Offline Isolated RAM Memory Track")
     progress_bar = st.progress(0)
     status_text = st.empty()
     total_upload_records = len(full_validation_df)
@@ -305,25 +312,29 @@ if is_valid_data and not full_validation_df.empty and not api_sync_triggered:
         calculated_away_rest_days = 5.0
         
         if not historical_reference_df.empty:
-            # --- FIXED: ACCURATE DATETIME LOOKBACK TRACKS ---
+            # --- FIXED: INLINE TIMESTAMP CAST SHIELD ---
+            # Explicitly cast historical records to datetimes right inside the lookback slice
             home_past_records = historical_reference_df[
-                ((historical_reference_df["home_team"] == h_name) | (historical_reference_df["away_team"] == h_name)) & 
-                (historical_reference_df["match_timestamp"].notna())
-            ]
-            # Ensure slicing only applies to strictly past games chronologically
-            home_past_records = home_past_records[home_past_records["match_timestamp"] < current_match_time]
+                ((historical_reference_df["home_team"] == h_name) | (historical_reference_df["away_team"] == h_name))
+            ].copy()
+            
             if not home_past_records.empty:
-                days_diff = (current_match_time - home_past_records["match_timestamp"].max()).days
-                calculated_home_rest_days = float(days_diff) if days_diff <= 14 else 5.0
+                home_past_records["match_timestamp"] = pd.to_datetime(home_past_records["match_timestamp"], errors='coerce')
+                home_past_records = home_past_records[(home_past_records["match_timestamp"].notna()) & (home_past_records["match_timestamp"] < current_match_time)]
+                if not home_past_records.empty:
+                    days_diff = (current_match_time - home_past_records["match_timestamp"].max()).days
+                    calculated_home_rest_days = float(days_diff) if days_diff <= 14 else 5.0
                 
             away_past_records = historical_reference_df[
-                ((historical_reference_df["home_team"] == a_name) | (historical_reference_df["away_team"] == a_name)) & 
-                (historical_reference_df["match_timestamp"].notna())
-            ]
-            away_past_records = away_past_records[away_past_records["match_timestamp"] < current_match_time]
+                ((historical_reference_df["home_team"] == a_name) | (historical_reference_df["away_team"] == a_name))
+            ].copy()
+            
             if not away_past_records.empty:
-                days_diff = (current_match_time - away_past_records["match_timestamp"].max()).days
-                calculated_away_rest_days = float(days_diff) if days_diff <= 14 else 5.0
+                away_past_records["match_timestamp"] = pd.to_datetime(away_past_records["match_timestamp"], errors='coerce')
+                away_past_records = away_past_records[(away_past_records["match_timestamp"].notna()) & (away_past_records["match_timestamp"] < current_match_time)]
+                if not away_past_records.empty:
+                    days_diff = (current_match_time - away_past_records["match_timestamp"].max()).days
+                    calculated_away_rest_days = float(days_diff) if days_diff <= 14 else 5.0
 
         processed_execution_rows.append({
             "league_country": row.get("league_country", "Imported League"), "match_timestamp": current_match_time.isoformat(),
@@ -405,30 +416,24 @@ elif api_sync_triggered and globals().get("total_fixtures", 0) > 0:
     status_text.empty()
     progress_bar.empty()
 
+# HARD DRIVE DISK SAVING CODE COMPLETELY DISENGAGED PER REQUEST
 if processed_execution_rows:
-    new_compiled_df = pd.DataFrame(processed_execution_rows)
-    if not historical_reference_df.empty:
-        try:
-            combined_disk_df = pd.concat([historical_reference_df, new_compiled_df], ignore_index=True)
-            combined_disk_df.drop_duplicates(subset=["league_country", "match_timestamp", "home_team", "away_team"], keep="last", inplace=True)
-            combined_disk_df.to_csv(storage_path, index=False)
-        except: pass
-    else: 
-        new_compiled_df.to_csv(storage_path, index=False)
-        
-    st.success("⚡ SUCCESS! Your tracking dataset records have been serialized cleanly.")
-    # FIXED: MODERN RE-RUN TOKEN CLEARING STUCK LOADING ANIMATIONS
+    st.session_state["full_validation_df"] = pd.DataFrame(processed_execution_rows)
+    full_validation_df = st.session_state["full_validation_df"]
+    st.toast("⚡ Upload verified successfully inside temporary session state memory!")
     st.rerun()
     # ==============================================================================
 # SEGMENT 7 OF 15: GLOBAL SCHEMA SYNCHRONIZATION & TUNING CONTROLS
 # ==============================================================================
-working_pipeline_df = full_validation_df.copy() if (is_valid_data and not full_validation_df.empty) else (pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame())
+working_pipeline_df = full_validation_df.copy() if (globals().get("is_valid_data", False) and not full_validation_df.empty) else (pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame())
 
 if not working_pipeline_df.empty:
     working_pipeline_df.columns = [str(c).strip().lower() for c in working_pipeline_df.columns]
     working_pipeline_df["match_timestamp"] = pd.to_datetime(working_pipeline_df["match_timestamp"].astype(str).str.replace("T", " "), errors='coerce').fillna(pd.Timestamp.now())
     working_pipeline_df.drop_duplicates(subset=["league_country", "match_timestamp", "home_team", "away_team"], keep="last", inplace=True)
     
+    # --- COMPREHENSIVE FIX: DYNAMIC SCHEMA SYNCHRONIZATION OVERLAY ---
+    # Automatically injects and aligns required fallback metrics into old database rows on the fly
     CRITICAL_BACKEND_COLUMNS = {
         "home_sot": 4.0, "away_sot": 3.5,
         "home_big_chances": 1.2, "away_big_chances": 0.9, 
@@ -670,7 +675,7 @@ if not resolved_standings_df.empty and not resolved_neutral_active:
                 elif home_position >= (len(resolved_standings_df) - 3): 
                     home_motivation_multiplier = 1.15
                     # ==============================================================================
-# SEGMENT 10B OF 15: COMBINATORIAL PROCESSOR CORE & NAMESPACE SAFETY SHIELD
+# SEGMENT 10B OF 15: COMBINATORIAL PROCESSOR CORE & 22-MARKET INTERMEDIATE INTERCPT
 # ==============================================================================
 
 if tournament_neutral_active:
@@ -725,7 +730,7 @@ away_style_modifier = 1.00
 if home_tactical_style == "High-Possession Pressing" and away_tactical_style == "Fast Transition Counter-Attack":
     home_style_modifier = 0.88
     away_style_modifier = 1.10
-    st.sidebar.warning("🛡️ Tactical Mismatch: Pressing host exposed to Counter-Attack matrix tracks.")
+    st.sidebar.warning("🛡️ Tactical Mismatch: Pressing host exposed to Counter-Attack tracks.")
 elif home_tactical_style == "Deep Ultra-Defensive Low-Block" and away_tactical_style == "High-Possession Pressing":
     away_style_modifier = 0.90
     st.sidebar.info("🛡️ Tactical Mismatch: Low-Block defense suffocating traveling possession volume.")
@@ -745,33 +750,51 @@ a_s = engine.parse_live_team_averages(filtered_df, target["away_team"], target_t
 
 prob_home, prob_draw, prob_away = res["market_probabilities"]["1 (Home Win)"], res["market_probabilities"]["X (Draw)"], res["market_probabilities"]["2 (Away Win)"]
 prob_matrix = res["raw_matrix"]
-over_25_p, btts_yes_p, home_cs_p, away_cs_p = 0.0, 0.0, 0.0, 0.0
 
-# --- INDEX TUPLE ISOLATION SHIELD FIXED ---
+# Initialize all 22 advanced market tracking accumulators cleanly
+over_25_p, btts_yes_p, home_cs_p, away_cs_p = 0.0, 0.0, 0.0, 0.0
+home_over_15_p, away_over_15_p = 0.0, 0.0
+ah_home_minus_15_p, ah_home_plus_15_p = 0.0, 0.0
+
+# --- SHAPE TUPLE ISOLATION VECTOR PASS FIXED ---
 max_r = int(prob_matrix.shape[0])
 max_a = int(prob_matrix.shape[1])
 
 for r_idx in range(max_r):
     for a_idx in range(max_a):
         cell_p = prob_matrix[r_idx, a_idx]
+        
+        # Totals accumulators
         if r_idx + a_idx > 2.5: over_25_p += cell_p
         if r_idx > 0 and a_idx > 0: btts_yes_p += cell_p
+        
+        # Clean Sheet accumulators
         if a_idx == 0: home_cs_p += cell_p
         if r_idx == 0: away_cs_p += cell_p
         
+        # Team goals accumulators
+        if r_idx > 1.5: home_over_15_p += cell_p
+        if a_idx > 1.5: away_over_15_p += cell_p
+        
+        # Asian Handicap accumulators
+        if r_idx - a_idx > 1.5: ah_home_minus_15_p += cell_p
+        if r_idx - a_idx > -1.5: ah_home_plus_15_p += cell_p
+        
+# Finalize algebraic inversions for secondary option configurations
 under_25_p, btts_no_p = 1.0 - over_25_p, 1.0 - btts_yes_p
 dc_1X_p, dc_X2_p, dc_12_p = min(1.0, prob_home + prob_draw), min(1.0, prob_draw + prob_away), min(1.0, prob_home + prob_away)
+
 dnb_denom = 1.0 - prob_draw if prob_draw < 1.0 else 1.0
 dnb_1_p, dnb_2_p = prob_home / dnb_denom, prob_away / dnb_denom
 
-markets_master_manifest = [
-    ("HOME WIN (1)", odds_1, prob_home), ("DRAW MATCH (X)", odds_X, prob_draw), ("AWAY WIN (2)", odds_2, prob_away),
-    ("OVER 2.5 GOALS", odds_over, over_25_p), ("UNDER 2.5 GOALS", odds_under, under_25_p)
-]
+home_under_15_p, away_under_15_p = 1.0 - home_over_15_p, 1.0 - away_over_15_p
+ah_away_plus_15_p = 1.0 - ah_home_minus_15_p
+ah_away_minus_15_p = 1.0 - ah_home_plus_15_p
+
 sd = min(h_s.get("games_played", 12), a_s.get("games_played", 12))
 confidence = min(100, int((sd / 12.0) * 100)) if sd > 0 else 50
 # ==============================================================================
-# SEGMENT 11 OF 15: FLAT GLOBAL EXPECTED VALUE AUDITOR & STRESS TESTER ENGINE
+# SEGMENT 11 OF 15: EXPANDED EXPECTED VALUE AUDITOR & STRESS TESTER ENGINE
 # ==============================================================================
 
 st.markdown("### 📊 Comprehensive Market Projections & Value Audit")
@@ -779,7 +802,34 @@ all_markets_rendered_rows = []
 qualified_projections = []
 MAX_EV_CEILING_CAP = 0.50 
 
-for label, b_odds, m_prob in markets_master_manifest:
+# --- ADVANCED EXPANDED INVENTORY ARRAYS ---
+# Loops across all 22 parameters concurrently to build your automated insights sheets
+extended_markets_master_manifest = [
+    ("HOME WIN (1)", odds_1, prob_home),
+    ("DRAW MATCH (X)", odds_X, prob_draw),
+    ("AWAY WIN (2)", odds_2, prob_away),
+    ("DOUBLE CHANCE 1X", odds_1X, dc_1X_p),
+    ("DOUBLE CHANCE X2", odds_X2, dc_X2_p),
+    ("DOUBLE CHANCE 12", odds_12, dc_12_p),
+    ("OVER 2.5 TOTAL GOALS", odds_over, over_25_p),
+    ("UNDER 2.5 TOTAL GOALS", odds_under, under_25_p),
+    ("BOTH TEAMS TO SCORE (YES)", odds_btts_y, btts_yes_p),
+    ("BOTH TEAMS TO SCORE (NO)", odds_btts_n, btts_no_p),
+    ("DRAW NO BET HOME (DNB1)", odds_dnb1, dnb_1_p),
+    ("DRAW NO BET AWAY (DNB2)", odds_dnb2, dnb_2_p),
+    ("TEAM GOALS: HOME OVER 1.5", odds_home_over_15, home_over_15_p),
+    ("TEAM GOALS: HOME UNDER 1.5", odds_home_under_15, home_under_15_p),
+    ("TEAM GOALS: AWAY OVER 1.5", odds_away_over_15, away_over_15_p),
+    ("TEAM GOALS: AWAY UNDER 1.5", odds_away_under_15, away_under_15_p),
+    ("ASIAN HANDICAP: HOME -1.5", odds_ah_home_minus_15, ah_home_minus_15_p),
+    ("ASIAN HANDICAP: AWAY +1.5", odds_ah_away_plus_15, ah_away_plus_15_p),
+    ("ASIAN HANDICAP: HOME +1.5", odds_ah_home_plus_15, ah_home_plus_15_p),
+    ("ASIAN HANDICAP: AWAY -1.5", odds_ah_away_minus_15, ah_away_minus_15_p),
+    ("HOME CLEAN SHEET (YES)", odds_home_cs_y, home_cs_p),
+    ("AWAY CLEAN SHEET (YES)", odds_away_cs_y, away_cs_p)
+]
+
+for label, b_odds, m_prob in extended_markets_master_manifest:
     calculated_ev = (m_prob * b_odds) - 1.0
     implied_bookie_prob = 1.0 / b_odds if b_odds > 0 else 0.0
     edge_delta = m_prob - implied_bookie_prob
@@ -807,7 +857,6 @@ for label, b_odds, m_prob in markets_master_manifest:
     })
 
 st.markdown("#### ⚡ Real-Time Game-State Stress Tester Room")
-st.write("Models alternative options returns if early live friction alters standard timeline trends:")
 stress_away_lead_draw_prob = min(0.95, prob_draw * 1.35)
 stress_away_lead_under_prob = min(0.95, under_25_p * 1.20)
 
@@ -818,7 +867,7 @@ stress_rows = [
 st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
 
 st.markdown("### 🚨 Sisonke Engine Audit Room")
-highest_ev_found = max([(m_p * b_o) - 1.0 for lbl, b_o, m_p in markets_master_manifest]) if markets_master_manifest else -1.0
+highest_ev_found = max([(m_p * b_o) - 1.0 for lbl, b_o, m_p in extended_markets_master_manifest]) if extended_markets_master_manifest else -1.0
 if highest_ev_found >= 0.030 and confidence >= confidence_floor_input:
     st.success(f"🔥 ELITE PROJECTIONS UNLOCKED (+{highest_ev_found*100:.1f}% EV Edge Verified Across Multi-Variable Matrix Maps)")
 else: st.error("📉 SELECTION REJECTED: Internal profit margins fail target professional risk floor bounds.")
@@ -870,9 +919,8 @@ with c_col_l:
     # Render automated textual insights based on calibrated Shot Quality proxies
     st.markdown(f"• **Dominant Threat Metrics Trace**: Home team recent shooting efficiency averages **{h_past_bc:.2f} big chances** from **{h_past_sot:.2f} SOT** relative to Traveling Road parameters of **{a_past_bc:.2f} big chances** from **{a_past_sot:.2f} SOT**. This forms the core anchor of the Poisson matrix grid splits.")
     # ==============================================================================
-# SEGMENT 14 OF 15: FLAT GLOBAL BANKROLL performance LEDGER & CLV SHEET
+# SEGMENT 14 OF 15: MEMORY-ISOLATED PERFORMANCE TRACKER (NO DISK SAVES)
 # ==============================================================================
-
 with c_col_r:
     st.markdown("### 🎫 Calibrated Ticket Slip")
     ticket_string_content = (
@@ -900,38 +948,51 @@ with c_col_r:
     
     st.markdown("---")
     st.markdown("### 🏦 Sisonke Investment Ledger Room")
-    ledger_path = "master_bankroll_ledger.csv"
-    if not os.path.exists(ledger_path):
-        pd.DataFrame(columns=["Log_ID", "Timestamp", "Match", "Market", "Model_Prob", "Entry_Odds", "Closing_Odds", "CLV_Edge_Pct", "Kelly_Stake_Pct", "Outcome", "Net_Profit_Units"]).to_csv(ledger_path, index=False)
+    
+    # Initialize transient ledger list inside temporary container memory if missing
+    if "transient_ledger_cache" not in st.session_state:
+        st.session_state["transient_ledger_cache"] = []
 
     with st.form("ledger_commit_form"):
         try: safe_default_odds = float(best_odds)
         except: safe_default_odds = 2.00
         closing_odds_input = st.number_input("Enter Bookmaker Final Closing Odds:", min_value=1.01, value=safe_default_odds, step=0.05)
         match_outcome_selection = st.selectbox("Select Actual Match Reality Outcome:", ["Pending / Unplayed", "Won Match", "Lost Match", "Void / Refunded"])
-        submit_ledger_entry = st.form_submit_button("💾 Save Ticket to Hard Drive Ledger")
+        submit_ledger_entry = st.form_submit_button("💾 Log Ticket to Session Memory")
         
         if submit_ledger_entry and "NO COMPREHENSIVE" not in optimal_bet:
-            existing_ledger_df = pd.read_csv(ledger_path)
             entry_implied_prob = 1.0 / float(best_odds)
             closing_implied_prob = 1.0 / float(closing_odds_input)
             clv_edge_margin_pct = round((entry_implied_prob - closing_implied_prob) * 100, 2)
             net_units = round(fractional_scale_stake * (float(best_odds) - 1.0), 2) if match_outcome_selection == "Won Match" else (-fractional_scale_stake if match_outcome_selection == "Lost Match" else 0.0)
             
-            new_row = {"Log_ID": str(int(datetime.datetime.now().timestamp())), "Timestamp": datetime.datetime.now().strftime("%Y-%m-%d"), "Match": f"{target['home_team']} vs {target['away_team']}", "Market": optimal_bet, "Model_Prob": f"{best_prob*100:.1f}%", "Entry_Odds": best_odds, "Closing_Odds": closing_odds_input, "CLV_Edge_Pct": f"{clv_edge_margin_pct:+.2f}%", "Kelly_Stake_Pct": f"{fractional_scale_stake:.2f}%", "Outcome": match_outcome_selection, "Net_Profit_Units": net_units}
-            pd.concat([existing_ledger_df, pd.DataFrame([new_row])], ignore_index=True).to_csv(ledger_path, index=False)
-            st.rerun()
+            new_transient_row = {
+                "Timestamp": datetime.datetime.now().strftime("%Y-%m-%d"), 
+                "Match": f"{target['home_team']} vs {target['away_team']}", 
+                "Market": optimal_bet, 
+                "Model_Prob": f"{best_prob*100:.1f}%", 
+                "Entry_Odds": best_odds, 
+                "Closing_Odds": closing_odds_input, 
+                "CLV_Edge_Pct": f"{clv_edge_margin_pct:+.2f}%", 
+                "Kelly_Stake_Pct": f"{fractional_scale_stake:.2f}%", 
+                "Outcome": match_outcome_selection, 
+                "Net_Profit_Units": net_units
+            }
+            # Append rows directly to temporary memory state array instead of writing hard csv to drive
+            st.session_state["transient_ledger_cache"].append(new_transient_row)
+            st.toast("📬 Ticket recorded in transient cache memory successfully!")
 
-    try:
-        display_ledger_df = pd.read_csv(ledger_path)
-        if not display_ledger_df.empty:
-            st.markdown("#### 📈 Cumulative Bankroll Performance Ledger")
-            st.dataframe(display_ledger_df.tail(10), use_container_width=True, hide_index=True)
-            display_ledger_df["Cumulative_Units"] = display_ledger_df["Net_Profit_Units"].cumsum()
-            st.write("**Visualized Compounding Return Yield Curve (Rolling Units Profit)**")
-            st.line_chart(display_ledger_df.set_index("Timestamp")["Cumulative_Units"], use_container_width=True)
-    except: pass
-    # ==============================================================================
+    # Display rolling performance chart out of RAM memory cache safely
+    if st.session_state["transient_ledger_cache"]:
+        display_ledger_df = pd.DataFrame(st.session_state["transient_ledger_cache"])
+        st.markdown("#### 📈 Session Bankroll Performance Ledger")
+        st.dataframe(display_ledger_df.tail(10), use_container_width=True, hide_index=True)
+        display_ledger_df["Cumulative_Units"] = display_ledger_df["Net_Profit_Units"].cumsum()
+        st.write("**Visualized Session Return Yield Curve (Rolling RAM Profit)**")
+        st.line_chart(display_ledger_df["Cumulative_Units"], use_container_width=True)
+    else:
+        st.info("No tickets recorded inside this temporary session timeline yet.")
+        # ==============================================================================
 # SEGMENT 15A OF 15: OUTRIGHT ARBITRAGE MATRIX & SQUAD OVERRIDES PANEL
 # ==============================================================================
 
@@ -958,7 +1019,7 @@ with tab_tables:
                     "Bookmaker Outright Odds": 25.00
                 })
                 
-            st.write("✏ Honor Outright Campaign Entry Ledger: Adjust individual roster depth, multi-cup commitments, pitch layouts, and boardroom metrics before running the simulation pass:")
+            st.write("✏ Adjust individual roster depth, multi-cup commitments, pitch layouts, and boardroom metrics before running the simulation pass:")
             
             edited_profile_df = st.data_editor(
                 pd.DataFrame(squad_profile_rows),
