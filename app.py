@@ -668,5 +668,5 @@ with tab_history:
 with tab_past:
     if not filtered_df.empty:
         past_h = filtered_df.dropna(subset=["home_goals", "away_goals"]).copy()
-        if not past_h.empty: st.dataframe(past_h.sort_values(by="match_timestamp", ascending=False).reset_index(drop=True)[
+        if not past_h.empty: st.dataframe(past_h.sort_values(by="match_timestamp", ascending=False).reset_index(drop=True)[]
         
