@@ -343,7 +343,7 @@ with tab_pred:
             with s_col1: st.info(f"📊 {target['home_team']} Home Streak Index: {home_streak_score:+} Units")
             with s_col2: st.info(f"📊 {target['away_team']} Away Streak Index: {away_streak_score:+} Units")
             # ==============================================================================
-# SEGMENT 9 OF 15: NESTED STRATEGIC OVERRIDES & BLIND-SPOT CONTROL PANEL
+# SEGMENT 9 OF 15: NESTED STRATEGIC OVERRIDES PANEL
 # ==============================================================================
 
                 st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
