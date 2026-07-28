@@ -583,90 +583,193 @@ with c_col_r:
             pd.concat([existing_ledger_df, pd.DataFrame([new_row])], ignore_index=True).to_csv(ledger_path, index=False)
             st.rerun()
             # ==============================================================================
-# SEGMENT 15 OF 15: FLAT GLOBAL OUTRIGHT WINNER ARBITRAGE SIMULATOR
+# SEGMENT 15A OF 15: OUTRIGHT CAMPAIGN ENTRY LEDGER & SQUAD PROFILE MATRIX
 # ==============================================================================
+
 with tab_tables:
     if not filtered_df.empty:
         settled_check_df = filtered_df.dropna(subset=["home_goals", "away_goals"])
         
+        # Trigger the Outright Monte Carlo Simulator if the league is unplayed or explicitly anchored
         if len(settled_check_df) == 0 or preseason_calibration_active:
             st.markdown("#### 🏆 Syndicate Outright Winner Probability & Boardroom EV Arbitrage")
+            st.info("📊 Elite Simulation Active: Running 1,000 parallel tournament iterations with corporate manager sack loops, climate turf friction, and closing-gap motivation logic...")
+            
             all_participating_teams = sorted(list(set(filtered_df["home_team"].dropna().unique()).union(set(filtered_df["away_team"].dropna().unique()))))
             
-            squad_profile_rows = [{"Competing Squad": team, "Transfer Additions Boost (%)": 0.0, "Player Departures Decay (%)": 0.0, "Squad Rotation Depth Index": 1.00, "Active in Continental Cups": False, "Corporate Manager Sack Floor (Min PPG)": 1.10, "Asymmetric Pitch Layout Width Index": 1.00, "Bookmaker Outright Odds": 25.00} for team in all_participating_teams]
+            squad_profile_rows = []
+            for team in all_participating_teams:
+                squad_profile_rows.append({
+                    "Competing Squad": team,
+                    "Transfer Additions Boost (%)": 0.0,
+                    "Player Departures Decay (%)": 0.0,
+                    "Squad Rotation Depth Index": 1.00,
+                    "Active in Continental Cups": False,
+                    "Corporate Manager Sack Floor (Min PPG)": 1.10,
+                    "Asymmetric Pitch Layout Width Index": 1.00,
+                    "Bookmaker Outright Odds": 25.00
+                })
+                
+            st.write("✏️ **Outright Campaign Entry Ledger:** Adjust individual roster depth, multi-cup commitments, pitch layouts, and boardroom metrics before running the simulation pass:")
             
-            edited_profile_df = st.data_editor(pd.DataFrame(squad_profile_rows), column_config={"Competing Squad": st.column_config.TextColumn("Competing Squad", disabled=True), "Transfer Additions Boost (%)": st.column_config.NumberColumn("Signings Impact (+%)", min_value=0.0, max_value=25.0, format="%.1f%%"), "Player Departures Decay (%)": st.column_config.NumberColumn("Departures Decay (-%)", min_value=0.0, max_value=25.0, format="%.1f%%"), "Squad Rotation Depth Index": st.column_config.NumberColumn("Squad Rotation Depth", min_value=0.80, max_value=1.20, step=0.05), "Active in Continental Cups": st.column_config.CheckboxColumn("Multi-Cup Congestion?"), "Corporate Manager Sack Floor (Min PPG)": st.column_config.NumberColumn("Sack PPG Floor", min_value=0.50, max_value=2.00), "Asymmetric Pitch Layout Width Index": st.column_config.NumberColumn("Pitch Width Index", min_value=0.85, max_value=1.15), "Bookmaker Outright Odds": st.column_config.NumberColumn("Bookmaker Outright Odds", min_value=1.01)}, hide_index=True, use_container_width=True, key="outright_squad_ledger_v3")
+            edited_profile_df = st.data_editor(
+                pd.DataFrame(squad_profile_rows),
+                column_config={
+                    "Competing Squad": st.column_config.TextColumn("Competing Squad", disabled=True),
+                    "Transfer Additions Boost (%)": st.column_config.NumberColumn("Signings Impact (+%)", min_value=0.0, max_value=25.0, step=1.0, format="%.1f%%"),
+                    "Player Departures Decay (%)": st.column_config.NumberColumn("Departures Decay (-%)", min_value=0.0, max_value=25.0, step=1.0, format="%.1f%%"),
+                    "Squad Rotation Depth Index": st.column_config.NumberColumn("Squad Rotation Depth", min_value=0.80, max_value=1.20, step=0.05, format="%.2f"),
+                    "Active in Continental Cups": st.column_config.CheckboxColumn("Multi-Cup Congestion?"),
+                    "Corporate Manager Sack Floor (Min PPG)": st.column_config.NumberColumn("Sack PPG Floor", min_value=0.50, max_value=2.00, step=0.05, format="%.2f"),
+                    "Asymmetric Pitch Layout Width Index": st.column_config.NumberColumn("Pitch Width Index", min_value=0.85, max_value=1.15, step=0.05, format="%.2f"),
+                    "Bookmaker Outright Odds": st.column_config.NumberColumn("Bookmaker Outright Odds", format="%.2f", min_value=1.01, step=0.5)
+                },
+                hide_index=True,
+                use_container_width=True,
+                key="outright_squad_ledger_final"
+            )
 
-            # Low-latency internal dictionary builders
-            t_boost = {r["Competing Squad"]: 1.0 + (r["Transfer Additions Boost (%)"]/100.0) for _, r in edited_profile_df.iterrows()} if edited_profile_df is not None else {t: 1.0 for t in all_participating_teams}
-            d_decay = {r["Competing Squad"]: 1.0 - (r["Player Departures Decay (%)"]/100.0) for _, r in edited_profile_df.iterrows()} if edited_profile_df is not None else {t: 1.0 for t in all_participating_teams}
-            depth_map = {r["Competing Squad"]: r["Squad Rotation Depth Index"] for _, r in edited_profile_df.iterrows()} if edited_profile_df is not None else {t: 1.0 for t in all_participating_teams}
-            congestion_map = {r["Competing Squad"]: r["Active in Continental Cups"] for _, r in edited_profile_df.iterrows()} if edited_profile_df is not None else {t: False for t in all_participating_teams}
-            sack_map = {r["Competing Squad"]: r["Corporate Manager Sack Floor (Min PPG)"] for _, r in edited_profile_df.iterrows()} if edited_profile_df is not None else {t: 1.10 for t in all_participating_teams}
-            pitch_map = {r["Competing Squad"]: r["Asymmetric Pitch Layout Width Index"] for _, r in edited_profile_df.iterrows()} if edited_profile_df is not None else {t: 1.00 for t in all_participating_teams}
-            odds_map = {r["Competing Squad"]: r["Bookmaker Outright Odds"] for _, r in edited_profile_df.iterrows()} if edited_profile_df is not None else {t: 25.0 for t in all_participating_teams}
+            transfer_boost_map = {}
+            departure_decay_map = {}
+            depth_index_map = {}
+            congestion_map = {}
+            sack_floor_map = {}
+            pitch_width_map = {}
+            bookmaker_odds_map = {}
+            
+            if edited_profile_df is not None:
+                for _, row in edited_profile_df.iterrows():
+                    t_name = str(row["Competing Squad"])
+                    transfer_boost_map[t_name] = 1.0 + (float(row["Transfer Additions Boost (%)"]) / 100.0)
+                    departure_decay_map[t_name] = 1.0 - (float(row["Player Departures Decay (%)"]) / 100.0)
+                    depth_index_map[t_name] = float(row["Squad Rotation Depth Index"])
+                    congestion_map[t_name] = bool(row["Active in Continental Cups"])
+                    sack_floor_map[t_name] = float(row["Corporate Manager Sack Floor (Min PPG)"])
+                    pitch_width_map[t_name] = float(row["Asymmetric Pitch Layout Width Index"])
+                    bookmaker_odds_map[t_name] = float(row["Bookmaker Outright Odds"])
+            else:
+                for team in all_participating_teams:
+                    transfer_boost_map[team] = 1.0; departure_decay_map[team] = 1.0; depth_index_map[team] = 1.00; congestion_map[team] = False; sack_floor_map[team] = 1.10; pitch_width_map[team] = 1.00; bookmaker_odds_map[team] = 25.0
+                    # ==============================================================================
+# SEGMENT 15B OF 15: MONTE CARLO TOURNAMENT SIMULATION CORE & AUXILIARY LEDGERS
+# ==============================================================================
 
             outright_simulation_scoreboard = {team: 0 for team in all_participating_teams}
             mock_schedule_fixtures = [{"home": h, "away": a} for h in all_participating_teams for a in all_participating_teams if h != a]
             
             if mock_schedule_fixtures:
                 for iteration in range(1000):
-                    points_reg = {team: 0 for team in all_participating_teams}
-                    games_reg = {team: 0 for team in all_participating_teams}
-                    sacked_reg = {team: False for team in all_participating_teams}
+                    iteration_points_registry = {team: 0 for team in all_participating_teams}
+                    iteration_games_played = {team: 0 for team in all_participating_teams}
+                    manager_sacked_registry = {team: False for team in all_participating_teams}
                     
                     for index_f, fix in enumerate(mock_schedule_fixtures):
-                        sim_goals = baseline_goals * weather_goals_multiplier * preseason_turnover_rate
-                        games_reg[fix["home"]] += 1; games_reg[fix["away"]] += 1
+                        sim_baseline_goals = baseline_goals * weather_goals_multiplier * preseason_turnover_rate
+                        iteration_games_played[fix["home"]] += 1
+                        iteration_games_played[fix["away"]] += 1
                         
-                        if index_f > (len(mock_schedule_fixtures) * 0.85) and fix["home"] == max(points_reg, key=points_reg.get): sim_goals *= 0.78
+                        if index_f > (len(mock_schedule_fixtures) * 0.85):
+                            top_team_interim = max(iteration_points_registry, key=iteration_points_registry.get)
+                            if fix["home"] == top_team_interim: sim_baseline_goals *= 0.78
                         
-                        h_sack = 1.10 if (games_reg[fix["home"]] >= 10 and (points_reg[fix["home"]]/games_reg[fix["home"]]) < sack_map.get(fix["home"], 1.10)) or sacked_reg[fix["home"]] else 1.00
-                        if h_sack == 1.10: sacked_reg[fix["home"]] = True
-                        a_sack = 1.10 if (games_reg[fix["away"]] >= 10 and (points_reg[fix["away"]]/games_reg[fix["away"]]) < sack_map.get(fix["away"], 1.10)) or sacked_reg[fix["away"]] else 1.00
-                        if a_sack == 1.10: sacked_reg[fix["away"]] = True
+                        home_sack_bounce = 1.00
+                        away_sack_bounce = 1.00
+                        if iteration_games_played[fix["home"]] >= 10:
+                            home_current_ppg = iteration_points_registry[fix["home"]] / iteration_games_played[fix["home"]]
+                            if home_current_ppg < sack_floor_map.get(fix["home"], 1.10) and not manager_sacked_registry[fix["home"]]:
+                                manager_sacked_registry[fix["home"]] = True
+                        if manager_sacked_registry[fix["home"]]: home_sack_bounce = 1.10
                         
-                        h_pitch = 0.93 if pitch_map.get(fix["home"], 1.00) < 0.95 else 1.00
-                        h_attr = depth_map.get(fix["home"], 1.00) if index_f > (len(mock_schedule_fixtures)*0.60) else 1.00
-                        a_attr = depth_map.get(fix["away"], 1.00) if index_f > (len(mock_schedule_fixtures)*0.60) else 1.00
-                        h_cong = 0.915 if congestion_map.get(fix["home"], False) and (index_f % 7 == 0) else 1.00
-                        a_cong = 0.915 if congestion_map.get(fix["away"], False) and (index_f % 7 == 0) else 1.00
+                        if iteration_games_played[fix["away"]] >= 10:
+                            away_current_ppg = iteration_points_registry[fix["away"]] / iteration_games_played[fix["away"]]
+                            if away_current_ppg < sack_floor_map.get(fix["away"], 1.10) and not manager_sacked_registry[fix["away"]]:
+                                manager_sacked_registry[fix["away"]] = True
+                        if manager_sacked_registry[fix["away"]]: away_sack_bounce = 1.10
                         
-                        raw_h_exp = 1.35 * sim_goals * coach_attack_multiplier * t_boost.get(fix["home"],1.0) * d_decay.get(fix["home"],1.0) * h_attr * h_cong * h_sack * h_pitch
-                        raw_a_exp = 1.05 * sim_goals * t_boost.get(fix["away"],1.0) * d_decay.get(fix["away"],1.0) * a_attr * a_cong * a_sack
+                        home_pitch_modifier = 1.00
+                        if pitch_width_map.get(fix["home"], 1.00) < 0.95: home_pitch_modifier = 0.93
                         
-                        sim_h, sim_a = np.random.poisson(raw_h_exp), np.random.poisson(raw_a_exp)
-                        if sim_h > sim_a: points_reg[fix["home"]] += 3
-                        elif sim_a > sim_h: points_reg[fix["away"]] += 3
-                        else: points_reg[fix["home"]] += 1; points_reg[fix["away"]] += 1
+                        home_transfer_modifier = transfer_boost_map.get(fix["home"], 1.0) * departure_decay_map.get(fix["home"], 1.0)
+                        away_transfer_modifier = transfer_boost_map.get(fix["away"], 1.0) * departure_decay_map.get(fix["away"], 1.0)
+                        
+                        home_attrition_modifier = 1.00
+                        away_attrition_modifier = 1.00
+                        if index_f > (len(mock_schedule_fixtures) * 0.60):
+                            home_attrition_modifier = min(1.0, depth_index_map.get(fix["home"], 1.00))
+                            away_attrition_modifier = min(1.0, depth_index_map.get(fix["away"], 1.00))
                             
-                    for team in points_reg:
-                        if points_reg[team] > 100: points_reg[team] = 100
-                    outright_simulation_scoreboard[max(points_reg, key=points_reg.get)] += 1
+                        home_congestion_modifier = 0.915 if congestion_map.get(fix["home"], False) and (index_f % 7 == 0) else 1.00
+                        away_congestion_modifier = 0.915 if congestion_map.get(fix["away"], False) and (index_f % 7 == 0) else 1.00
+                        
+                        raw_h_exp = 1.35 * sim_baseline_goals * coach_attack_multiplier * home_transfer_modifier * home_attrition_modifier * home_congestion_modifier * home_sack_bounce * home_pitch_modifier
+                        raw_a_exp = 1.05 * sim_baseline_goals * away_transfer_modifier * away_attrition_modifier * away_congestion_modifier * away_sack_bounce
+                        
+                        sim_h_goals = np.random.poisson(raw_h_exp)
+                        sim_a_goals = np.random.poisson(raw_a_exp)
+                        
+                        if sim_h_goals > sim_a_goals: iteration_points_registry[fix["home"]] += 3
+                        elif sim_a_goals > sim_h_goals: iteration_points_registry[fix["away"]] += 3
+                        else:
+                            iteration_points_registry[fix["home"]] += 1
+                            iteration_points_registry[fix["away"]] += 1
+                            
+                    for team in iteration_points_registry:
+                        if iteration_points_registry[team] > 100: iteration_points_registry[team] = 100
+                            
+                    champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
+                    outright_simulation_scoreboard[champion_squad] += 1
             
             outright_results_rows = []
             for team, win_count in outright_simulation_scoreboard.items():
-                p_win = float(win_count / 1000.0)
-                b_odds = odds_map.get(team, 25.0)
-                c_ev = (p_win * b_odds) - 1.0
-                verdict = "🔥 HIGH VALUE FUTURES TICKET" if c_ev >= 0.070 else ("🟢 STANDARD VALUE ACCUMULATOR" if 0.030 <= c_ev <= 0.069 else "❌ NO BET")
-                outright_results_rows.append({"Competing Squad": team, "Model Probability (%)": f"{p_win*100:.1f}%", "Fair Value Odds": f"{1.0/p_win:.2f}" if p_win > 0 else "999.00", "Your Input Odds": f"{b_odds:.2f}", "Outright EV (%)": f"{c_ev*100:+.1f}%", "Trading Verdict": verdict})
+                projected_win_probability_pct = float(win_count / 1000.0)
+                b_odds = bookmaker_odds_map.get(team, 25.0)
+                calculated_outright_ev = (projected_win_probability_pct * b_odds) - 1.0
+                
+                if calculated_outright_ev >= 0.070: verdict = "🔥 HIGH VALUE FUTURES TICKET"
+                elif 0.030 <= calculated_outright_ev <= 0.069: verdict = "🟢 STANDARD VALUE ACCUMULATOR"
+                elif 0.000 <= calculated_outright_ev < 0.030: verdict = "❌ NO BET (EDGE VALUE DEFICIT)"
+                else: verdict = "❌ NEGATIVE EXPECTED VALUE"
+                
+                outright_results_rows.append({
+                    "Competing Squad": team,
+                    "Model Probability (%)": f"{projected_win_probability_pct * 100:.1f}%",
+                    "Fair Value Odds": f"{1.0 / projected_win_probability_pct:.2f}" if projected_win_probability_pct > 0 else "999.00",
+                    "Your Input Odds": f"{b_odds:.2f}",
+                    "Outright EV (%)": f"{calculated_outright_ev * 100:+.1f}%",
+                    "Trading Verdict": verdict
+                })
             
+            outright_display_df = pd.DataFrame(outright_results_rows).sort_values(by="Model Probability (%)", ascending=False).reset_index(drop=True)
             st.write("📈 **Simulated Outright Forecasting & Arbitrage Report Matrix:**")
-            st.dataframe(pd.DataFrame(outright_results_rows).sort_values(by="Model Probability (%)", ascending=False), use_container_width=True, hide_index=True)
+            st.dataframe(outright_display_df, use_container_width=True, hide_index=True)
             st.markdown("---")
             
         base_table = engine.generate_dynamic_league_table(filtered_df)
-        if base_table is not None and not base_table.empty: st.dataframe(base_table, use_container_width=True)
+        if base_table is not None and not base_table.empty: 
+            st.write("**Current Real-World Standings Table**")
+            st.dataframe(base_table, use_container_width=True)
+        else: st.info("Dynamic league standings are empty or uncompiled.")
+    else: st.info("No context available to compile standings arrays.")
+
 with tab_history:
+    st.markdown("### Backtest Calibration Analysis")
     if not filtered_df.empty:
+        league_key = selected_league_filter.lower().strip()
+        baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
         b_df = engine.run_rolling_window_backtest(filtered_df, baseline_goals, backtest_window, 7, vol_dampener)
         if b_df is not None and not b_df.empty:
             b_df["is_correct"] = b_df["model_probability"] >= accuracy_threshold_floor
             st.metric("Backtest Prediction Accuracy", f"{(b_df['is_correct'].sum() / len(b_df)) * 100:.1f}%")
             st.dataframe(b_df, use_container_width=True)
+        else: st.info("Insufficient historical metrics to parse target backtesting window arrays.")
+    else: st.info("No datasets verified.")
+
 with tab_past:
+    st.markdown("### 📜 Settled Historical Results Ledger")
     if not filtered_df.empty:
         past_h = filtered_df.dropna(subset=["home_goals", "away_goals"]).copy()
-        if not past_h.empty: st.dataframe(past_h.sort_values(by="match_timestamp", ascending=False).reset_index(drop=True)[]
-        
+        if not past_h.empty: 
+            st.dataframe(past_h.sort_values(by="match_timestamp", ascending=False).reset_index(drop=True)[["match_timestamp", "home_team", "away_team", "home_goals", "away_goals"]], use_container_width=True)
+        else: st.info("No historical matches found for this filter combination.")
+    else: st.info("Database matrix workspace is currently unpopulated.")
+    
