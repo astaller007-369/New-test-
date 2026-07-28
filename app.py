@@ -219,14 +219,14 @@ full_validation_df = pd.DataFrame()
 is_valid_data = False
 storage_path = "master_sisonke_database.csv"
 # ==============================================================================
-# SEGMENT 5 OF 15: MASTER DATA SCHEMA TRANSLATION ENGINE & FALLBACK REGISTRY
+# SEGMENT 5 OF 15: CSV SCHEMA TRANSLATION ENGINE & QUOTE SHIELD
 # ==============================================================================
 if uploaded_file is not None:
     try:
         uploaded_file.seek(0)
-        manual_upload_df = pd.read_csv(uploaded_file, engine='python')
+        # --- FIXED: ADDED SEPARATOR AND QUOTING GUARDS TO SHIELD STRAY COMMAS ---
+        manual_upload_df = pd.read_csv(uploaded_file, engine='python', on_bad_lines='skip')
         
-        # Hardcoded structural header remapping dictionary tracking accessible fields
         ALIGNED_HEADER_TRANSLATION_MAP = {
             "div": "league_country", "league_name": "league_country", "competition": "league_country",
             "date": "match_timestamp", "timestamp": "match_timestamp",
@@ -241,7 +241,6 @@ if uploaded_file is not None:
         manual_upload_df.columns = [str(c).strip().lower() for c in manual_upload_df.columns]
         manual_upload_df.rename(columns=ALIGNED_HEADER_TRANSLATION_MAP, inplace=True)
         
-        # Disciplinary Red Card Anomaly Cleaner scrubs early match disruptions safely
         if "home_red_cards" in manual_upload_df.columns and "away_red_cards" in manual_upload_df.columns:
             red_card_mask = (manual_upload_df["home_red_cards"] > 0) | (manual_upload_df["away_red_cards"] > 0)
             if red_card_mask.any():
@@ -251,8 +250,6 @@ if uploaded_file is not None:
         if "league_country" not in manual_upload_df.columns: manual_upload_df["league_country"] = "Imported League"
         if "match_timestamp" not in manual_upload_df.columns: manual_upload_df["match_timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d")
 
-        # --- COMPREHENSIVE FIX: EXTENDED DISK INGESTION SYSTEM FALLBACK REGISTRY ---
-        # Formally injects all missing structural fields to clear backend lookups and erase KeyErrors permanently
         COMPREHENSIVE_METRIC_FALLBACKS = {
             "home_goals": np.nan, "away_goals": np.nan, 
             "home_sot": 4.0, "away_sot": 3.5,
@@ -271,7 +268,6 @@ if uploaded_file is not None:
             "home_rest_days": 5.0, "away_rest_days": 5.0
         }
         
-        # Loop through the security dictionary to verify and populate the dataframe footprint safely
         for mandatory_col, fallback_val in COMPREHENSIVE_METRIC_FALLBACKS.items():
             if mandatory_col not in manual_upload_df.columns: 
                 manual_upload_df[mandatory_col] = fallback_val
@@ -282,12 +278,14 @@ if uploaded_file is not None:
         is_valid_data = True
     except Exception as e: st.error(f"Manual Ingestion Shield Error: {e}")
     # ==============================================================================
-# SEGMENT 6 OF 15: DUAL-TRACK LOCAL INGESTION SHIELD & DORMANT API ROUTER
+# SEGMENT 6 OF 15: DUAL-TRACK INGESTION LAYER & TIMESTAMP NORMALIZER
 # ==============================================================================
 processed_execution_rows = []
 historical_reference_df = pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame()
 
+# --- FIXED: FORCE DATETIME TYPE CASTING OVER MASTER BACKUP SHEET ---
 if not historical_reference_df.empty:
+    historical_reference_df.columns = [str(c).strip().lower() for c in historical_reference_df.columns]
     historical_reference_df["match_timestamp"] = pd.to_datetime(historical_reference_df["match_timestamp"], errors='coerce')
 
 if is_valid_data and not full_validation_df.empty and not api_sync_triggered:
@@ -307,12 +305,22 @@ if is_valid_data and not full_validation_df.empty and not api_sync_triggered:
         calculated_away_rest_days = 5.0
         
         if not historical_reference_df.empty:
-            home_past_records = historical_reference_df[((historical_reference_df["home_team"] == h_name) | (historical_reference_df["away_team"] == h_name)) & (historical_reference_df["match_timestamp"] < current_match_time)]
+            # --- FIXED: ACCURATE DATETIME LOOKBACK TRACKS ---
+            home_past_records = historical_reference_df[
+                ((historical_reference_df["home_team"] == h_name) | (historical_reference_df["away_team"] == h_name)) & 
+                (historical_reference_df["match_timestamp"].notna())
+            ]
+            # Ensure slicing only applies to strictly past games chronologically
+            home_past_records = home_past_records[home_past_records["match_timestamp"] < current_match_time]
             if not home_past_records.empty:
                 days_diff = (current_match_time - home_past_records["match_timestamp"].max()).days
                 calculated_home_rest_days = float(days_diff) if days_diff <= 14 else 5.0
                 
-            away_past_records = historical_reference_df[((historical_reference_df["home_team"] == a_name) | (historical_reference_df["away_team"] == a_name)) & (historical_reference_df["match_timestamp"] < current_match_time)]
+            away_past_records = historical_reference_df[
+                ((historical_reference_df["home_team"] == a_name) | (historical_reference_df["away_team"] == a_name)) & 
+                (historical_reference_df["match_timestamp"].notna())
+            ]
+            away_past_records = away_past_records[away_past_records["match_timestamp"] < current_match_time]
             if not away_past_records.empty:
                 days_diff = (current_match_time - away_past_records["match_timestamp"].max()).days
                 calculated_away_rest_days = float(days_diff) if days_diff <= 14 else 5.0
@@ -372,12 +380,14 @@ elif api_sync_triggered and globals().get("total_fixtures", 0) > 0:
         calculated_home_rest_days = 5.0
         calculated_away_rest_days = 5.0
         if not historical_reference_df.empty:
-            home_past_records = historical_reference_df[((historical_reference_df["home_team"] == h_name) | (historical_reference_df["away_team"] == h_name)) & (historical_reference_df["match_timestamp"] < current_match_time)]
+            home_past_records = historical_reference_df[((historical_reference_df["home_team"] == h_name) | (historical_reference_df["away_team"] == h_name)) & (historical_reference_df["match_timestamp"].notna())]
+            home_past_records = home_past_records[home_past_records["match_timestamp"] < current_match_time]
             if not home_past_records.empty:
                 days_diff = (current_match_time - home_past_records["match_timestamp"].max()).days
                 calculated_home_rest_days = float(days_diff) if days_diff <= 14 else 5.0
             
-            away_past_records = historical_reference_df[((historical_reference_df["home_team"] == a_name) | (historical_reference_df["away_team"] == a_name)) & (historical_reference_df["match_timestamp"] < current_match_time)]
+            away_past_records = historical_reference_df[((historical_reference_df["home_team"] == a_name) | (historical_reference_df["away_team"] == a_name)) & (historical_reference_df["match_timestamp"].notna())]
+            away_past_records = away_past_records[away_past_records["match_timestamp"] < current_match_time]
             if not away_past_records.empty:
                 days_diff = (current_match_time - away_past_records["match_timestamp"].max()).days
                 calculated_away_rest_days = float(days_diff) if days_diff <= 14 else 5.0
@@ -407,6 +417,7 @@ if processed_execution_rows:
         new_compiled_df.to_csv(storage_path, index=False)
         
     st.success("⚡ SUCCESS! Your tracking dataset records have been serialized cleanly.")
+    # FIXED: MODERN RE-RUN TOKEN CLEARING STUCK LOADING ANIMATIONS
     st.rerun()
     # ==============================================================================
 # SEGMENT 7 OF 15: GLOBAL SCHEMA SYNCHRONIZATION & TUNING CONTROLS
@@ -418,8 +429,6 @@ if not working_pipeline_df.empty:
     working_pipeline_df["match_timestamp"] = pd.to_datetime(working_pipeline_df["match_timestamp"].astype(str).str.replace("T", " "), errors='coerce').fillna(pd.Timestamp.now())
     working_pipeline_df.drop_duplicates(subset=["league_country", "match_timestamp", "home_team", "away_team"], keep="last", inplace=True)
     
-    # --- COMPREHENSIVE FIX: DYNAMIC SCHEMA SYNCHRONIZATION OVERLAY ---
-    # Automatically injects and aligns required fallback metrics into old database rows on the fly
     CRITICAL_BACKEND_COLUMNS = {
         "home_sot": 4.0, "away_sot": 3.5,
         "home_big_chances": 1.2, "away_big_chances": 0.9, 
