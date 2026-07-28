@@ -343,49 +343,114 @@ with tab_pred:
             with s_col1: st.info(f"📊 {target['home_team']} Home Streak Index: {home_streak_score:+} Units")
             with s_col2: st.info(f"📊 {target['away_team']} Away Streak Index: {away_streak_score:+} Units")
             # ==============================================================================
-# SEGMENT 9 OF 15: EXTENDED ODDS GRID & STRATEGIC OVERRIDES PANEL
+# SEGMENT 9 OF 15: NESTED STRATEGIC OVERRIDES & BLIND-SPOT CONTROL PANEL
 # ==============================================================================
+
                 st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
                 w_col1, w_col2, w_col3 = st.columns(3)
-                with w_col1: weather_condition_selection = st.selectbox("Current Weather:", ["Optimal / Indoor Dome", "Heavy Rain / Slick Pitch", "Extreme High Wind"])
-                with w_col2: tournament_framework_selection = st.selectbox("Competition Stage:", ["Standard Domestic League Match", "🏆 Neutral-Site Tournament Group Stage", "💀 Knockout Round (Extra-Time Risk)"])
-                with w_col3: coach_stability_selection = st.selectbox("Host Coach Stability:", ["Long-Term Stability (2+ Years)", "Stable Baseline", "Recent Appointment / Caretaker", "🚨 dressing room friction"])
+                with w_col1:
+                    weather_condition_selection = st.selectbox(
+                        "Current Matchday Weather Climate:",
+                        ["Optimal / Standard Ambient / Indoor Dome", "Heavy Rain / High Pitch Slick Surface", "Extreme High Wind / Aerodynamic Drag Line"]
+                    )
+                with w_col2:
+                    tournament_framework_selection = st.selectbox(
+                        "Competition Tournament Format Stage:",
+                        ["Standard Domestic League Match", "🏆 Neutral-Site Tournament Group Stage", "💀 Knockout Round (Extra-Time Risk)"]
+                    )
+                with w_col3:
+                    coach_stability_selection = st.selectbox(
+                        "Host Team Coach Stability Status:",
+                        ["Long-Term Stability (2+ Years)", "Stable Baseline / Standard Tenure", "Recent Appointment / Caretaker Setup", "🚨 Public Dressing Room Friction"]
+                    )
 
+                # --- PATCHED BLIND SPOT 1 & 3: TACTICAL STYLES & GEOGRAPHIC FRICTION OVERRIDES ---
                 st.markdown("#### ⚙️ Syndicate Tactical Mismatch & Travel Metrics")
                 t_col1, t_col2, t_col3 = st.columns(3)
-                with t_col1: home_tactical_style = st.selectbox("Home Tactical Blueprint Style:", ["Standard Balanced", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"])
-                with t_col2: away_tactical_style = st.selectbox("Away Tactical Blueprint Style:", ["Standard Balanced", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"])
+                with t_col1:
+                    home_tactical_style = st.selectbox(
+                        "Home Tactical Blueprint Style:",
+                        ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"]
+                    )
+                with t_col2:
+                    away_tactical_style = st.selectbox(
+                        "Away Tactical Blueprint Style:",
+                        ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"]
+                    )
                 with t_col3:
                     st.write("**Geographic Friction Tracks**")
                     home_heavy_travel = st.checkbox("🚨 Home Team: Long-Distance Travel Exposure", value=False)
                     away_heavy_travel = st.checkbox("🚨 Away Team: Long-Distance Travel Exposure", value=False)
 
+                # --- PATCHED BLIND SPOT 2: TEAM NEWS INCOMPLETE INFORMATION SLIDERS ---
                 st.markdown("#### 🏥 Team News Missing-Talent Impact Overrides")
                 i_col1, i_col2 = st.columns(2)
-                with i_col1: home_missing_talent_tier = st.select_slider("Home Injury Severity:", options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"], value="Full Strength Squad")
-                with i_col2: away_missing_talent_tier = st.select_slider("Away Injury Severity:", options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"], value="Full Strength Squad")
+                with i_col1:
+                    home_missing_talent_tier = st.select_slider(
+                        "Home Key Player Injury / Suspension Severity:",
+                        options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"],
+                        value="Full Strength Squad"
+                    )
+                with i_col2:
+                    away_missing_talent_tier = st.select_slider(
+                        "Away Key Player Injury / Suspension Severity:",
+                        options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"],
+                        value="Full Strength Squad"
+                    )
 
+                # --- PATCHED BLIND SPOTS 5, 6 & 7: SCHEDULING PSYCHOLOGY, REFEREES & PITCH ASYMMETRY ---
                 st.markdown("#### 🧠 Scheduling Psychology, Referees & Pitch Overrides")
                 b_col1, b_col2, b_col3 = st.columns(3)
-                with b_col1: lookahead_match_active = st.selectbox("Look-Ahead Match Distraction:", ["None / Standard Focus Match", "🏠 Home Team: Massive Impending Cup/Derby Next Week", "✈️ Away Team: Massive Impending Cup/Derby Next Week"])
-                with b_col2: referee_strictness_profile = st.selectbox("Assigned Referee Strictness:", ["Standard Baseline", "Lenient / High-Flow", "🚨 Strict / Cards & Penalties Inclined"])
+                with b_col1:
+                    lookahead_match_active = st.selectbox(
+                        "Look-Ahead Match Distraction Profile:",
+                        ["None / Standard Focus Match", "🏠 Home Team: Massive Impending Cup/Derby Next Week", "✈️ Away Team: Massive Impending Cup/Derby Next Week"]
+                    )
+                with b_col2:
+                    referee_strictness_profile = st.selectbox(
+                        "Assigned Referee Strictness Profile:",
+                        ["Standard Baseline / Moderate Official", "Lenient / High-Flow Context", "🚨 Strict / Cards & Penalties Inclined"]
+                    )
                 with b_col3:
-                    st.write("**Asymmetric Layout Friction**")
-                    asymmetric_pitch_climate_advantage = st.checkbox("🚨 Host Narrow Pitch / Ground Surface Advantage Active", value=False)
+                    st.write("**Asymmetric Climate/Surface Friction**")
+                    asymmetric_pitch_climate_advantage = st.checkbox(
+                        "🚨 Host Artificial Turf / Extreme Climate Advantage Active", 
+                        value=False,
+                        help="Check this if the visitor faces severe unfamiliarity with artificial turf, altitude, or tropical humidity."
+                    )
 
-                derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High-Intensity Rivalry", value=False)
-                weather_goals_multiplier = 0.92 if "Rain" in weather_condition_selection else (0.88 if "Wind" in weather_condition_selection else 1.00)
+                st.markdown("---")
+                derby_match_active = st.checkbox(
+                    "🚨 Flag Entry as Local Derby / High-Intensity Rivalry", 
+                    value=False,
+                    help="Check this box to neutralize standard home crowd advantage weights and scale up high-volatility variance parameters."
+                )
+
+                # Convert baseline conditions into exact quantitative variables
+                weather_goals_multiplier = 1.00
+                if weather_condition_selection == "Heavy Rain / High Pitch Slick Surface": weather_goals_multiplier = 0.92
+                elif weather_condition_selection == "Extreme High Wind / Aerodynamic Drag Line": weather_goals_multiplier = 0.88
+
                 coach_attack_multiplier = 1.05 if "Long" in coach_stability_selection else (0.85 if "Recent" in coach_stability_selection else 1.00)
-                coach_volatility_expansion = 1.08 if "friction" in coach_stability_selection else 1.00
-                home_injury_penalty = 1.00 if "Full" in home_missing_talent_tier else (0.95 if "Tier 2" in home_missing_talent_tier else 0.85)
-                away_injury_penalty = 1.00 if "Full" in away_missing_talent_tier else (0.95 if "Tier 2" in away_missing_talent_tier else 0.85)
+                coach_volatility_expansion = 1.08 if "Public" in coach_stability_selection else 1.00
+
+                home_injury_penalty = 1.00 if home_missing_talent_tier == "Full Strength Squad" else (0.95 if "Tier 2" in home_missing_talent_tier else 0.85)
+                away_injury_penalty = 1.00 if away_missing_talent_tier == "Full Strength Squad" else (0.95 if "Tier 2" in away_missing_talent_tier else 0.85)
+
                 home_travel_multiplier = 0.92 if home_heavy_travel else 1.00
                 away_travel_multiplier = 0.92 if away_heavy_travel else 1.00
+
+                # Map Look-Ahead Match Psychology parameters cleanly
                 home_lookahead_penalty = 0.90 if "Home Team" in lookahead_match_active else 1.00
                 away_lookahead_penalty = 0.90 if "Away Team" in lookahead_match_active else 1.00
-                referee_volatility_expansion = 1.08 if "Strict" in referee_strictness_profile else (0.94 if "Lenient" in referee_strictness_profile else 1.00)
-                visitor_surface_penalty = 0.93 if asymmetric_pitch_climate_advantage else 1.00
 
+                # Map Referee Strictness profile multipliers cleanly
+                referee_volatility_expansion = 1.08 if "Strict" in referee_strictness_profile else (0.94 if "Lenient" in referee_strictness_profile else 1.00)
+
+                # Map Asymmetric Pitch/Climate advantage modifiers cleanly
+                visitor_surface_penalty = 0.94 if asymmetric_pitch_climate_advantage else 1.00
+
+                # --- EXTENDED USER ODDS INPUT MATRIX ---
                 o_col1, o_col2 = st.columns(2)
                 with o_col1:
                     odds_1 = st.number_input("Home Odds (1):", min_value=1.01, value=2.10, step=0.05, key="o_1")
@@ -394,158 +459,36 @@ with tab_pred:
                 with o_col2:
                     odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
                     odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
-                
+
                 odds_1X, odds_X2, odds_12, odds_btts_y, odds_btts_n, odds_dnb1, odds_dnb2, odds_home_over_15, odds_home_under_15, odds_away_over_15, odds_away_under_15, odds_ah_home_minus_15, odds_ah_away_plus_15, odds_ah_home_plus_15, odds_ah_minus_15, odds_home_cs_y, odds_away_cs_y = 1.3, 1.6, 1.25, 1.8, 1.9, 1.5, 2.4, 2.1, 1.6, 3.1, 1.3, 3.8, 1.25, 1.18, 6.5, 2.6, 3.9
                 h_status, a_status = "stable", "stable"
                 league_key = selected_league_filter.lower().strip()
                 baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
-                is_fr = st.session_state.freeze_matrix.get(league_key, False)# ==============================================================================
-# SEGMENT 9 OF 15: EXTENDED ODDS GRID & ADVANCED BLIND-SPOT PATCH OVERRIDES
-# ==============================================================================
-
-st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
-w_col1, w_col2, w_col3 = st.columns(3)
-with w_col1:
-    weather_condition_selection = st.selectbox(
-        "Current Matchday Weather Climate:",
-        ["Optimal / Standard Ambient / Indoor Dome", "Heavy Rain / High Pitch Slick Surface", "Extreme High Wind / Aerodynamic Drag Line"]
-    )
-with w_col2:
-    tournament_framework_selection = st.selectbox(
-        "Competition Tournament Format Stage:",
-        ["Standard Domestic League Match", "🏆 Neutral-Site Tournament Group Stage", "💀 Knockout Round (Extra-Time Risk)"]
-    )
-with w_col3:
-    coach_stability_selection = st.selectbox(
-        "Host Team Coach Stability Status:",
-        ["Long-Term Stability (2+ Years)", "Stable Baseline / Standard Tenure", "Recent Appointment / Caretaker Setup", "🚨 Public Dressing Room Friction"]
-    )
-
-# --- PATCHED BLIND SPOT 1 & 3: TACTICAL STYLES & GEOGRAPHIC FRICTION OVERRIDES ---
-st.markdown("#### ⚙️ Syndicate Tactical Mismatch & Travel Metrics")
-t_col1, t_col2, t_col3 = st.columns(3)
-with t_col1:
-    home_tactical_style = st.selectbox(
-        "Home Tactical Blueprint Style:",
-        ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"]
-    )
-with t_col2:
-    away_tactical_style = st.selectbox(
-        "Away Tactical Blueprint Style:",
-        ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"]
-    )
-with t_col3:
-    st.write("**Geographic Friction Tracks**")
-    home_heavy_travel = st.checkbox("🚨 Home Team: Long-Distance Travel Exposure", value=False)
-    away_heavy_travel = st.checkbox("🚨 Away Team: Long-Distance Travel Exposure", value=False)
-
-# --- PATCHED BLIND SPOT 2: TEAM NEWS INCOMPLETE INFORMATION SLIDERS ---
-st.markdown("#### 🏥 Team News Missing-Talent Impact Overrides")
-i_col1, i_col2 = st.columns(2)
-with i_col1:
-    home_missing_talent_tier = st.select_slider(
-        "Home Key Player Injury / Suspension Severity:",
-        options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"],
-        value="Full Strength Squad"
-    )
-with i_col2:
-    away_missing_talent_tier = st.select_slider(
-        "Away Key Player Injury / Suspension Severity:",
-        options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"],
-        value="Full Strength Squad"
-    )
-
-# --- PATCHED BLIND SPOTS 5, 6 & 7: SCHEDULING PSYCHOLOGY, REFEREES & PITCH ASYMMETRY ---
-st.markdown("#### 🧠 Scheduling Psychology, Referees & Pitch Overrides")
-b_col1, b_col2, b_col3 = st.columns(3)
-with b_col1:
-    lookahead_match_active = st.selectbox(
-        "Look-Ahead Match Distraction Profile:",
-        ["None / Standard Focus Match", "🏠 Home Team: Massive Impending Cup/Derby Next Week", "✈️ Away Team: Massive Impending Cup/Derby Next Week"]
-    )
-with b_col2:
-    referee_strictness_profile = st.selectbox(
-        "Assigned Referee Strictness Profile:",
-        ["Standard Baseline / Moderate Official", "Lenient / High-Flow Context", "🚨 Strict / Cards & Penalties Inclined"]
-    )
-with b_col3:
-    st.write("**Asymmetric Climate/Surface Friction**")
-    asymmetric_pitch_climate_advantage = st.checkbox(
-        "🚨 Host Artificial Turf / Extreme Climate Advantage Active", 
-        value=False,
-        help="Check this if the visitor faces severe unfamiliarity with artificial turf, altitude, or tropical humidity."
-    )
-
-st.markdown("---")
-derby_match_active = st.checkbox(
-    "🚨 Flag Entry as Local Derby / High-Intensity Rivalry", 
-    value=False,
-    help="Check this box to neutralize standard home crowd advantage weights and scale up high-volatility variance parameters."
-)
-
-# Convert baseline conditions into exact quantitative variables
-weather_goals_multiplier = 1.00
-if weather_condition_selection == "Heavy Rain / High Pitch Slick Surface": weather_goals_multiplier = 0.92
-elif weather_condition_selection == "Extreme High Wind / Aerodynamic Drag Line": weather_goals_multiplier = 0.88
-
-coach_attack_multiplier = 1.05 if "Long" in coach_stability_selection else (0.85 if "Recent" in coach_stability_selection else 1.00)
-coach_volatility_expansion = 1.08 if "Public" in coach_stability_selection else 1.00
-
-home_injury_penalty = 1.00 if home_missing_talent_tier == "Full Strength Squad" else (0.95 if "Tier 2" in home_missing_talent_tier else 0.85)
-away_injury_penalty = 1.00 if away_missing_talent_tier == "Full Strength Squad" else (0.95 if "Tier 2" in away_missing_talent_tier else 0.85)
-
-home_travel_multiplier = 0.92 if home_heavy_travel else 1.00
-away_travel_multiplier = 0.92 if away_heavy_travel else 1.00
-
-# Map Look-Ahead Match Psychology parameters cleanly
-home_lookahead_penalty = 0.90 if "Home Team" in lookahead_match_active else 1.00
-away_lookahead_penalty = 0.90 if "Away Team" in lookahead_match_active else 1.00
-
-# Map Referee Strictness profile multipliers cleanly
-referee_volatility_expansion = 1.08 if "Strict" in referee_strictness_profile else (0.94 if "Lenient" in referee_strictness_profile else 1.00)
-
-# Map Asymmetric Pitch/Climate advantage modifiers cleanly
-visitor_surface_penalty = 0.94 if asymmetric_pitch_climate_advantage else 1.00
-
-# --- EXTENDED USER ODDS INPUT MATRIX ---
-o_col1, o_col2 = st.columns(2)
-with o_col1:
-    odds_1 = st.number_input("Home Odds (1):", min_value=1.01, value=2.10, step=0.05, key="o_1")
-    odds_X = st.number_input("Draw Odds (X):", min_value=1.01, value=3.20, step=0.05, key="o_x")
-    odds_2 = st.number_input("Away Odds (2):", min_value=1.01, value=3.40, step=0.05, key="o_2")
-with o_col2:
-    odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
-    odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
-
-odds_1X, odds_X2, odds_12, odds_btts_y, odds_btts_n, odds_dnb1, odds_dnb2, odds_home_over_15, odds_home_under_15, odds_away_over_15, odds_away_under_15, odds_ah_home_minus_15, odds_ah_away_plus_15, odds_ah_home_plus_15, odds_ah_minus_15, odds_home_cs_y, odds_away_cs_y = 1.3, 1.6, 1.25, 1.8, 1.9, 1.5, 2.4, 2.1, 1.6, 3.1, 1.3, 3.8, 1.25, 1.18, 6.5, 2.6, 3.9
-h_status, a_status = "stable", "stable"
-league_key = selected_league_filter.lower().strip()
-baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
-is_fr = st.session_state.freeze_matrix.get(league_key, False)
-# ==============================================================================
-# SEGMENT 10A OF 15: DYNAMIC MOTIVATION STANDINGS LOOPS & REMAP SHIELDS
-# ==============================================================================
-
-home_motivation_multiplier = 1.00
-away_motivation_multiplier = 1.00
-tournament_neutral_active = "Neutral" in tournament_framework_selection or "Knockout" in tournament_framework_selection
-knockout_volatility_boost = 1.15 if "Knockout" in tournament_framework_selection else 1.00
-
-live_standings_df = engine.generate_dynamic_league_table(filtered_df)
-if live_standings_df is not None and not live_standings_df.empty and not tournament_neutral_active:
-    live_standings_df.columns = [str(c).strip().lower() for c in live_standings_df.columns]
-    live_standings_df.rename(columns={"team": "Team", "p": "P", "played": "P", "pld": "P"}, inplace=True)
-    
-    if "Team" in live_standings_df.columns:
-        live_standings_df["Team"] = live_standings_df["Team"].astype(str).str.strip().lower()
-        home_match_row = live_standings_df[live_standings_df["Team"] == str(target["home_team"]).strip().lower()]
-        if not home_match_row.empty:
-            home_position = int(home_match_row.index) + 1
-            if home_position <= 4: 
-                home_motivation_multiplier = 1.12
-            elif home_position >= (len(live_standings_df) - 3): 
-                home_motivation_multiplier = 1.15
+                is_fr = st.session_state.freeze_matrix.get(league_key, False)
                 # ==============================================================================
+# SEGMENT 10A OF 15: NESTED DYNAMIC MOTIVATION STANDINGS LOOPS & REMAP SHIELDS
+# ==============================================================================
+
+                home_motivation_multiplier = 1.00
+                away_motivation_multiplier = 1.00
+                tournament_neutral_active = "Neutral" in tournament_framework_selection or "Knockout" in tournament_framework_selection
+                knockout_volatility_boost = 1.15 if "Knockout" in tournament_framework_selection else 1.00
+
+                live_standings_df = engine.generate_dynamic_league_table(filtered_df)
+                if live_standings_df is not None and not live_standings_df.empty and not tournament_neutral_active:
+                    live_standings_df.columns = [str(c).strip().lower() for c in live_standings_df.columns]
+                    live_standings_df.rename(columns={"team": "Team", "p": "P", "played": "P", "pld": "P"}, inplace=True)
+                    
+                    if "Team" in live_standings_df.columns:
+                        live_standings_df["Team"] = live_standings_df["Team"].astype(str).str.strip().lower()
+                        home_match_row = live_standings_df[live_standings_df["Team"] == str(target["home_team"]).strip().lower()]
+                        if not home_match_row.empty:
+                            home_position = int(home_match_row.index) + 1
+                            if home_position <= 4: 
+                                home_motivation_multiplier = 1.12
+                            elif home_position >= (len(live_standings_df) - 3): 
+                                home_motivation_multiplier = 1.15
+                                # ==============================================================================
 # SEGMENT 10B OF 15: MULTI-VARIABLE PROCESSOR CORE & POISSON SHIELD
 # ==============================================================================
                 if tournament_neutral_active:
