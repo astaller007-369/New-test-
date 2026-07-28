@@ -409,7 +409,7 @@ if processed_execution_rows:
     st.success("⚡ SUCCESS! Your tracking dataset records have been serialized cleanly.")
     st.rerun()
     # ==============================================================================
-# SEGMENT 7 OF 15: FLAT GLOBAL NUMERIC ENFORCEMENT LAYER & TUNING CONTROLS
+# SEGMENT 7 OF 15: GLOBAL SCHEMA SYNCHRONIZATION & TUNING CONTROLS
 # ==============================================================================
 working_pipeline_df = full_validation_df.copy() if (is_valid_data and not full_validation_df.empty) else (pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame())
 
@@ -418,10 +418,38 @@ if not working_pipeline_df.empty:
     working_pipeline_df["match_timestamp"] = pd.to_datetime(working_pipeline_df["match_timestamp"].astype(str).str.replace("T", " "), errors='coerce').fillna(pd.Timestamp.now())
     working_pipeline_df.drop_duplicates(subset=["league_country", "match_timestamp", "home_team", "away_team"], keep="last", inplace=True)
     
-    # Force float numeric casting over standard Shots on Target and Big Chances parameters
-    for col in ["home_goals", "away_goals", "home_sot", "away_sot", "home_big_chances", "away_big_chances", "home_box_touches", "away_box_touches", "home_rest_days", "away_rest_days"]:
+    # --- COMPREHENSIVE FIX: DYNAMIC SCHEMA SYNCHRONIZATION OVERLAY ---
+    # Automatically injects and aligns required fallback metrics into old database rows on the fly
+    CRITICAL_BACKEND_COLUMNS = {
+        "home_sot": 4.0, "away_sot": 3.5,
+        "home_big_chances": 1.2, "away_big_chances": 0.9, 
+        "home_box_touches": 16.0, "away_box_touches": 13.0,
+        "home_through_passes": 1.5, "away_through_passes": 1.1, 
+        "home_final_third_entries": 32.0, "away_final_third_entries": 28.0,
+        "home_interceptions": 11.0, "away_interceptions": 12.0, 
+        "home_recoveries": 48.0, "away_recoveries": 46.0,
+        "home_saves": 2.5, "away_saves": 2.8, 
+        "home_ground_duels_won_pct": 0.50, "away_ground_duels_won_pct": 0.50,
+        "home_aerial_duels_won_pct": 0.50, "away_aerial_duels_won_pct": 0.50, 
+        "home_dribbles_won_pct": 0.50, "away_dribbles_won_pct": 0.50,
+        "home_tackles_won_pct": 0.52, "away_tackles_won_pct": 0.52, 
+        "home_passes_final_third_pct": 0.68, "away_passes_final_third_pct": 0.65,
+        "home_rest_days": 5.0, "away_rest_days": 5.0
+    }
+    
+    for mandatory_col, fallback_val in CRITICAL_BACKEND_COLUMNS.items():
+        if mandatory_col not in working_pipeline_df.columns:
+            working_pipeline_df[mandatory_col] = fallback_val
+        else:
+            working_pipeline_df[mandatory_col] = working_pipeline_df[mandatory_col].fillna(fallback_val)
+
+    # Force float numeric casting over all processing variables safely
+    for col in CRITICAL_BACKEND_COLUMNS.keys():
+        working_pipeline_df[col] = pd.to_numeric(working_pipeline_df[col], errors='coerce').fillna(CRITICAL_BACKEND_COLUMNS[col])
+        
+    for col in ["home_goals", "away_goals"]:
         if col in working_pipeline_df.columns:
-            working_pipeline_df[col] = pd.to_numeric(working_pipeline_df[col], errors='coerce').fillna(0.0)
+            working_pipeline_df[col] = pd.to_numeric(working_pipeline_df[col], errors='coerce')
 
     uploaded_leagues = sorted(list(working_pipeline_df["league_country"].dropna().unique()))
 else:
