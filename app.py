@@ -221,12 +221,12 @@ if api_sync_triggered and resolved_payload_string:
 
 is_valid_data = False
 # ==============================================================================
-# SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & QUOTE SHIELD
+# SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
 if uploaded_file is not None:
     try:
         uploaded_file.seek(0)
-        # Quote shield enables the model to take ALL CSV files without choking on extra text commas
+        # Quote shield allows the model to process all CSV layouts smoothly
         manual_upload_df = pd.read_csv(uploaded_file, engine='python', on_bad_lines='skip')
         
         ALIGNED_HEADER_TRANSLATION_MAP = {
@@ -243,16 +243,39 @@ if uploaded_file is not None:
         manual_upload_df.columns = [str(c).strip().lower() for c in manual_upload_df.columns]
         manual_upload_df.rename(columns=ALIGNED_HEADER_TRANSLATION_MAP, inplace=True)
         
+        # --- FIXED: AUTHENTIC LEAGUE NOMENCLATURE SHIELD ---
+        # Automatically detects and maps authentic regional league names to your dashboard options
+        if "league_country" in manual_upload_df.columns:
+            def segment_divisional_tiers(cell_val):
+                val_clean = str(cell_val).strip().upper()
+                
+                # Direct regional overrides
+                if "SPAIN" in val_clean:
+                    return "SPAIN LA LIGA"
+                elif "GERMANY" in val_clean:
+                    return "GERMANY BUNDESLIGA"
+                elif "ITALY" in val_clean:
+                    return "ITALY SERIE A"
+                elif "PREMIER" in val_clean or "EPL" in val_clean or "TIER 1" in val_clean:
+                    return "ENGLAND PREMIER LEAGUE" if "ENGLAND" in val_clean else f"{cell_val} PREMIER LEAGUE"
+                elif "CHAMPIONSHIP" in val_clean or "CHAM" in val_clean or "TIER 2" in val_clean:
+                    return "ENGLAND CHAMPIONSHIP" if "ENGLAND" in val_clean else f"{cell_val} CHAMPIONSHIP"
+                
+                # Dynamic fallback check for flat text strings
+                if val_clean == "ENGLAND":
+                    return "ENGLAND PREMIER LEAGUE"
+                return cell_val
+                
+            manual_upload_df["league_country"] = manual_upload_df["league_country"].apply(segment_divisional_tiers)
+
         if "home_red_cards" in manual_upload_df.columns and "away_red_cards" in manual_upload_df.columns:
             red_card_mask = (manual_upload_df["home_red_cards"] > 0) | (manual_upload_df["away_red_cards"] > 0)
             if red_card_mask.any():
                 manual_upload_df.loc[red_card_mask, "home_goals"] = manual_upload_df.loc[red_card_mask, "home_goals"].clip(upper=3)
                 manual_upload_df.loc[red_card_mask, "away_goals"] = manual_upload_df.loc[red_card_mask, "away_goals"].clip(upper=3)
 
-        if "league_country" not in manual_upload_df.columns: manual_upload_df["league_country"] = "Imported League"
         if "match_timestamp" not in manual_upload_df.columns: manual_upload_df["match_timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d")
 
-        # Dynamic fallback matrix maps full field layouts for all CSV versions instantly
         COMPREHENSIVE_METRIC_FALLBACKS = {
             "home_goals": np.nan, "away_goals": np.nan, 
             "home_sot": 4.0, "away_sot": 3.5,
@@ -1009,7 +1032,8 @@ with tab_tables:
         settled_check_df = filtered_df.dropna(subset=["home_goals", "away_goals"])
         
         if len(settled_check_df) == 0 or preseason_calibration_active:
-            st.markdown("#### 🏆 Syndicate Outright Winner Probability & Boardroom EV Arbitrage")
+            # FIXED: Title automatically formats to the specific selected tier name cleanly
+            st.markdown(f"#### 🏆 Syndicate {selected_league_filter.upper()} Outright Winner Probability & Boardroom EV Arbitrage")
             st.info("📊 Elite Simulation Active: Running 1,000 parallel tournament iterations with corporate manager sack loops, climate turf friction, and closing-gap motivation logic...")
             
             all_participating_teams = sorted(list(set(filtered_df["home_team"].dropna().unique()).union(set(filtered_df["away_team"].dropna().unique()))))
