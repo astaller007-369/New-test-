@@ -305,7 +305,7 @@ if uploaded_file is not None:
         is_valid_data = True
     except Exception as e: st.error(f"Manual Ingestion Shield Error: {e}")
     # ==============================================================================
-# SEGMENT 6 OF 15: MEMORY-ISOLATED INGESTION LAYER & MIXED-INPUT DATE ARMOR
+# SEGMENT 6 OF 15: MEMORY-ISOLATED INGESTION LAYER & ITERATOR ARMOR
 # ==============================================================================
 processed_execution_rows = []
 historical_reference_df = pd.DataFrame()
@@ -319,8 +319,6 @@ if os.path.exists(storage_path):
     try:
         historical_reference_df = pd.read_csv(storage_path, on_bad_lines='skip')
         historical_reference_df.columns = [str(c).strip().lower() for c in historical_reference_df.columns]
-        # Force string casting first to isolate and neutralize mixed hard drive formats safely
-        historical_reference_df["match_timestamp"] = historical_reference_df["match_timestamp"].astype(str)
         historical_reference_df["match_timestamp"] = pd.to_datetime(historical_reference_df["match_timestamp"], errors='coerce', dayfirst=True)
     except: pass
 
@@ -331,9 +329,7 @@ if is_valid_data and not full_validation_df.empty and not api_sync_triggered and
     status_text = st.empty()
     total_upload_records = len(full_validation_df)
     
-    # --- FIXED: STRING-FIRST SANITIZATION SHIELD ---
-    # Convert everything to raw text strings first to stop the internal converter from freezing up
-    full_validation_df["match_timestamp"] = full_validation_df["match_timestamp"].astype(str)
+    # Globally standardize the incoming file timestamps cleanly
     full_validation_df["match_timestamp"] = pd.to_datetime(full_validation_df["match_timestamp"], errors='coerce', dayfirst=True)
     
     for index, row in full_validation_df.iterrows():
@@ -341,7 +337,7 @@ if is_valid_data and not full_validation_df.empty and not api_sync_triggered and
         a_name = str(row["away_team"]).strip()
         
         current_match_time = row["match_timestamp"]
-        if pd.isnull(current_match_time): 
+        if pd.isnull(current_match_time) or isinstance(current_match_time, str): 
             current_match_time = pd.Timestamp.now()
             
         status_text.text(f"Processing File Rows {index+1}/{total_upload_records}: {h_name} vs {a_name}")
@@ -349,36 +345,43 @@ if is_valid_data and not full_validation_df.empty and not api_sync_triggered and
         calculated_away_rest_days = 5.0
         
         if not historical_reference_df.empty:
-            # Settle the home team lookback track, enforcing explicit datetime typing comparisons
-            home_past_records = historical_reference_df[
-                ((historical_reference_df["home_team"] == h_name) | (historical_reference_df["away_team"] == h_name))
-            ].copy()
+            # Isolate home team candidate rows
+            home_candidates = historical_reference_df[
+                (historical_reference_df["home_team"] == h_name) | (historical_reference_df["away_team"] == h_name)
+            ]
             
-            if not home_past_records.empty:
-                home_past_records["match_timestamp"] = home_past_records["match_timestamp"].astype(str)
-                home_past_records["match_timestamp"] = pd.to_datetime(home_past_records["match_timestamp"], errors='coerce', dayfirst=True)
-                home_past_records = home_past_records[(home_past_records["match_timestamp"].notna()) & (home_past_records["match_timestamp"] < current_match_time)]
-                if not home_past_records.empty:
-                    days_diff = (current_match_time - home_past_records["match_timestamp"].max()).days
-                    calculated_home_rest_days = float(days_diff) if days_diff <= 14 else 5.0
+            # --- FIXED: TYPE-SAFE CONDITIONAL ITERATOR PASS ---
+            # Evaluates cell values individually to bypass column vector comparison failures
+            home_past_dates = []
+            for _, c_row in home_candidates.iterrows():
+                ts_val = c_row["match_timestamp"]
+                if pd.notna(ts_val) and isinstance(ts_val, (pd.Timestamp, datetime.datetime, datetime.date)):
+                    try:
+                        if ts_val < current_match_time:
+                            home_past_dates.append(ts_val)
+                    except: pass
+            
+            if home_past_dates:
+                days_diff = (current_match_time - max(home_past_dates)).days
+                calculated_home_rest_days = float(days_diff) if days_diff <= 14 else 5.0
                 
-            # Settle the away team lookback track, enforcing explicit datetime typing comparisons
-            away_past_records = historical_reference_df[
-                ((historical_reference_df["home_team"] == a_name) | (historical_reference_df["away_team"] == a_name))
-            ].copy()
+            # Isolate away team candidate rows
+            away_candidates = historical_reference_df[
+                (historical_reference_df["home_team"] == a_name) | (historical_reference_df["away_team"] == a_name)
+            ]
             
-            if not away_past_records.empty:
-                away_past_records["match_timestamp"] = away_past_records["match_timestamp"].astype(str)
-                away_past_records["match_timestamp"] = pd.to_datetime(away_past_records["match_timestamp"], errors='coerce', dayfirst=True)
-                away_past_records = away_past_records[(away_past_records["match_timestamp"].notna()) & (away_past_records["away_team"].notna())]
-                # Force standard chronological alignment checks safely
-                try:
-                    away_past_records = away_past_records[away_past_records["match_timestamp"] < current_match_time]
-                    if not away_past_records.empty:
-                        days_diff = (current_match_time - away_past_records["match_timestamp"].max()).days
-                        calculated_away_rest_days = float(days_diff) if days_diff <= 14 else 5.0
-                except:
-                    calculated_away_rest_days = 5.0
+            away_past_dates = []
+            for _, c_row in away_candidates.iterrows():
+                ts_val = c_row["match_timestamp"]
+                if pd.notna(ts_val) and isinstance(ts_val, (pd.Timestamp, datetime.datetime, datetime.date)):
+                    try:
+                        if ts_val < current_match_time:
+                            away_past_dates.append(ts_val)
+                    except: pass
+            
+            if away_past_dates:
+                days_diff = (current_match_time - max(away_past_dates)).days
+                calculated_away_rest_days = float(days_diff) if days_diff <= 14 else 5.0
 
         # Helper extraction utility pass to convert text spaces safely into floats without crashes
         def parse_safe_float(val, fallback):
