@@ -347,7 +347,7 @@ with tab_pred:
 # ==============================================================================
 
             st.markdown("### ⛅ Matchday Conditions & Strategic Overrides")
-                w_col1, w_col2, w_col3 = st.columns(3)
+            w_col1, w_col2, w_col3 = st.columns(3)
                 with w_col1:
                     weather_condition_selection = st.selectbox(
                         "Current Matchday Weather Climate:",
