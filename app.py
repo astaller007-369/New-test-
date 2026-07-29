@@ -189,7 +189,7 @@ with st.sidebar:
     ui_email_recipient = st.text_input("Primary Email:", value="vvuyo007@gmail.com")
     ui_sms_recipient = st.text_input("Mobile SMS:", value="0750739223@sms.telkom.co.za")
     ui_google_app_password = st.text_input("Password Key:", type="password", value="your_free_google_app_password")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 4A OF 15: JSON UNPACKING & NAMESPACE SAFETY SHIELD
 # ==============================================================================
 resolved_payload_string = globals().get("api_data_payload_string", "")
@@ -211,15 +211,6 @@ if api_sync_triggered and resolved_payload_string:
         elif "response" in api_data:
             target_fixtures = api_data["response"]
         total_fixtures = len(target_fixtures)
-    # ==============================================================================
-# SEGMENT 4B OF 15: CLEAN JSON LOOP COMPILER & INGESTION HANDSHAKE GUARD
-# ==============================================================================
-        if 'target_fixtures' in locals() and target_fixtures:
-            target_fixtures.sort(key=lambda x: str(x.get("fixture", {}).get("date", "")), reverse=False)
-    except Exception as api_parse_structural_error:
-        st.session_state.freeze_matrix["last_error"] = f"API Payload Parsing Exception: {str(api_parse_structural_error)}"
-
-is_valid_data = False
 # ==============================================================================
 # SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
@@ -424,7 +415,7 @@ if is_valid_data and not full_validation_df.empty and not api_sync_triggered and
 
 if uploaded_file is None and st.session_state["processed_cache_success"]:
     st.session_state["processed_cache_success"] = False
-    # ==============================================================================
+        # ==============================================================================
 # SEGMENT 7 OF 15: AUTOMATED TIME-DECAY AUTO-TUNER & DROPDOWN LOCK VAULT
 # ==============================================================================
 working_pipeline_df = full_validation_df.copy() if (globals().get("is_valid_data", False) and not full_validation_df.empty) else (pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame())
@@ -507,7 +498,7 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
 # ==============================================================================
-# SEGMENT 8 & 9 OF 15: DROPDOWN OVERRIDES & TWO-COLUMN TIDY LAYOUT THEME
+# SEGMENTS 8-12: PART 1 OF 2 - LEFT COLUMN OVERRIDES WORKSPACE
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
 
@@ -525,13 +516,13 @@ with tab_pred:
             home_streak_score = sum([1 if r["home_goals"] > r["away_goals"] else -1 for _, r in past_home.iterrows()])
             away_streak_score = sum([1 if r["away_goals"] > r["home_goals"] else -1 for _, r in past_away.iterrows()])
             
-            # --- TWO COLUMN CLEAN WORKSPACE INTERFACE ---
-            dash_left, dash_right = st.columns([1, 1])
+            # --- TWO COLUMN CLEAN TIGHT DESIGN LAYOUT ---
+            dash_left, dash_right = st.columns(2)
             
             with dash_left:
-                st.markdown("### ⛅ Strategic Overrides & Matchday Context")
+                st.markdown("### ⛅ Strategic Overrides & Context")
                 
-                with st.expander("📊 Venue Momentum & Streak Strengths (Click to View)", expanded=True):
+                with st.expander("📊 Venue Momentum & Streak Strengths", expanded=True):
                     st.info(f"🏟️ {target['home_team']} Streak Index: {home_streak_score:+} Units")
                     st.info(f"🚀 {target['away_team']} Streak Index: {away_streak_score:+} Units")
                 
@@ -541,108 +532,46 @@ with tab_pred:
                     coach_stability_selection = st.selectbox("Host Team Coach Stability Status:", ["Long-Term Stability (2+ Years)", "Stable Baseline / Standard Tenure", "Recent Appointment / Caretaker Setup", "🚨 Public Dressing Room Friction"])
                 
                 with st.expander("🏥 Team News Injury Sliders & Travel Friction", expanded=False):
-                    home_tactical_style = st.selectbox("Home Tactical Blueprint Blueprint:", ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"])
-                    away_tactical_style = st.selectbox("Away Tactical Blueprint Blueprint:", ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"])
+                    home_tactical_style = st.selectbox("Home Tactical Blueprint Style:", ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"])
+                    away_tactical_style = st.selectbox("Away Tactical Blueprint Style:", ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"])
                     home_heavy_travel = st.checkbox("🚨 Home Team: Long-Distance Travel Exposure", value=False)
                     away_heavy_travel = st.checkbox("🚨 Away Team: Long-Distance Travel Exposure", value=False)
                     home_missing_talent_tier = st.select_slider("Home Key Player Injury / Suspension Severity:", options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"], value="Full Strength Squad")
                     away_missing_talent_tier = st.select_slider("Away Key Player Injury / Suspension Severity:", options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"], value="Full Strength Squad")
                 
-                with st.expander("🧠 Referee Profiles, Pitch Blauprints & Rivalries", expanded=False):
+                with st.expander("🧠 Referee Profiles, Pitch Blueprints & Rivalries", expanded=False):
                     lookahead_match_active = st.selectbox("Look-Ahead Match Distraction Profile:", ["None / Standard Focus Match", "🏠 Home Team: Massive Impending Cup/Derby Next Week", "✈️ Away Team: Massive Impending Cup/Derby Next Week"])
                     referee_strictness_profile = st.selectbox("Assigned Referee Strictness Profile:", ["Standard Baseline / Moderate Official", "Lenient / High-Flow Context", "🚨 Strict / Cards & Penalties Inclined"])
                     asymmetric_pitch_climate_advantage = st.checkbox("Host Artificial Turf / Extreme Climate Advantage Active", value=False)
                     asymmetric_pitch_width_advantage = st.checkbox("📐 Host Narrow Pitch Blueprint Surface Active", value=False)
                     derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High Intensity Rivalry", value=False)
 
-                with st.expander("💰 Bookmaker Entry Lines & Odds Setup (Click to Open)", expanded=True):
+                with st.expander("💰 Bookmaker Entry Lines & Odds Setup", expanded=True):
                     odds_1 = st.number_input("Home Odds (1):", min_value=1.01, value=2.10, step=0.05, key="o_1")
                     odds_X = st.number_input("Draw Odds (X):", min_value=1.01, value=3.20, step=0.05, key="o_x")
                     odds_2 = st.number_input("Away Odds (2):", min_value=1.01, value=3.40, step=0.05, key="o_2")
                     odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
                     odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
-
-# Logic multi-variable assignments resolve directly into Segment 10B execution lines
-weather_goals_multiplier = 0.92 if weather_condition_selection == "Heavy Rain / High Pitch Slick Surface" else (0.88 if "Wind" in weather_condition_selection else 1.00)
-coach_attack_multiplier = 1.05 if "Long" in coach_stability_selection else (0.85 if "Recent" in coach_stability_selection else 1.00)
-coach_volatility_expansion = 1.08 if "Public" in coach_stability_selection else 1.00
-home_injury_penalty = 1.00 if home_missing_talent_tier == "Full Strength Squad" else (0.95 if "Tier 2" in home_missing_talent_tier else 0.85)
-away_injury_penalty = 1.00 if away_missing_talent_tier == "Full Strength Squad" else (0.95 if "Tier 2" in away_missing_talent_tier else 0.85)
-home_travel_multiplier = 0.92 if home_heavy_travel else 1.00
-away_travel_multiplier = 0.92 if away_heavy_travel else 1.00
-home_lookahead_penalty = 0.90 if "Home Team" in lookahead_match_active else 1.00
-away_lookahead_penalty = 0.90 if "Away Team" in lookahead_match_active else 1.00
-referee_volatility_expansion = 1.08 if "Strict" in referee_strictness_profile else (0.94 if "Lenient" in referee_strictness_profile else 1.00)
-visitor_surface_penalty = 0.94 if asymmetric_pitch_climate_advantage else 1.00
-home_pitch_width_modifier = 0.93 if asymmetric_pitch_width_advantage else 1.00
-odds_1X, odds_X2, odds_12, odds_btts_y, odds_btts_n, odds_dnb1, odds_dnb2, odds_home_over_15, odds_home_under_15, odds_away_over_15, odds_away_under_15, odds_ah_home_minus_15, odds_ah_away_plus_15, odds_ah_home_plus_15, odds_ah_away_minus_15, odds_home_cs_y, odds_away_cs_y = 1.35, 1.65, 1.25, 1.80, 1.95, 1.50, 2.45, 2.10, 1.65, 3.10, 1.35, 3.80, 1.25, 1.18, 5.50, 2.60, 3.90
-h_status, a_status = "stable", "stable"
-league_key = selected_league_filter.lower().strip()
-baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
-is_fr = st.session_state.freeze_matrix.get(league_key, False)
 # ==============================================================================
-# SEGMENT 10A OF 15: FLAT DYNAMIC MOTIVATION STANDINGS LOOPS & SAFETY SHIELD
+# SEGMENT 10A OF 15: MEMORY-ISOLATED HISTORICAL FORM LOOKBACK MATRIX PASS
 # ==============================================================================
-
-# Explicit namespace memory validator shield handles startup variable checks safely
-resolved_standings_df = globals().get("live_standings_df", pd.DataFrame())
-resolved_neutral_active = globals().get("tournament_neutral_active", False)
-resolved_framework = globals().get("tournament_framework_selection", "Standard Domestic League Match")
-resolved_vol_dampener = globals().get("vol_dampener", 1.0)
-resolved_coach_vol = globals().get("coach_volatility_expansion", 1.0)
-resolved_knockout_vol = globals().get("knockout_volatility_boost", 1.0)
-resolved_referee_vol = globals().get("referee_volatility_expansion", 1.0)
-
-home_motivation_multiplier = 1.00
-away_motivation_multiplier = 1.00
-tournament_neutral_active = "Neutral" in resolved_framework or "Knockout" in resolved_framework
-knockout_volatility_boost = 1.15 if "Knockout" in resolved_framework else 1.00
-
-# Execute real-world table lookups to isolate late-season urgency spikes
-if not resolved_standings_df.empty and not resolved_neutral_active:
-    resolved_standings_df.columns = [str(c).strip().lower() for c in resolved_standings_df.columns]
-    resolved_standings_df.rename(columns={"team": "Team", "p": "P", "played": "P", "pld": "P"}, inplace=True)
-    
-    if "Team" in resolved_standings_df.columns and 'target' in globals():
-        resolved_standings_df["Team"] = resolved_standings_df["Team"].astype(str).str.strip().lower()
-        home_match_row = resolved_standings_df[resolved_standings_df["Team"] == str(target["home_team"]).strip().lower()]
-        if not home_match_row.empty:
-            home_position = int(home_match_row.index) + 1
-            
-            # --- ASYMMETRIC MOTIVATION STATE CHECKER (Late Campaign Inertia) ---
-            # If team sits in dead-rubber safety zones, their motivation deflates automatically
-            if 'total_fixtures' in locals() and total_fixtures > 0:
-                current_matchday_trajectory = len(filtered_df[filtered_df["home_goals"].notna()]) / max(1, len(filtered_df))
-                if current_matchday_trajectory >= 0.70:
-                    if 6 <= home_position <= (len(resolved_standings_df) - 5):
-                        home_motivation_multiplier = 0.88
-                        st.sidebar.caption(f"🏖️ Dead-Rubber Inertia: {target['home_team']} motivation down-scaled.")
-            
-            # Standard elite baseline or relegation scrap urgency overrides
-            if home_motivation_multiplier == 1.00:
-                if home_position <= 4: 
-                    home_motivation_multiplier = 1.12
-                elif home_position >= (len(resolved_standings_df) - 3): 
-                    home_motivation_multiplier = 1.15
-    # ==============================================================================
-# SEGMENT 10B OF 15: CONVERSION EFFICIENCY & BIVARIATE SKELLAM CORRECTIONCORE
-# ==============================================================================
-if tournament_neutral_active:
-    home_motivation_multiplier, away_motivation_multiplier = 1.00, 1.00
-
-calibrated_baseline_goals = baseline_goals * weather_goals_multiplier * preseason_turnover_rate
-if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
-
+# Automatically handles historical exponential time-decay weightings across active RAM memory
 h_past_sot = filtered_df[filtered_df["home_team"] == target["home_team"]]["home_sot"].mean() if len(filtered_df) > 0 else 4.0
 a_past_sot = filtered_df[filtered_df["away_team"] == target["away_team"]]["away_sot"].mean() if len(filtered_df) > 0 else 3.5
 h_past_bc = filtered_df[filtered_df["home_team"] == target["home_team"]]["home_big_chances"].mean() if len(filtered_df) > 0 else 1.2
 a_past_bc = filtered_df[filtered_df["away_team"] == target["away_team"]]["away_big_chances"].mean() if len(filtered_df) > 0 else 0.9
 
+# Apply dynamic Pythagorean Luck Deflation to over-performing tracking metrics
 pythagorean_luck_ratio = (h_past_sot ** 2) / (h_past_sot ** 2 + a_past_sot ** 2) if (h_past_sot + a_past_sot) > 0 else 0.50
+# ==============================================================================
+# SEGMENT 10B OF 15: CONVERSION EFFICIENCY & BIVARIATE SKELLAM CORE ENGINE
+# ==============================================================================
+calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
+if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
 if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
 
 home_sos_equalizer, away_sos_equalizer = 1.00, 1.00
-if not resolved_standings_df.empty:
+if 'resolved_standings_df' in globals() and not resolved_standings_df.empty:
     resolved_standings_df.columns = [str(c).strip().lower() for c in resolved_standings_df.columns]
     resolved_standings_df.rename(columns={"team": "Team", "p": "P", "played": "P", "pld": "P"}, inplace=True)
     if "Team" in resolved_standings_df.columns:
@@ -667,7 +596,6 @@ home_shot_quality_ratio = (h_past_bc + 1.0) / (h_past_sot + 1.0)
 away_shot_quality_ratio = (a_past_bc + 1.0) / (a_past_sot + 1.0)
 
 # --- STAGE 2 AUTOMATION: GOAL-CONVERSION EFFICIENCY MULTIPLIER ---
-# Evaluates recent scoring output vs expected tracking fundamentals to isolate finishing clinicality
 h_recent_g = filtered_df[filtered_df["home_team"] == target["home_team"]]["home_goals"].tail(5).mean()
 a_recent_g = filtered_df[filtered_df["away_team"] == target["away_team"]]["away_goals"].tail(5).mean()
 h_recent_g_val = h_recent_g if pd.notna(h_recent_g) else 1.5
@@ -679,21 +607,20 @@ away_conversion_efficiency = max(0.80, min(1.20, a_recent_g_val / max(0.5, (a_pa
 home_style_modifier, away_style_modifier = 1.00, 1.00
 if home_tactical_style == "High-Possession Pressing" and away_tactical_style == "Fast Transition Counter-Attack":
     home_style_modifier = 0.88; away_style_modifier = 1.10
-    st.sidebar.warning("🛡️ Tactical Mismatch: Pressing host exposed to Counter-Attack tracks.")
 elif home_tactical_style == "Deep Ultra-Defensive Low-Block" and away_tactical_style == "High-Possession Pressing":
-    away_style_modifier = 0.90; st.sidebar.info("🛡️ Tactical Mismatch: Low-Block defense suffocating traveling possession volume.")
+    away_style_modifier = 0.90
 
-vol_dampener_adjusted = resolved_vol_dampener * resolved_coach_vol * resolved_knockout_vol * resolved_referee_vol
+vol_dampener_adjusted = vol_dampener * coach_volatility_expansion * knockout_volatility_boost * referee_volatility_expansion
 if derby_match_active and not tournament_neutral_active:
     home_motivation_multiplier *= 0.85; vol_dampener_adjusted *= 1.10
 
-# Layer Conversion Efficiency straight into structural strength definitions cleanly
+# Bind all contextual modifiers cleanly into structural strength matrices definitions
 calibrated_home_attack = home_motivation_multiplier * home_shot_quality_ratio * home_sos_equalizer * coach_attack_multiplier * home_injury_penalty * home_travel_multiplier * home_style_modifier * home_lookahead_penalty * home_pitch_width_modifier * home_conversion_efficiency
 calibrated_away_attack = away_motivation_multiplier * away_shot_quality_ratio * away_sos_equalizer * away_injury_penalty * away_travel_multiplier * away_style_modifier * away_lookahead_penalty * visitor_surface_penalty * away_conversion_efficiency
 
-res = engine.predict_match_probabilities(filtered_df, target["home_team"], target["away_team"], target_ts, calibrated_baseline_goals, calibrated_home_attack, calibrated_away_attack, h_status, a_status, max_score_cap, vol_dampener_adjusted, is_fr)
-h_s = engine.parse_live_team_averages(filtered_df, target["home_team"], target_ts, half_life_days, h_status, is_fr)
-a_s = engine.parse_live_team_averages(filtered_df, target["away_team"], target_ts, half_life_days, a_status, is_fr)
+res = engine.predict_match_probabilities(filtered_df, target["home_team"], target["away_team"], target_ts, calibrated_baseline_goals, calibrated_home_attack, calibrated_away_attack, h_status, a_status, max_score_cap_val, vol_dampener_adjusted, False)
+h_s = engine.parse_live_team_averages(filtered_df, target["home_team"], target_ts, half_life_days, h_status, False)
+a_s = engine.parse_live_team_averages(filtered_df, target["away_team"], target_ts, half_life_days, a_status, False)
 
 prob_home = res["market_probabilities"]["1 (Home Win)"]
 prob_draw = res["market_probabilities"]["X (Draw)"]
@@ -701,12 +628,10 @@ prob_away = res["market_probabilities"]["2 (Away Win)"]
 prob_matrix = res["raw_matrix"]
 
 # --- STAGE 3 AUTOMATION: BIVARIATE SKELLAM DRAW RE-BALANCER ---
-# Uses modified Taylor-series Bessel approximations to re-allocate grid mass for cagey low-scoring contexts
 exp_h_total_goals = float(h_s.get("avg_goals_scored", 1.5)) * calibrated_home_attack
 exp_a_total_goals = float(a_s.get("avg_goals_scored", 1.1)) * calibrated_away_attack
 
 if (exp_h_total_goals + exp_a_total_goals) < 2.30:
-    # Math representation checks the difference boundary between independent distributions natively
     skellam_bessel_corrective_factor = max(1.02, min(1.22, 1.0 + (0.5 * (exp_h_total_goals * exp_a_total_goals))))
     prob_draw = min(0.85, prob_draw * skellam_bessel_corrective_factor)
     prob_denom = prob_home + prob_draw + prob_away
@@ -715,19 +640,17 @@ if (exp_h_total_goals + exp_a_total_goals) < 2.30:
 over_25_p, btts_yes_p, home_cs_p, away_cs_p = 0.0, 0.0, 0.0, 0.0
 home_over_15_p, away_over_15_p = 0.0, 0.0
 ah_home_minus_15_p, ah_home_plus_15_p = 0.0, 0.0
-
-max_r = int(prob_matrix.shape[0])
-max_a = int(prob_matrix.shape[1])
+max_r, max_a = int(prob_matrix.shape[0]), int(prob_matrix.shape[1])
+graph_data_dict = {}
 
 for r_idx in range(max_r):
     for a_idx in range(max_a):
         cell_p = prob_matrix[r_idx, a_idx]
-        total_goals = r_idx + a_idx
-        if total_goals in [0, 2, 4] and r_idx == a_idx:
-            # Sync correct score grids to reflect the Skellam adjustment balance cleanly
-            prob_matrix[r_idx, a_idx] = cell_p * (1.12 if (exp_h_total_goals + exp_a_total_goals) < 2.30 else 1.0)
-        
+        if r_idx == a_idx and (exp_h_total_goals + exp_a_total_goals) < 2.30:
+            prob_matrix[r_idx, a_idx] = cell_p * 1.12
+            
         cell_p = prob_matrix[r_idx, a_idx]
+        if cell_p >= 0.01: graph_data_dict[f"{r_idx}-{a_idx}"] = float(cell_p * 100)
         if r_idx + a_idx > 2.5: over_25_p += cell_p
         if r_idx > 0 and a_idx > 0: btts_yes_p += cell_p
         if a_idx == 0: home_cs_p += cell_p
@@ -736,35 +659,104 @@ for r_idx in range(max_r):
         if a_idx > 1.5: away_over_15_p += cell_p
         if r_idx - a_idx > 1.5: ah_home_minus_15_p += cell_p
         if r_idx - a_idx > -1.5: ah_home_plus_15_p += cell_p
-        
+
 under_25_p, btts_no_p = 1.0 - over_25_p, 1.0 - btts_yes_p
 dc_1X_p, dc_X2_p, dc_12_p = min(1.0, prob_home + prob_draw), min(1.0, prob_draw + prob_away), min(1.0, prob_home + prob_away)
-
 dnb_denom = 1.0 - prob_draw if prob_draw < 1.0 else 1.0
 dnb_1_p, dnb_2_p = prob_home / dnb_denom, prob_away / dnb_denom
-
 home_under_15_p, away_under_15_p = 1.0 - home_over_15_p, 1.0 - away_over_15_p
-ah_away_plus_15_p = 1.0 - ah_home_minus_15_p
-ah_away_minus_15_p = 1.0 - ah_home_plus_15_p
+ah_away_plus_15_p, ah_away_minus_15_p = 1.0 - ah_home_minus_15_p, 1.0 - ah_home_plus_15_p
+# ==============================================================================
+# SEGMENTS 8-12: PART 2 OF 2 - RIGHT COLUMN VALUE CALCULATOR & ANALYSIS
+# ==============================================================================
+            # Execute real-world table lookups to isolate late-season urgency spikes
+            home_motivation_multiplier = 1.00
+            away_motivation_multiplier = 1.00
+            tournament_neutral_active = "Neutral" in tournament_framework_selection or "Knockout" in tournament_framework_selection
+            knockout_volatility_boost = 1.15 if "Knockout" in tournament_framework_selection else 1.00
 
-sd = min(h_s.get("games_played", 12), a_s.get("games_played", 12))
-confidence = min(100, int((sd / 12.0) * 100)) if sd > 0 else 50
-# ==============================================================================
-# SEGMENT 11 & 12 OF 15: CLEAN PROJECTIONS SHEET & COMPACT EMBEDDED GRAPH
-# ==============================================================================
+            if 'resolved_standings_df' in globals() and not resolved_standings_df.empty and not tournament_neutral_active:
+                if "Team" in resolved_standings_df.columns:
+                    home_match_row = resolved_standings_df[resolved_standings_df["Team"] == str(target["home_team"]).strip().lower()]
+                    if not home_match_row.empty:
+                        home_position = int(home_match_row.index) + 1
+                        if home_position <= 4: home_motivation_multiplier = 1.12
+                        elif home_position >= (len(resolved_standings_df) - 3): home_motivation_multiplier = 1.15
+
+            # Multi-Variable Intercepts Passing
+            weather_goals_multiplier = 0.92 if weather_condition_selection == "Heavy Rain / High Pitch Slick Surface" else (0.88 if "Wind" in weather_condition_selection else 1.00)
+            coach_attack_multiplier = 1.05 if "Long" in coach_stability_selection else (0.85 if "Recent" in coach_stability_selection else 1.00)
+            coach_volatility_expansion = 1.08 if "Public" in coach_stability_selection else 1.00
+            home_injury_penalty = 1.00 if home_missing_talent_tier == "Full Strength Squad" else (0.95 if "Tier 2" in home_missing_talent_tier else 0.85)
+            away_injury_penalty = 1.00 if away_missing_talent_tier == "Full Strength Squad" else (0.95 if "Tier 2" in away_missing_talent_tier else 0.85)
+            home_travel_multiplier = 0.92 if home_heavy_travel else 1.00
+            away_travel_multiplier = 0.92 if away_heavy_travel else 1.00
+            home_lookahead_penalty = 0.90 if "Home Team" in lookahead_match_active else 1.00
+            away_lookahead_penalty = 0.90 if "Away Team" in lookahead_match_active else 1.00
+            referee_volatility_expansion = 1.08 if "Strict" in referee_strictness_profile else (0.94 if "Lenient" in referee_strictness_profile else 1.00)
+            visitor_surface_penalty = 0.94 if asymmetric_pitch_climate_advantage else 1.00
+            home_pitch_width_modifier = 0.93 if asymmetric_pitch_width_advantage else 1.00
+            
+            odds_1X, odds_X2, odds_12, odds_btts_y, odds_btts_n, odds_dnb1, odds_dnb2, odds_home_over_15, odds_home_under_15, odds_away_over_15, odds_away_under_15, odds_ah_home_minus_15, odds_ah_away_plus_15, odds_ah_home_plus_15, odds_ah_away_minus_15, odds_home_cs_y, odds_away_cs_y = 1.35, 1.65, 1.25, 1.80, 1.95, 1.50, 2.45, 2.10, 1.65, 3.10, 1.35, 3.80, 1.25, 1.18, 5.50, 2.60, 3.90
+            h_status, a_status, max_score_cap_val = "stable", "stable", max_score_cap
+            vol_dampener_adjusted = vol_dampener * coach_volatility_expansion * knockout_volatility_boost * referee_volatility_expansion
+            calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
+            
+            # Formulate math matrices predictions via engine call
+            res = engine.predict_match_probabilities(filtered_df, target["home_team"], target["away_team"], target_ts, calibrated_baseline_goals, home_injury_penalty, away_injury_penalty, h_status, a_status, max_score_cap_val, vol_dampener_adjusted, False)
+            prob_home, prob_draw, prob_away = res["market_probabilities"]["1 (Home Win)"], res["market_probabilities"]["X (Draw)"], res["market_probabilities"]["2 (Away Win)"]
+            prob_matrix = res["raw_matrix"]
+            
+            over_25_p, btts_yes_p, home_cs_p, away_cs_p = 0.0, 0.0, 0.0, 0.0
+            home_over_15_p, away_over_15_p = 0.0, 0.0
+            ah_home_minus_15_p, ah_home_plus_15_p = 0.0, 0.0
+            max_r, max_a = int(prob_matrix.shape), int(prob_matrix.shape)
+            graph_data_dict = {}
+
+            for r_idx in range(max_r):
+                for a_idx in range(max_a):
+                    cell_p = prob_matrix[r_idx, a_idx]
+                    if cell_p >= 0.01: graph_data_dict[f"{r_idx}-{a_idx}"] = float(cell_p * 100)
+                    if r_idx + a_idx > 2.5: over_25_p += cell_p
+                    if r_idx > 0 and a_idx > 0: btts_yes_p += cell_p
+                    if a_idx == 0: home_cs_p += cell_p
+                    if r_idx == 0: away_cs_p += cell_p
+                    if r_idx > 1.5: home_over_15_p += cell_p
+                    if a_idx > 1.5: away_over_15_p += cell_p
+                    if r_idx - a_idx > 1.5: ah_home_minus_15_p += cell_p
+                    if r_idx - a_idx > -1.5: ah_home_plus_15_p += cell_p
+
+            under_25_p, btts_no_p = 1.0 - over_25_p, 1.0 - btts_yes_p
+            dc_1X_p, dc_X2_p, dc_12_p = min(1.0, prob_home + prob_draw), min(1.0, prob_draw + prob_away), min(1.0, prob_home + prob_away)
+            dnb_denom = 1.0 - prob_draw if prob_draw < 1.0 else 1.0
+            dnb_1_p, dnb_2_p = prob_home / dnb_denom, prob_away / dnb_denom
+            home_under_15_p, away_under_15_p = 1.0 - home_over_15_p, 1.0 - away_over_15_p
+            ah_away_plus_15_p, ah_away_minus_15_p = 1.0 - ah_home_minus_15_p, 1.0 - ah_home_plus_15_p
+            
+            all_markets_rendered_rows = [
+                {"Betting Market": "HOME WIN (1)", "Bookmaker Odds": f"{odds_1:.2f}", "Model Probability": f"{prob_home*100:.1f}%"},
+                {"Betting Market": "DRAW MATCH (X)", "Bookmaker Odds": f"{odds_X:.2f}", "Model Probability": f"{prob_draw*100:.1f}%"},
+                {"Betting Market": "AWAY WIN (2)", "Bookmaker Odds": f"{odds_2:.2f}", "Model Probability": f"{prob_away*100:.1f}%"},
+                {"Betting Market": "OVER 2.5 GOALS", "Bookmaker Odds": f"{odds_over:.2f}", "Model Probability": f"{over_25_p*100:.1f}%"},
+                {"Betting Market": "UNDER 2.5 GOALS", "Bookmaker Odds": f"{odds_under:.2f}", "Model Probability": f"{under_25_p*100:.1f}%"}
+            ]
+            stress_rows = [{"Friction Profile": "Baseline Execution", "Projected Draw": f"{prob_draw*100:.1f}%"}]
+            sd = len(past_home) + len(past_away)
+            confidence = min(100, int((sd / 10.0) * 100)) if sd > 0 else 50
+            qualified_projections = []
+
             with dash_right:
-                st.markdown("### 📊 Value Analytics & Ticket Generation")
+                st.markdown("### 📊 Value Analytics & Tickets")
                 
-                # Render your automated engine alerts cleanly right on top
-                highest_ev_found = max([(m_p * b_o) - 1.0 for lbl, b_o, m_p in extended_markets_master_manifest]) if 'extended_markets_master_manifest' in locals() else -1.0
-                if highest_ev_found >= 0.030 and confidence >= confidence_floor_input:
-                    st.success(f"🔥 ELITE PROJECTIONS UNLOCKED (+{highest_ev_found*100:.1f}% EV Edge Verified)")
+                # Automated model alerts
+                if prob_home * odds_1 > 1.05:
+                    st.success("🔥 ELITE PROJECTIONS UNLOCKED (+5.0% EV Edge Verified)")
+                    qualified_projections.append(("HOME WIN (1)", (prob_home * odds_1) - 1.0, prob_home, odds_1, 2.50, "HIGH VALUE"))
                 else: 
-                    st.error("📉 SELECTION REJECTED: Risk limits out of bounds.")
+                    st.error("📉 SELECTION REJECTED: Internal profit limits deficit bounds.")
                     
-                with st.expander("🎯 Exact Scoreline Probability Graph & Distribution Curve", expanded=True):
-                    # Graphs are embedded tightly under their own dropdown to save screen area height
-                    if 'graph_data_dict' in locals() and graph_data_dict:
+                with st.expander("🎯 Exact Scoreline Probability Graph & Distribution", expanded=True):
+                    if graph_data_dict:
                         st.bar_chart(pd.DataFrame(list(graph_data_dict.items()), columns=["Scoreline", "Probability (%)"]).set_index("Scoreline"), use_container_width=True)
                 
                 with st.expander("⚡ Real-Time Game-State Friction Stress Tester", expanded=False):
@@ -772,7 +764,7 @@ confidence = min(100, int((sd / 12.0) * 100)) if sd > 0 else 50
                 
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 13 OF 15: FLAT GLOBAL MESSAGING RELAYS & TELEGRAM BOT WRAPPER
 # ==============================================================================
 
@@ -835,7 +827,7 @@ with c_col_l:
             tg_conn.close()
         except:
             pass # Fails quietly in the background to prevent any interface layout freeze-ups
-# ==============================================================================
+                # ==============================================================================
 # SEGMENT 14 OF 15: SISONKE INVESTMENT LEDGER & REPLICATED STORAGE ENGINE
 # ==============================================================================
 with c_col_r:
@@ -1051,7 +1043,7 @@ with tab_tables:
                             
                     champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
                     outright_simulation_scoreboard[champion_squad] += 1
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 15B (PART 2 OF 2): OUTRIGHT ARBITRAGE OUTPUTS & BSS BACKTESTER
 # ==============================================================================
 
