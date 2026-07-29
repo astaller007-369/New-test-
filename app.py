@@ -147,7 +147,7 @@ with st.sidebar:
                 phase_tag = "⏳ PRE-SEASON (ANCHOR REQ)" if settled_count == 0 else ("🌱 EARLY SEASON (HYBRID)" if settled_count < 20 else "🟢 IN-PROGRESS (DECAY)")
                 radar_rows.append({"Target Competition": str(lg).upper(), "Settled": settled_count, "Upcoming": upcoming_count, "Database Status Room": phase_tag})
             st.dataframe(pd.DataFrame(radar_rows), use_container_width=True, hide_index=True)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 3B OF 15: INGESTION SETTINGS & PRE-SEASON CALIBRATION SIDEBAR SLIDERS
 # ==============================================================================
     st.markdown("---")
@@ -211,7 +211,7 @@ if api_sync_triggered and resolved_payload_string:
         elif "response" in api_data:
             target_fixtures = api_data["response"]
         total_fixtures = len(target_fixtures)
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 4B OF 15: CLEAN JSON LOOP COMPILER & INGESTION HANDSHAKE GUARD
 # ==============================================================================
         if 'target_fixtures' in locals() and target_fixtures:
@@ -220,7 +220,7 @@ if api_sync_triggered and resolved_payload_string:
         st.session_state.freeze_matrix["last_error"] = f"API Payload Parsing Exception: {str(api_parse_structural_error)}"
 
 is_valid_data = False
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
 if uploaded_file is not None:
@@ -304,7 +304,7 @@ if uploaded_file is not None:
         full_validation_df = st.session_state["full_validation_df"]
         is_valid_data = True
     except Exception as e: st.error(f"Manual Ingestion Shield Error: {e}")
-# ==============================================================================
+        # ==============================================================================
 # SEGMENT 6 OF 15: MEMORY-ISOLATED INGESTION LAYER & LOCAL DISK AUTO-MIRROR
 # ==============================================================================
 processed_execution_rows = []
@@ -468,7 +468,7 @@ settled_past_games = filtered_df.dropna(subset=["home_goals", "away_goals"])
 optimal_half_life = 45
 if len(settled_past_games) >= 5:
     lowest_historical_brier = 999.0
-    # --- FIXED: RE-INJECTED DISCRETE EVALUATION WINDOW TIMELINES ARRAYS ---
+    # --- FIXED: NATIVE PYTHON LIST EXPLICITLY PROVIDED ---
     for test_hl in:
         test_brier_accumulator = 0.0
         tc = 0
@@ -580,7 +580,7 @@ h_status, a_status = "stable", "stable"
 league_key = selected_league_filter.lower().strip()
 baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
 is_fr = st.session_state.freeze_matrix.get(league_key, False)
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 10A OF 15: FLAT DYNAMIC MOTIVATION STANDINGS LOOPS & SAFETY SHIELD
 # ==============================================================================
 
@@ -835,7 +835,7 @@ with c_col_l:
             tg_conn.close()
         except:
             pass # Fails quietly in the background to prevent any interface layout freeze-ups
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 14 OF 15: SISONKE INVESTMENT LEDGER & REPLICATED STORAGE ENGINE
 # ==============================================================================
 with c_col_r:
@@ -1140,4 +1140,3 @@ with tab_past:
             st.dataframe(past_h.sort_values(by="match_timestamp", ascending=False).reset_index(drop=True)[["match_timestamp", "home_team", "away_team", "home_goals", "away_goals"]], use_container_width=True)
         else: st.info("No historical matches found for this filter combination.")
     else: st.info("Database matrix workspace is currently unpopulated.")
-        
