@@ -39,8 +39,8 @@ LEAGUE_API_IDENTIFIER_REGISTRY = {
     "south africa premier league": 288, "austria premier league": 218,
     "estonia premier league": 322, "uefa champions league": 2,
     "africa cup of nations": 6, "fifa world cup": 1
-    }
-    # ==============================================================================
+}
+# ==============================================================================
 # SEGMENT 3 OF 15: CORPORATE STRUCTURAL BRANDING LAYER & SIDEBAR LAYOUT
 # ==============================================================================
 st.title("🦅 Sisonke Football Predictive Analytics Hub")
@@ -345,17 +345,15 @@ with tab_pred:
                     odds_2 = st.number_input("Away Odds (2):", min_value=1.01, value=3.40, step=0.05, key="o_2")
                     odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
                     odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
-                             # ==============================================================================
+# ==============================================================================
 # SEGMENTS 10A, 10B & PART 2 OF 2: PART 1 - VALUE MATRIX LOGIC CORE
 # ==============================================================================
             # --- SEGMENT 10A: HISTORICAL FORM LOOKBACK MATRIX PASS ---
-            # Automatically handles historical exponential time-decay weightings across active RAM memory
             h_past_sot = filtered_df[filtered_df["home_team"] == target["home_team"]]["home_sot"].mean() if len(filtered_df) > 0 else 4.0
             a_past_sot = filtered_df[filtered_df["away_team"] == target["away_team"]]["away_sot"].mean() if len(filtered_df) > 0 else 3.5
             h_past_bc = filtered_df[filtered_df["home_team"] == target["home_team"]]["home_big_chances"].mean() if len(filtered_df) > 0 else 1.2
             a_past_bc = filtered_df[filtered_df["away_team"] == target["away_team"]]["away_big_chances"].mean() if len(filtered_df) > 0 else 0.9
             
-            # Apply dynamic Pythagorean Luck Deflation to over-performing tracking metrics
             pythagorean_luck_ratio = (h_past_sot ** 2) / (h_past_sot ** 2 + a_past_sot ** 2) if (h_past_sot + a_past_sot) > 0 else 0.50
 
             # --- STRUCTURE REAL-WORLD TABLE LOOKUPS & TEAMS MOTIVATION ---
@@ -371,6 +369,35 @@ with tab_pred:
                         home_position = int(home_match_row.index) + 1
                         if home_position <= 4: home_motivation_multiplier = 1.12
                         elif home_position >= (len(resolved_standings_df) - 3): home_motivation_multiplier = 1.15
+
+            # --- FIXED: INLINE DYNAMIC SOS SAFETY GUARD ---
+            # Pre-seeds the unassigned variable parameters cleanly to drop the NameError loop instantly
+            home_sos_equalizer = 1.00
+            away_sos_equalizer = 1.00
+            
+            if 'resolved_standings_df' in globals() and not resolved_standings_df.empty:
+                resolved_standings_df.columns = [str(c).strip().lower() for c in resolved_standings_df.columns]
+                # Check for alternative naming standard variants inside the standings columns headers
+                target_team_column_key = "team" if "team" in resolved_standings_df.columns else ("squad" if "squad" in resolved_standings_df.columns else "")
+                
+                if target_team_column_key != "" and not filtered_df.empty:
+                    total_table_teams = len(resolved_standings_df)
+                    home_opponents = filtered_df[(filtered_df["home_team"] == target["home_team"]) | (filtered_df["away_team"] == target["home_team"])].tail(5)
+                    away_opponents = filtered_df[(filtered_df["home_team"] == target["away_team"]) | (filtered_df["away_team"] == target["away_team"])].tail(5)
+                    
+                    def compute_inline_sos(opp_df, active_team, col_key):
+                        positions = []
+                        for _, gm in opp_df.iterrows():
+                            opp = str(gm["away_team"]).strip().lower() if str(gm["home_team"]).strip().lower() == active_team.lower() else str(gm["home_team"]).strip().lower()
+                            look = resolved_standings_df[resolved_standings_df[col_key] == opp]
+                            if not look.empty: positions.append(int(look.index) + 1)
+                        if positions:
+                            avg_opp_pos = sum(positions) / len(positions)
+                            return 1.10 if avg_opp_pos <= (total_table_teams * 0.35) else (0.90 if avg_opp_pos >= (total_table_teams * 0.65) else 1.00)
+                        return 1.00
+                        
+                    home_sos_equalizer = compute_inline_sos(home_opponents, target["home_team"], target_team_column_key)
+                    away_sos_equalizer = compute_inline_sos(away_opponents, target["away_team"], target_team_column_key)
 
             # --- DYNAMIC MATRIX MODIFIERS SEGMENTATION PASS ---
             weather_goals_multiplier = 0.92 if weather_condition_selection == "Heavy Rain / High Pitch Slick Surface" else (0.88 if "Wind" in weather_condition_selection else 1.00)
@@ -392,7 +419,6 @@ with tab_pred:
             calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
             
             # --- STAGE 2 AUTOMATION: GOAL-CONVERSION EFFICIENCY MULTIPLIER ---
-            # Now executes safely after Segment 10A form variables have been fully populated
             h_recent_g = filtered_df[filtered_df["home_team"] == target["home_team"]]["home_goals"].tail(5).mean()
             a_recent_g = filtered_df[filtered_df["away_team"] == target["away_team"]]["away_goals"].tail(5).mean()
             h_recent_g_val = h_recent_g if pd.notna(h_recent_g) else 1.5
@@ -401,17 +427,17 @@ with tab_pred:
             home_conversion_efficiency = max(0.80, min(1.20, h_recent_g_val / max(0.5, (h_past_bc * 0.38) + (h_past_sot * 0.12))))
             away_conversion_efficiency = max(0.80, min(1.20, a_recent_g_val / max(0.5, (a_past_bc * 0.38) + (a_past_sot * 0.12))))
 
-            # Compile structural strength matrices definitions cleanly with exact variable sequence
+            # Compile structural strength matrices definitions cleanly
             home_shot_quality_ratio = (h_past_bc + 1.0) / (h_past_sot + 1.0)
             away_shot_quality_ratio = (a_past_bc + 1.0) / (a_past_sot + 1.0)
             home_style_modifier, away_style_modifier = 1.00, 1.00
             
             calibrated_home_attack = home_motivation_multiplier * home_shot_quality_ratio * home_sos_equalizer * coach_attack_multiplier * home_injury_penalty * home_travel_multiplier * home_style_modifier * home_lookahead_penalty * home_pitch_width_modifier * home_conversion_efficiency
             calibrated_away_attack = away_motivation_multiplier * away_shot_quality_ratio * away_sos_equalizer * away_injury_penalty * away_travel_multiplier * away_style_modifier * away_lookahead_penalty * visitor_surface_penalty * away_conversion_efficiency
-            # ==============================================================================
+    # ==============================================================================
 # SEGMENTS 10A, 10B & PART 2 OF 2: PART 2 - RIGHT PANEL OUTPUTS
 # ==============================================================================
-            # Invoked here to guarantee all Stage 2 attack modifiers are fully populated
+            # Invoked here to guarantee all Stage 2 and SoS attack modifiers are fully populated
             res = engine.predict_match_probabilities(filtered_df, target["home_team"], target["away_team"], target_ts, calibrated_baseline_goals, calibrated_home_attack, calibrated_away_attack, h_status, a_status, max_score_cap_val, vol_dampener_adjusted, False)
             h_s = engine.parse_live_team_averages(filtered_df, target["home_team"], target_ts, half_life_days, h_status, False)
             a_s = engine.parse_live_team_averages(filtered_df, target["away_team"], target_ts, half_life_days, a_status, False)
@@ -494,7 +520,7 @@ with tab_pred:
                 
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-            # ==============================================================================
+        # ==============================================================================
 # SEGMENT 11 & 12 OF 15: CLEAN PROJECTIONS SHEET & COMPACT EMBEDDED GRAPHING
 # ==============================================================================
             all_markets_rendered_rows = [
@@ -522,7 +548,7 @@ with tab_pred:
                     st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-# ==============================================================================
+                       # ==============================================================================
 # SEGMENT 13 OF 15: CLEAN OUTGOING-ONLY TELEGRAM BOT VALUE PAGER ALERT
 # ==============================================================================
 st.markdown("---")
@@ -551,7 +577,7 @@ with c_col_l:
             tg_conn.request("GET", f"/bot{telegram_bot_token}/sendMessage?chat_id={telegram_chat_id}&text={encoded_tg_msg}")
             tg_conn.close()
         except: pass
-# ==============================================================================
+                       # ==============================================================================
 # SEGMENT 14 OF 15: SISONKE INVESTMENT LEDGER & REPLICATED STORAGE ENGINE
 # ==============================================================================
 with c_col_r:
@@ -583,7 +609,7 @@ with c_col_r:
     if not display_replicated_ledger_df.empty:
         display_replicated_ledger_df["Cumulative_Units"] = display_replicated_ledger_df["Net_Profit_Units"].cumsum()
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 15A & 15B (PART 1 OF 2): CAMPAIGNS LEDGER & OUTRIGHT SIMULATION CORE
 # ==============================================================================
 with tab_tables:
@@ -645,7 +671,7 @@ with tab_tables:
                         
                 champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
                 outright_simulation_scoreboard[champion_squad] += 1
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 15A & 15B (PART 2 OF 2): REPORT COUPLINGS, BSS, AND AUDIT LEDGERS
 # ==============================================================================
         outright_results_rows = []
@@ -714,4 +740,3 @@ with tab_past:
             st.info("No historical matches found for this filter combination.")
     else:
         st.info("Database matrix workspace is currently unpopulated.")
-            
