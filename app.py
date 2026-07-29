@@ -147,7 +147,7 @@ with st.sidebar:
                 phase_tag = "⏳ PRE-SEASON (ANCHOR REQ)" if settled_count == 0 else ("🌱 EARLY SEASON (HYBRID)" if settled_count < 20 else "🟢 IN-PROGRESS (DECAY)")
                 radar_rows.append({"Target Competition": str(lg).upper(), "Settled": settled_count, "Upcoming": upcoming_count, "Database Status Room": phase_tag})
             st.dataframe(pd.DataFrame(radar_rows), use_container_width=True, hide_index=True)
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 3B OF 15: INGESTION SETTINGS & PRE-SEASON CALIBRATION SIDEBAR SLIDERS
 # ==============================================================================
     st.markdown("---")
@@ -220,7 +220,7 @@ if api_sync_triggered and resolved_payload_string:
         st.session_state.freeze_matrix["last_error"] = f"API Payload Parsing Exception: {str(api_parse_structural_error)}"
 
 is_valid_data = False
-        # ==============================================================================
+                                                                 # ==============================================================================
 # SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
 if uploaded_file is not None:
@@ -424,7 +424,7 @@ if is_valid_data and not full_validation_df.empty and not api_sync_triggered and
 
 if uploaded_file is None and st.session_state["processed_cache_success"]:
     st.session_state["processed_cache_success"] = False
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 7 OF 15: AUTOMATED TIME-DECAY AUTO-TUNER & DROPDOWN LOCK VAULT
 # ==============================================================================
 working_pipeline_df = full_validation_df.copy() if (globals().get("is_valid_data", False) and not full_validation_df.empty) else (pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame())
@@ -468,7 +468,7 @@ settled_past_games = filtered_df.dropna(subset=["home_goals", "away_goals"])
 optimal_half_life = 45
 if len(settled_past_games) >= 5:
     lowest_historical_brier = 999.0
-    # --- FIXED: NATIVE PYTHON LIST EXPLICITLY PROVIDED ---
+    # --- FIXED: CORRECT STANDARD PYTHON ITERABLE LIST INJECTED ---
     for test_hl in:
         test_brier_accumulator = 0.0
         tc = 0
@@ -835,7 +835,7 @@ with c_col_l:
             tg_conn.close()
         except:
             pass # Fails quietly in the background to prevent any interface layout freeze-ups
-    # ==============================================================================
+        # ==============================================================================
 # SEGMENT 14 OF 15: SISONKE INVESTMENT LEDGER & REPLICATED STORAGE ENGINE
 # ==============================================================================
 with c_col_r:
@@ -915,7 +915,7 @@ with c_col_r:
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
     else:
         st.info("No tickets recorded inside this local storage database file path partition yet.")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 15A OF 15: OUTRIGHT ARBITRAGE MATRIX & SQUAD OVERRIDES PANEL
 # ==============================================================================
 
