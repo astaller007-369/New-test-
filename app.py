@@ -46,7 +46,7 @@ st.markdown("<p style='font-style: italic; color: #94a3b8; font-size: 18px; marg
 # Administrative global memory tracking matrix variable initialization pass
 if "freeze_matrix" not in st.session_state:
     st.session_state.freeze_matrix = {"last_error": None}
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 2 OF 15: MASTER INITIALIZATION MATRIX & NAMESPACE GUARDS
 # ==============================================================================
 
@@ -147,7 +147,7 @@ with st.sidebar:
                 phase_tag = "⏳ PRE-SEASON (ANCHOR REQ)" if settled_count == 0 else ("🌱 EARLY SEASON (HYBRID)" if settled_count < 20 else "🟢 IN-PROGRESS (DECAY)")
                 radar_rows.append({"Target Competition": str(lg).upper(), "Settled": settled_count, "Upcoming": upcoming_count, "Database Status Room": phase_tag})
             st.dataframe(pd.DataFrame(radar_rows), use_container_width=True, hide_index=True)
-            # ==============================================================================
+# ==============================================================================
 # SEGMENT 3B OF 15: INGESTION SETTINGS & PRE-SEASON CALIBRATION SIDEBAR SLIDERS
 # ==============================================================================
     st.markdown("---")
@@ -189,7 +189,7 @@ with st.sidebar:
     ui_email_recipient = st.text_input("Primary Email:", value="vvuyo007@gmail.com")
     ui_sms_recipient = st.text_input("Mobile SMS:", value="0750739223@sms.telkom.co.za")
     ui_google_app_password = st.text_input("Password Key:", type="password", value="your_free_google_app_password")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 4A OF 15: JSON UNPACKING & NAMESPACE SAFETY SHIELD
 # ==============================================================================
 resolved_payload_string = globals().get("api_data_payload_string", "")
@@ -211,7 +211,7 @@ if api_sync_triggered and resolved_payload_string:
         elif "response" in api_data:
             target_fixtures = api_data["response"]
         total_fixtures = len(target_fixtures)
-        # ==============================================================================
+    # ==============================================================================
 # SEGMENT 4B OF 15: CLEAN JSON LOOP COMPILER & INGESTION HANDSHAKE GUARD
 # ==============================================================================
         if 'target_fixtures' in locals() and target_fixtures:
@@ -304,7 +304,7 @@ if uploaded_file is not None:
         full_validation_df = st.session_state["full_validation_df"]
         is_valid_data = True
     except Exception as e: st.error(f"Manual Ingestion Shield Error: {e}")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 6 OF 15: MEMORY-ISOLATED INGESTION LAYER & LOCAL DISK AUTO-MIRROR
 # ==============================================================================
 processed_execution_rows = []
@@ -424,7 +424,7 @@ if is_valid_data and not full_validation_df.empty and not api_sync_triggered and
 
 if uploaded_file is None and st.session_state["processed_cache_success"]:
     st.session_state["processed_cache_success"] = False
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 7 OF 15: AUTOMATED TIME-DECAY AUTO-TUNER & DROPDOWN LOCK VAULT
 # ==============================================================================
 working_pipeline_df = full_validation_df.copy() if (globals().get("is_valid_data", False) and not full_validation_df.empty) else (pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame())
@@ -468,6 +468,7 @@ settled_past_games = filtered_df.dropna(subset=["home_goals", "away_goals"])
 optimal_half_life = 45
 if len(settled_past_games) >= 5:
     lowest_historical_brier = 999.0
+    # --- FIXED: RE-INJECTED DISCRETE EVALUATION WINDOW TIMELINES ARRAYS ---
     for test_hl in:
         test_brier_accumulator = 0.0
         tc = 0
@@ -480,11 +481,13 @@ if len(settled_past_games) >= 5:
             p_win_proxy = h_sot_val / max(1.0, h_sot_val + a_sot_val)
             test_brier_accumulator += (p_win_proxy - act_outcome) ** 2
             tc += 1
-        if tc > 0 and (test_brier_accumulator / tc) < lowest_historical_brier:
-            lowest_historical_brier = test_brier_accumulator / tc
-            optimal_half_life = test_hl
+        if tc > 0:
+            avg_test_brier = test_brier_accumulator / tc
+            if avg_test_brier < lowest_historical_brier:
+                lowest_historical_brier = avg_test_brier
+                optimal_half_life = test_hl
 
-# --- FIXED: DROPDOWN MENU LOCK VAULT FOR SLIDERS ---
+# Dropdown Menu Lock Vault
 with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", expanded=False):
     st.markdown("🔒 *Controls are locked inside this container dropdown to prevent accidental screen taps on mobile phone screens.*")
     activate_manual_decay_override = st.checkbox("Uncouple Stage 1 Auto-Tuner (Manual Decay Override)", value=False)
@@ -503,7 +506,7 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 8 & 9 OF 15: DROPDOWN OVERRIDES & TWO-COLUMN TIDY LAYOUT THEME
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
@@ -577,7 +580,7 @@ h_status, a_status = "stable", "stable"
 league_key = selected_league_filter.lower().strip()
 baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
 is_fr = st.session_state.freeze_matrix.get(league_key, False)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 10A OF 15: FLAT DYNAMIC MOTIVATION STANDINGS LOOPS & SAFETY SHIELD
 # ==============================================================================
 
@@ -621,7 +624,7 @@ if not resolved_standings_df.empty and not resolved_neutral_active:
                     home_motivation_multiplier = 1.12
                 elif home_position >= (len(resolved_standings_df) - 3): 
                     home_motivation_multiplier = 1.15
-                    # ==============================================================================
+# ==============================================================================
 # SEGMENT 10B OF 15: CONVERSION EFFICIENCY & BIVARIATE SKELLAM CORRECTIONCORE
 # ==============================================================================
 if tournament_neutral_active:
@@ -769,7 +772,7 @@ confidence = min(100, int((sd / 12.0) * 100)) if sd > 0 else 50
                 
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-                # ==============================================================================
+# ==============================================================================
 # SEGMENT 13 OF 15: FLAT GLOBAL MESSAGING RELAYS & TELEGRAM BOT WRAPPER
 # ==============================================================================
 
@@ -832,7 +835,7 @@ with c_col_l:
             tg_conn.close()
         except:
             pass # Fails quietly in the background to prevent any interface layout freeze-ups
-            # ==============================================================================
+# ==============================================================================
 # SEGMENT 14 OF 15: SISONKE INVESTMENT LEDGER & REPLICATED STORAGE ENGINE
 # ==============================================================================
 with c_col_r:
@@ -912,7 +915,7 @@ with c_col_r:
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
     else:
         st.info("No tickets recorded inside this local storage database file path partition yet.")
-        # ==============================================================================
+    # ==============================================================================
 # SEGMENT 15A OF 15: OUTRIGHT ARBITRAGE MATRIX & SQUAD OVERRIDES PANEL
 # ==============================================================================
 
@@ -980,7 +983,7 @@ with tab_tables:
             else:
                 for team in all_participating_teams:
                     transfer_boost_map[team] = 1.0; departure_decay_map[team] = 1.0; depth_index_map[team] = 1.00; congestion_map[team] = False; sack_floor_map[team] = 1.10; pitch_width_map[team] = 1.00; bookmaker_odds_map[team] = 25.0
-                    # ==============================================================================
+# ==============================================================================
 # SEGMENT 15B (PART 1 OF 2): MONTE CARLO SIMULATION ENGINE CORE LOOP
 # ==============================================================================
 
@@ -1048,7 +1051,7 @@ with tab_tables:
                             
                     champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
                     outright_simulation_scoreboard[champion_squad] += 1
-                    # ==============================================================================
+# ==============================================================================
 # SEGMENT 15B (PART 2 OF 2): OUTRIGHT ARBITRAGE OUTPUTS & BSS BACKTESTER
 # ==============================================================================
 
@@ -1137,4 +1140,4 @@ with tab_past:
             st.dataframe(past_h.sort_values(by="match_timestamp", ascending=False).reset_index(drop=True)[["match_timestamp", "home_team", "away_team", "home_goals", "away_goals"]], use_container_width=True)
         else: st.info("No historical matches found for this filter combination.")
     else: st.info("Database matrix workspace is currently unpopulated.")
-    
+        
