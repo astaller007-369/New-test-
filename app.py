@@ -48,7 +48,7 @@ st.markdown("##### *We Beat The Odds*")
 st.sidebar.image("https://unsplash.com", use_container_width=True)
 st.sidebar.markdown("### 🎛️ Active Data Control Room")
 st.sidebar.caption("Sisonke Engine Status: 🟢 High-Utility Operations Standby")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 4 OF 11: MULTI-LEAGUES MANUAL CSV INGESTION PORT
 # ==============================================================================
 # Accepts tiny unplayed future or results slates and processes them in RAM
@@ -261,7 +261,7 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 8 & 9 OF 11: DROPDOWN OVERRIDES & LEFT COLS WORKING ENVIRONMENT
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
@@ -279,12 +279,17 @@ with tab_pred:
             home_streak_score = sum([1 if r["home_goals"] > r["away_goals"] else -1 for _, r in past_home.iterrows()])
             away_streak_score = sum([1 if r["away_goals"] > r["home_goals"] else -1 for _, r in past_away.iterrows()])
             
-            # --- FIXED: CORE VARIABLE ATTACK VECTOR SEQUENCING ARMOUR ---
+            # --- FIXED: LINE 434 STATUS SEQUENCING PROTECTION SHIELD ---
             league_key = str(selected_league_filter).lower().strip()
             baseline_goals = 2.65
             if 'engine' in globals() and hasattr(engine, 'COMPETITION_MATRIX'):
                 baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
             
+            # Pre-seed team status string profiles to neutralize the line 434 engine crash
+            h_status = "stable"
+            a_status = "stable"
+            
+            # Fallback initialization seeds to clear variable scope traps
             weather_goals_multiplier = 1.00
             coach_attack_multiplier = 1.00
             coach_volatility_expansion = 1.00
@@ -427,7 +432,7 @@ with tab_pred:
             calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
             if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
             if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
-# ==============================================================================
+            # ==============================================================================
 # SEGMENT 10C OF 11: RIGHT PANEL PROJECTIONS SHEET OUTPUTS
 # ==============================================================================
             # 📍 CORE ENGAGEMENT COMPILATION PASS
@@ -500,7 +505,7 @@ with tab_pred:
                     st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-        # ==============================================================================
+# ==============================================================================
 # SEGMENT 11A OF 11: TELEGRAM BOT PAGER & BANKROLL INVESTMENTS LEDGER
 # ==============================================================================
 st.markdown("---")
