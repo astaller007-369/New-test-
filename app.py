@@ -147,7 +147,7 @@ with st.sidebar:
                 phase_tag = "⏳ PRE-SEASON (ANCHOR REQ)" if settled_count == 0 else ("🌱 EARLY SEASON (HYBRID)" if settled_count < 20 else "🟢 IN-PROGRESS (DECAY)")
                 radar_rows.append({"Target Competition": str(lg).upper(), "Settled": settled_count, "Upcoming": upcoming_count, "Database Status Room": phase_tag})
             st.dataframe(pd.DataFrame(radar_rows), use_container_width=True, hide_index=True)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 3B OF 15: INGESTION SETTINGS & PRE-SEASON CALIBRATION SIDEBAR SLIDERS
 # ==============================================================================
     st.markdown("---")
@@ -189,7 +189,7 @@ with st.sidebar:
     ui_email_recipient = st.text_input("Primary Email:", value="vvuyo007@gmail.com")
     ui_sms_recipient = st.text_input("Mobile SMS:", value="0750739223@sms.telkom.co.za")
     ui_google_app_password = st.text_input("Password Key:", type="password", value="your_free_google_app_password")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 4A OF 15: JSON UNPACKING & NAMESPACE SAFETY SHIELD
 # ==============================================================================
 resolved_payload_string = globals().get("api_data_payload_string", "")
@@ -211,7 +211,7 @@ if api_sync_triggered and resolved_payload_string:
         elif "response" in api_data:
             target_fixtures = api_data["response"]
         total_fixtures = len(target_fixtures)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 4B OF 15: CLEAN JSON LOOP COMPILER & INGESTION HANDSHAKE GUARD
 # ==============================================================================
         if 'target_fixtures' in locals() and target_fixtures:
@@ -220,7 +220,7 @@ if api_sync_triggered and resolved_payload_string:
         st.session_state.freeze_matrix["last_error"] = f"API Payload Parsing Exception: {str(api_parse_structural_error)}"
 
 is_valid_data = False
-                                                                 # ==============================================================================
+# ==============================================================================
 # SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
 if uploaded_file is not None:
@@ -468,8 +468,8 @@ settled_past_games = filtered_df.dropna(subset=["home_goals", "away_goals"])
 optimal_half_life = 45
 if len(settled_past_games) >= 5:
     lowest_historical_brier = 999.0
-    # --- FIXED: CORRECT STANDARD PYTHON ITERABLE LIST INJECTED ---
-    for test_hl in:
+    # --- CHANGED APPROACH: CLEAN STANDARD PYTHON RANGE GENERATOR TO PREVENT CODE LOSS ---
+    for test_hl in range(15, 91, 15):
         test_brier_accumulator = 0.0
         tc = 0
         for idx, r in settled_past_games.tail(15).iterrows():
@@ -624,7 +624,7 @@ if not resolved_standings_df.empty and not resolved_neutral_active:
                     home_motivation_multiplier = 1.12
                 elif home_position >= (len(resolved_standings_df) - 3): 
                     home_motivation_multiplier = 1.15
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 10B OF 15: CONVERSION EFFICIENCY & BIVARIATE SKELLAM CORRECTIONCORE
 # ==============================================================================
 if tournament_neutral_active:
@@ -772,7 +772,7 @@ confidence = min(100, int((sd / 12.0) * 100)) if sd > 0 else 50
                 
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 13 OF 15: FLAT GLOBAL MESSAGING RELAYS & TELEGRAM BOT WRAPPER
 # ==============================================================================
 
@@ -835,7 +835,7 @@ with c_col_l:
             tg_conn.close()
         except:
             pass # Fails quietly in the background to prevent any interface layout freeze-ups
-        # ==============================================================================
+# ==============================================================================
 # SEGMENT 14 OF 15: SISONKE INVESTMENT LEDGER & REPLICATED STORAGE ENGINE
 # ==============================================================================
 with c_col_r:
@@ -915,7 +915,7 @@ with c_col_r:
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
     else:
         st.info("No tickets recorded inside this local storage database file path partition yet.")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 15A OF 15: OUTRIGHT ARBITRAGE MATRIX & SQUAD OVERRIDES PANEL
 # ==============================================================================
 
@@ -1051,7 +1051,7 @@ with tab_tables:
                             
                     champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
                     outright_simulation_scoreboard[champion_squad] += 1
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 15B (PART 2 OF 2): OUTRIGHT ARBITRAGE OUTPUTS & BSS BACKTESTER
 # ==============================================================================
 
