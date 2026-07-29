@@ -48,7 +48,7 @@ st.markdown("##### *We Beat The Odds*")
 st.sidebar.image("https://unsplash.com", use_container_width=True)
 st.sidebar.markdown("### 🎛️ Active Data Control Room")
 st.sidebar.caption("Sisonke Engine Status: 🟢 High-Utility Operations Standby")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 4 OF 11: MULTI-LEAGUES MANUAL CSV INGESTION PORT
 # ==============================================================================
 # Accepts tiny unplayed future or results slates and processes them in RAM
@@ -314,7 +314,7 @@ with tab_pred:
             coach_stability_selection = "Stable Baseline / Standard Tenure"
             lookahead_match_active = "None / Standard Focus Match"
             referee_strictness_profile = "Standard Baseline / Moderate Official"
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 10A OF 11: LEFT PANEL INPUT OVERRIDES WORKSPACE
 # ==============================================================================
             # --- STEP 1: OPEN WIDESCREEN GRID CHANNELS ---
@@ -349,7 +349,7 @@ with tab_pred:
                     odds_2 = st.number_input("Away Odds (2):", min_value=1.01, value=3.40, step=0.05, key="o_2")
                     odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
                     odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
-                    # ==============================================================================
+    # ==============================================================================
 # SEGMENT 10B OF 11: ENGINE PROBABILITY CALCULATION CORE LAYER
 # ==============================================================================
             # --- STEP 3: RUN THE ADVANCED MATHEMATICAL THREE-STAGE OPTIMIZATION ENGINE ---
@@ -432,7 +432,7 @@ with tab_pred:
             calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
             if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
             if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
-            # ==============================================================================
+                                                                         # ==============================================================================
 # SEGMENT 10C OF 11: RIGHT PANEL PROJECTIONS SHEET OUTPUTS
 # ==============================================================================
             # 📍 CORE ENGAGEMENT COMPILATION PASS
@@ -458,8 +458,9 @@ with tab_pred:
             home_over_15_p, away_over_15_p = 0.0, 0.0
             ah_home_minus_15_p, ah_home_plus_15_p = 0.0, 0.0
             
-            max_r = int(prob_matrix.shape)
-            max_a = int(prob_matrix.shape)
+            # --- FIXED: EXPLICITLY EXTRACT TUPLE INDICES BEFORE INT CASTING ---
+            max_r = int(prob_matrix.shape[0])
+            max_a = int(prob_matrix.shape[1])
             graph_data_dict = {}
 
             for r_idx in range(max_r):
@@ -505,7 +506,7 @@ with tab_pred:
                     st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 11A OF 11: TELEGRAM BOT PAGER & BANKROLL INVESTMENTS LEDGER
 # ==============================================================================
 st.markdown("---")
@@ -564,7 +565,7 @@ with c_col_r:
     if not display_replicated_ledger_df.empty:
         display_replicated_ledger_df["Cumulative_Units"] = display_replicated_ledger_df["Net_Profit_Units"].cumsum()
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 11B OF 11: CAMPAIGNS TABLES, BSS CALIBRATOR & GOAL-EFFICIENCY LEDGER
 # ==============================================================================
 with tab_tables:
@@ -674,3 +675,4 @@ with tab_past:
             st.dataframe(efficiency_display_df, use_container_width=True, hide_index=True)
         else: st.info("No historical matches found for this filter combination.")
     else: st.info("Database matrix workspace is currently unpopulated.")
+    
