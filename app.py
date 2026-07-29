@@ -48,7 +48,7 @@ st.markdown("##### *We Beat The Odds*")
 st.sidebar.image("https://unsplash.com", use_container_width=True)
 st.sidebar.markdown("### 🎛️ Active Data Control Room")
 st.sidebar.caption("Sisonke Engine Status: 🟢 High-Utility Operations Standby")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 4 OF 12: MULTI-LEAGUES MANUAL CSV INGESTION PORT
 # ==============================================================================
 st.sidebar.markdown("#### 📁 Historical Matchday Upload Port")
@@ -56,7 +56,7 @@ uploaded_file = st.sidebar.file_uploader(
     "Drop your imidlalo.csv or fixture ledger files here:", 
     type=["csv"], 
     help="Accepts mixed format date columns, shots on target, and big chances data structures natively."
-)
+    )
 # ==============================================================================
 # SEGMENT 5 OF 12: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
@@ -260,7 +260,7 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
-# ==============================================================================
+        # ==============================================================================
 # SEGMENT 8 & 9 OF 11 (PART 1 OF 2): FIXED UNIQUE ELEMENT WIDGET ARMORE
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
@@ -331,6 +331,36 @@ with tab_pred:
                     asymmetric_pitch_width_advantage = st.checkbox("📐 Host Narrow Pitch Blueprint Surface Active Check", value=False, key="cb_width_core")
                     derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High Intensity Rivalry Check", value=False, key="cb_derby_core")
 # ==============================================================================
+# SEGMENT 8 & 9 OF 11 (PART 2 OF 2): FIXED UNIQUE ELEMENT ODDS MATRIX ARMORE
+# ==============================================================================
+                with st.expander("💰 Bookmaker Entry Lines & Odds Setup", expanded=True):
+                    # --- FIXED: INJECTED CRITICAL CORRELATION KEY STRINGS TO PREVENT DUPLICATES ---
+                    odds_1 = st.number_input("Home Odds (1):", min_value=1.01, value=2.10, step=0.05, key="num_o1_core")
+                    odds_X = st.number_input("Draw Odds (X):", min_value=1.01, value=3.20, step=0.05, key="num_ox_core")
+                    odds_2 = st.number_input("Away Odds (2):", min_value=1.01, value=3.40, step=0.05, key="num_o2_core")
+                    odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="num_oov_core")
+                    odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="num_oun_core")
+                    odds_correct_score = st.number_input("Target Correct Score Odds (e.g., 1-0 or 1-1):", min_value=1.01, value=7.50, step=0.10, key="num_ocs_core")
+                    
+                    with st.expander("🧩 Alternative Lines & Props Entry (Click to Open)", expanded=False):
+                        odds_1X = st.number_input("Double Chance 1X Odds:", min_value=1.01, value=1.35, step=0.02, key="num_o1x_core")
+                        odds_X2 = st.number_input("Double Chance X2 Odds:", min_value=1.01, value=1.65, step=0.02, key="num_ox2_core")
+                        odds_12 = st.number_input("Double Chance 12 Odds:", min_value=1.01, value=1.25, step=0.02, key="num_o12_core")
+                        odds_dnb1 = st.number_input("Draw No Bet DNB1 Odds:", min_value=1.01, value=1.50, step=0.05, key="num_odnb1_core")
+                        odds_dnb2 = st.number_input("Draw No Bet DNB2 Odds:", min_value=1.01, value=2.45, step=0.05, key="num_odnb2_core")
+                        odds_btts_y = st.number_input("BTTS Yes Odds:", min_value=1.01, value=1.80, step=0.05, key="num_obttsy_core")
+                        odds_btts_n = st.number_input("BTTS No Odds:", min_value=1.01, value=1.95, step=0.05, key="num_obttsn_core")
+                        odds_home_over_15 = st.number_input("Home Team Over 1.5 Goals Odds:", min_value=1.01, value=2.10, step=0.05, key="num_oho15_core")
+                        odds_home_under_15 = st.number_input("Home Team Under 1.5 Goals Odds:", min_value=1.01, value=1.65, step=0.05, key="num_ohu15_core")
+                        odds_away_over_15 = st.number_input("Away Team Over 1.5 Goals Odds:", min_value=1.01, value=3.10, step=0.05, key="num_oao15_core")
+                        odds_away_under_15 = st.number_input("Away Team Under 1.5 Goals Odds:", min_value=1.01, value=1.35, step=0.05, key="num_oau15_core")
+                        odds_ah_home_minus_15 = st.number_input("Asian Handicap Home -1.5 Odds:", min_value=1.01, value=3.80, step=0.10, key="num_oahm15_core")
+                        odds_ah_away_plus_15 = st.number_input("Asian Handicap Away +1.5 Odds:", min_value=1.01, value=1.25, step=0.02, key="num_oaap15_core")
+                        odds_ah_home_plus_15 = st.number_input("Asian Handicap Home +1.5 Odds:", min_value=1.01, value=1.18, step=0.02, key="num_oahp15_core")
+                        odds_ah_away_minus_15 = st.number_input("Asian Handicap Away -1.5 Odds:", min_value=1.01, value=5.50, step=0.10, key="num_oaam15_core")
+                        odds_home_cs_y = st.number_input("Home Clean Sheet Yes Odds:", min_value=1.01, value=2.60, step=0.05, key="num_ohcsy_core")
+                        odds_away_cs_y = st.number_input("Away Clean Sheet Yes Odds:", min_value=1.01, value=3.90, step=0.05, key="num_oacsy_core")
+                                                      # ==============================================================================
 # SEGMENT 10A OF 12: UNIFIED MIDDLE WORKSPACE & DROPDOWNS MANAGEMENT
 # ==============================================================================
             dash_left, dash_right = st.columns(2)
@@ -364,7 +394,7 @@ with tab_pred:
                     odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
                     odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
                     odds_correct_score = st.number_input("Target Correct Score Odds (e.g., 1-0 or 1-1):", min_value=1.01, value=7.50, step=0.10, key="o_cs")
-                    # ==============================================================================
+# ==============================================================================
 # SEGMENT 10B OF 12: ENGINE THREE-STAGE PROBABILITY OPTIMIZATION LAYER
 # ==============================================================================
             # 📍 SEGMENT 10A: HISTORICAL FORM LOOKBACK MATRIX PASS
@@ -508,7 +538,7 @@ with tab_pred:
             dnb_1_p, dnb_2_p = prob_home / dnb_denom, prob_away / dnb_denom
             home_under_15_p, away_under_15_p = 1.0 - home_over_15_p, 1.0 - away_over_15_p
             ah_away_plus_15_p, ah_away_minus_15_p = 1.0 - ah_home_minus_15_p, 1.0 - ah_home_plus_15_p
-                                                      # ==============================================================================
+            # ==============================================================================
 # SEGMENT 10C (PART 2 OF 2): OPTION VALUATION MATRICES SHEET RENDER
 # ==============================================================================
             # Map out your entire expanded 22 global options matrix cleanly
@@ -716,7 +746,7 @@ with tab_tables:
                         
                 champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
                 outright_simulation_scoreboard[champion_squad] += 1
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 11B (PART 2 OF 2): FUTURES ARBITRAGE, BSS ROOM & EFFICIENCY LEDGER
 # ==============================================================================
         outright_results_rows = []
