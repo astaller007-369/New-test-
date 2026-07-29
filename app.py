@@ -1,5 +1,5 @@
 # ==============================================================================
-# SEGMENT 1 OF 11: GLOBAL NAMESPACE INITIALIZATION & CORE IMPORTS
+# SEGMENT 1 OF 12: GLOBAL NAMESPACE INITIALIZATION & CORE IMPORTS
 # ==============================================================================
 import streamlit as st
 import pandas as pd
@@ -26,7 +26,7 @@ storage_path = "master_sisonke_database.csv"
 is_valid_data = False
 api_sync_triggered = False
 # ==============================================================================
-# SEGMENT 2 OF 11: DORMANT API INTEGRATION HEADERS & SECURITY MAPS
+# SEGMENT 2 OF 12: DORMANT API INTEGRATION HEADERS & SECURITY MAPS
 # ==============================================================================
 # Token placeholders map directly to corporate data stream servers when required
 API_FOOTBALL_HOST_ENDPOINT = "v3.football.api-sports.io"
@@ -39,27 +39,26 @@ LEAGUE_API_IDENTIFIER_REGISTRY = {
     "south africa premier league": 288, "austria premier league": 218,
     "estonia premier league": 322, "uefa champions league": 2,
     "africa cup of nations": 6, "fifa world cup": 1
-}
-# ==============================================================================
-# SEGMENT 3 OF 11: CORPORATE STRUCTURAL BRANDING LAYER & SIDEBAR LAYOUT
+    }
+    # ==============================================================================
+# SEGMENT 3 OF 12: CORPORATE STRUCTURAL BRANDING LAYER & SIDEBAR LAYOUT
 # ==============================================================================
 st.title("🦅 Sisonke Football Predictive Analytics Hub")
 st.markdown("##### *We Beat The Odds*")
 st.sidebar.image("https://unsplash.com", use_container_width=True)
 st.sidebar.markdown("### 🎛️ Active Data Control Room")
 st.sidebar.caption("Sisonke Engine Status: 🟢 High-Utility Operations Standby")
+    # ==============================================================================
+# SEGMENT 4 OF 12: MULTI-LEAGUES MANUAL CSV INGESTION PORT
 # ==============================================================================
-# SEGMENT 4 OF 11: MULTI-LEAGUES MANUAL CSV INGESTION PORT
-# ==============================================================================
-# Accepts tiny unplayed future or results slates and processes them in RAM
 st.sidebar.markdown("#### 📁 Historical Matchday Upload Port")
 uploaded_file = st.sidebar.file_uploader(
     "Drop your imidlalo.csv or fixture ledger files here:", 
     type=["csv"], 
-    help="Accepts mixed format date columns, shots on target, and big chances data structures natively."
+    help="Accepts mixed format data structures natively."
 )
 # ==============================================================================
-# SEGMENT 5 OF 11: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
+# SEGMENT 5 OF 12: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
 if uploaded_file is not None:
     try:
@@ -123,7 +122,7 @@ if uploaded_file is not None:
         is_valid_data = True
     except Exception as e: st.error(f"Manual Ingestion Shield Error: {e}")
 # ==============================================================================
-# SEGMENT 6 OF 11: MEMORY-ISOLATED INGESTION LAYER & LOCAL DISK AUTO-MIRROR
+# SEGMENT 6 OF 12: MEMORY-ISOLATED INGESTION LAYER & LOCAL DISK AUTO-MIRROR
 # ==============================================================================
 processed_execution_rows = []
 historical_reference_df = pd.DataFrame()
@@ -211,7 +210,7 @@ if uploaded_file is None and st.session_state["processed_cache_success"]:
     st.session_state["processed_cache_success"] = False
 full_validation_df = st.session_state["full_validation_df"]
 # ==============================================================================
-# SEGMENT 7 OF 11: AUTOMATED TIME-DECAY AUTO-TUNER & DROPDOWN LOCK VAULT
+# SEGMENT 7 OF 12: AUTOMATED TIME-DECAY AUTO-TUNER & DROPDOWN LOCK VAULT
 # ==============================================================================
 working_pipeline_df = full_validation_df.copy() if not full_validation_df.empty else (pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame())
 
@@ -261,8 +260,8 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
-# ==============================================================================
-# SEGMENT 8 & 9 OF 11: DROPDOWN OVERRIDES & LEFT COLS WORKING ENVIRONMENT
+    # ==============================================================================
+# SEGMENT 8 & 9 OF 12: DROPDOWN OVERRIDES & LEFT COLS WORKING ENVIRONMENT
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
 
@@ -279,17 +278,15 @@ with tab_pred:
             home_streak_score = sum([1 if r["home_goals"] > r["away_goals"] else -1 for _, r in past_home.iterrows()])
             away_streak_score = sum([1 if r["away_goals"] > r["home_goals"] else -1 for _, r in past_away.iterrows()])
             
-            # --- FIXED: LINE 434 STATUS SEQUENCING PROTECTION SHIELD ---
+            # --- CORE VARIABLE ATTACK VECTOR SEQUENCING ARMOUR ---
             league_key = str(selected_league_filter).lower().strip()
             baseline_goals = 2.65
             if 'engine' in globals() and hasattr(engine, 'COMPETITION_MATRIX'):
                 baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
             
-            # Pre-seed team status string profiles to neutralize the line 434 engine crash
             h_status = "stable"
             a_status = "stable"
             
-            # Fallback initialization seeds to clear variable scope traps
             weather_goals_multiplier = 1.00
             coach_attack_multiplier = 1.00
             coach_volatility_expansion = 1.00
@@ -314,8 +311,8 @@ with tab_pred:
             coach_stability_selection = "Stable Baseline / Standard Tenure"
             lookahead_match_active = "None / Standard Focus Match"
             referee_strictness_profile = "Standard Baseline / Moderate Official"
-    # ==============================================================================
-# SEGMENT 10A OF 11: LEFT PANEL INPUT OVERRIDES WORKSPACE
+        # ==============================================================================
+# SEGMENT 10A OF 12: LEFT PANEL INPUT OVERRIDES WORKSPACE
 # ==============================================================================
             # --- STEP 1: OPEN WIDESCREEN GRID CHANNELS ---
             dash_left, dash_right = st.columns(2)
@@ -349,8 +346,9 @@ with tab_pred:
                     odds_2 = st.number_input("Away Odds (2):", min_value=1.01, value=3.40, step=0.05, key="o_2")
                     odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
                     odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
-    # ==============================================================================
-# SEGMENT 10B OF 11: ENGINE PROBABILITY CALCULATION CORE LAYER
+                    odds_correct_score = st.number_input("Target Correct Score Odds:", min_value=1.01, value=7.50, step=0.10, key="o_cs")
+# ==============================================================================
+# SEGMENT 10B OF 12: ENGINE PROBABILITY CALCULATION CORE LAYER
 # ==============================================================================
             # --- STEP 3: RUN THE ADVANCED MATHEMATICAL THREE-STAGE OPTIMIZATION ENGINE ---
             # 📍 SEGMENT 10A: HISTORICAL FORM LOOKBACK MATRIX PASS
@@ -432,10 +430,9 @@ with tab_pred:
             calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
             if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
             if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
-                                                                         # ==============================================================================
-# SEGMENT 10C OF 11: RIGHT PANEL PROJECTIONS SHEET OUTPUTS
+                                                                          # ==============================================================================
+# SEGMENT 10C OF 12 (PART A): CORES EMITS MAPS & PROBABILITY VALUATIONS
 # ==============================================================================
-            # 📍 CORE ENGAGEMENT COMPILATION PASS
             res = engine.predict_match_probabilities(filtered_df, target["home_team"], target["away_team"], target_ts, calibrated_baseline_goals, calibrated_home_attack, calibrated_away_attack, h_status, a_status, max_score_cap, vol_dampener_adjusted, False)
             h_s = engine.parse_live_team_averages(filtered_df, target["home_team"], target_ts, half_life_days, h_status, False)
             a_s = engine.parse_live_team_averages(filtered_df, target["away_team"], target_ts, half_life_days, a_status, False)
@@ -458,17 +455,20 @@ with tab_pred:
             home_over_15_p, away_over_15_p = 0.0, 0.0
             ah_home_minus_15_p, ah_home_plus_15_p = 0.0, 0.0
             
-            # --- FIXED: EXPLICITLY EXTRACT TUPLE INDICES BEFORE INT CASTING ---
+            # Unpack shape tuple coordinates explicitly to clear typeerror crashes
             max_r = int(prob_matrix.shape[0])
             max_a = int(prob_matrix.shape[1])
             graph_data_dict = {}
+            scoreline_scenarios_list = []
 
             for r_idx in range(max_r):
                 for a_idx in range(max_a):
                     cell_p = prob_matrix[r_idx, a_idx]
                     if r_idx == a_idx and (exp_h_total_goals + exp_a_total_goals) < 2.30: prob_matrix[r_idx, a_idx] = cell_p * 1.12
                     cell_p = prob_matrix[r_idx, a_idx]
-                    if cell_p >= 0.01: graph_data_dict[f"{r_idx}-{a_idx}"] = float(cell_p * 100)
+                    if cell_p >= 0.001: 
+                        graph_data_dict[f"{r_idx}-{a_idx}"] = float(cell_p * 100)
+                        scoreline_scenarios_list.append({"Scoreline Scenario": f"{r_idx} - {a_idx}", "Probability": cell_p, "Fair Value Odds": 1.0 / cell_p if cell_p > 0 else 999.00})
                     if r_idx + a_idx > 2.5: over_25_p += cell_p
                     if r_idx > 0 and a_idx > 0: btts_yes_p += cell_p
                     if a_idx == 0: home_cs_p += cell_p
@@ -479,19 +479,51 @@ with tab_pred:
                     if r_idx - a_idx > -1.5: ah_home_plus_15_p += cell_p
 
             under_25_p, btts_no_p = 1.0 - over_25_p, 1.0 - btts_yes_p
+            dc_1X_p, dc_X2_p, dc_12_p = min(1.0, prob_home + prob_draw), min(1.0, prob_draw + prob_away), min(1.0, prob_home + prob_away)
+            dnb_denom = 1.0 - prob_draw if prob_draw < 1.0 else 1.0
+            dnb_1_p, dnb_2_p = prob_home / dnb_denom, prob_away / dnb_denom
+            home_under_15_p, away_under_15_p = 1.0 - home_over_15_p, 1.0 - away_over_15_p
+            ah_away_plus_15_p, ah_away_minus_15_p = 1.0 - ah_home_minus_15_p, 1.0 - ah_home_plus_15_p
+            
+            odds_1X, odds_X2, odds_12 = 1.35, 1.65, 1.25
+            odds_dnb1, odds_dnb2, odds_btts_y, odds_btts_n = 1.50, 2.45, 1.80, 1.95
+            odds_home_over_15, odds_home_under_15 = 2.10, 1.65
+            odds_away_over_15, odds_away_under_15 = 3.10, 1.35
+            odds_ah_home_minus_15, odds_ah_away_plus_15 = 3.80, 1.25
+            odds_ah_home_plus_15, odds_ah_away_minus_15 = 1.18, 5.50
+            odds_home_cs_y, odds_away_cs_y = 2.60, 3.90
+                                                      # ==============================================================================
+# SEGMENT 10C OF 12 (PART B): RIGHT UI PANEL AND EXACT SCORE MATRIX
+# ==============================================================================
             all_markets_rendered_rows = [
                 {"Betting Market": "HOME WIN (1)", "Bookmaker Odds": f"{odds_1:.2f}", "Model Probability": f"{prob_home*100:.1f}%"},
                 {"Betting Market": "DRAW MATCH (X)", "Bookmaker Odds": f"{odds_X:.2f}", "Model Probability": f"{prob_draw*100:.1f}%"},
                 {"Betting Market": "AWAY WIN (2)", "Bookmaker Odds": f"{odds_2:.2f}", "Model Probability": f"{prob_away*100:.1f}%"},
+                {"Betting Market": "DOUBLE CHANCE (1X)", "Bookmaker Odds": f"{odds_1X:.2f}", "Model Probability": f"{dc_1X_p*100:.1f}%"},
+                {"Betting Market": "DOUBLE CHANCE (X2)", "Bookmaker Odds": f"{odds_X2:.2f}", "Model Probability": f"{dc_X2_p*100:.1f}%"},
+                {"Betting Market": "DOUBLE CHANCE (12)", "Bookmaker Odds": f"{odds_12:.2f}", "Model Probability": f"{dc_12_p*100:.1f}%"},
+                {"Betting Market": "DRAW NO BET (DNB1)", "Bookmaker Odds": f"{odds_dnb1:.2f}", "Model Probability": f"{dnb_1_p*100:.1f}%"},
+                {"Betting Market": "DRAW NO BET (DNB2)", "Bookmaker Odds": f"{odds_dnb2:.2f}", "Model Probability": f"{dnb_2_p*100:.1f}%"},
                 {"Betting Market": "OVER 2.5 GOALS", "Bookmaker Odds": f"{odds_over:.2f}", "Model Probability": f"{over_25_p*100:.1f}%"},
-                {"Betting Market": "UNDER 2.5 GOALS", "Bookmaker Odds": f"{odds_under:.2f}", "Model Probability": f"{under_25_p*100:.1f}%"}
+                {"Betting Market": "UNDER 2.5 GOALS", "Bookmaker Odds": f"{odds_under:.2f}", "Model Probability": f"{under_25_p*100:.1f}%"},
+                {"Betting Market": "BOTH TEAMS TO SCORE (YES)", "Bookmaker Odds": f"{odds_btts_y:.2f}", "Model Probability": f"{btts_yes_p*100:.1f}%"},
+                {"Betting Market": "BOTH TEAMS TO SCORE (NO)", "Bookmaker Odds": f"{odds_btts_n:.2f}", "Model Probability": f"{btts_no_p*100:.1f}%"},
+                {"Betting Market": "HOME TOTAL GOALS OVER 1.5", "Bookmaker Odds": f"{odds_home_over_15:.2f}", "Model Probability": f"{home_over_15_p*100:.1f}%"},
+                {"Betting Market": "HOME TOTAL GOALS UNDER 1.5", "Bookmaker Odds": f"{odds_home_under_15:.2f}", "Model Probability": f"{home_under_15_p*100:.1f}%"},
+                {"Betting Market": "AWAY TOTAL GOALS OVER 1.5", "Bookmaker Odds": f"{odds_away_over_15:.2f}", "Model Probability": f"{away_over_15_p*100:.1f}%"},
+                {"Betting Market": "AWAY TOTAL GOALS UNDER 1.5", "Bookmaker Odds": f"{odds_away_under_15:.2f}", "Model Probability": f"{away_under_15_p*100:.1f}%"},
+                {"Betting Market": "ASIAN HANDICAP (HOME -1.5)", "Bookmaker Odds": f"{odds_ah_home_minus_15:.2f}", "Model Probability": f"{ah_home_minus_15_p*100:.1f}%"},
+                {"Betting Market": "ASIAN HANDICAP (AWAY +1.5)", "Bookmaker Odds": f"{odds_ah_away_plus_15:.2f}", "Model Probability": f"{ah_away_plus_15_p*100:.1f}%"},
+                {"Betting Market": "ASIAN HANDICAP (HOME +1.5)", "Bookmaker Odds": f"{odds_ah_home_plus_15:.2f}", "Model Probability": f"{ah_home_plus_15_p*100:.1f}%"},
+                {"Betting Market": "ASIAN HANDICAP (AWAY -1.5)", "Bookmaker Odds": f"{odds_ah_away_minus_15:.2f}", "Model Probability": f"{ah_away_minus_15_p*100:.1f}%"},
+                {"Betting Market": "HOME CLEAN SHEET (YES)", "Bookmaker Odds": f"{odds_home_cs_y:.2f}", "Model Probability": f"{home_cs_p*100:.1f}%"},
+                {"Betting Market": "AWAY CLEAN SHEET (YES)", "Bookmaker Odds": f"{odds_away_cs_y:.2f}", "Model Probability": f"{away_cs_p*100:.1f}%"}
             ]
             stress_rows = [{"Friction Profile": "Baseline Execution", "Projected Draw": f"{prob_draw*100:.1f}%"}]
             sd = len(past_home) + len(past_away)
             confidence = min(100, int((sd / 10.0) * 100)) if sd > 0 else 50
             qualified_projections = []
 
-            # --- STEP 4: RENDER COMPILING TICKETS (RIGHT PANEL) ---
             with dash_right:
                 st.markdown("### 📊 Value Analytics & Tickets")
                 highest_ev_found = (prob_home * odds_1) - 1.0
@@ -502,12 +534,27 @@ with tab_pred:
                     
                 with st.expander("🎯 Exact Scoreline Probability Graph & Distribution", expanded=True):
                     if graph_data_dict: st.bar_chart(pd.DataFrame(list(graph_data_dict.items()), columns=["Scoreline", "Probability (%)"]).set_index("Scoreline"), use_container_width=True)
+                
+                with st.expander("🎯 Exact Scoreline Valuation Matrix (Top 10 Scenarios)", expanded=False):
+                    st.markdown("🔒 *Tucked away safely to eliminate mobile phone scrolling lag.*")
+                    if scoreline_scenarios_list:
+                        scoreline_display_df = pd.DataFrame(scoreline_scenarios_list)
+                        scoreline_display_df = scoreline_display_df.sort_values(by="Probability", ascending=False).head(10).reset_index(drop=True)
+                        scoreline_display_df["Your Input Odds"] = f"{odds_correct_score:.2f}"
+                        scoreline_display_df["Calculated EV Edge"] = ((scoreline_display_df["Probability"] * float(odds_correct_score)) - 1.0) * 100
+                        
+                        def format_scoreline_ev(val): return f"{val:+.1f}%"
+                        scoreline_display_df["Calculated EV Edge"] = scoreline_display_df["Calculated EV Edge"].apply(format_scoreline_ev)
+                        scoreline_display_df["Model Probability (%)"] = (scoreline_display_df["Probability"] * 100).apply(lambda x: f"{x:.1f}%")
+                        scoreline_display_df["Fair Value Odds"] = scoreline_display_df["Fair Value Odds"].apply(lambda x: f"{x:.2f}")
+                        st.dataframe(scoreline_display_df[["Scoreline Scenario", "Model Probability (%)", "Fair Value Odds", "Your Input Odds", "Calculated EV Edge"]], use_container_width=True, hide_index=True)
+
                 with st.expander("⚡ Real-Time Game-State Friction Stress Tester", expanded=False):
                     st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
     # ==============================================================================
-# SEGMENT 11A OF 11: TELEGRAM BOT PAGER & BANKROLL INVESTMENTS LEDGER
+# SEGMENT 11 OF 12: TELEGRAM BOT PAGER & BANKROLL INVESTMENTS LEDGER
 # ==============================================================================
 st.markdown("---")
 st.markdown("### 🤖 Telegram Bot Pager Alert Integration")
@@ -566,7 +613,7 @@ with c_col_r:
         display_replicated_ledger_df["Cumulative_Units"] = display_replicated_ledger_df["Net_Profit_Units"].cumsum()
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
 # ==============================================================================
-# SEGMENT 11B OF 11: CAMPAIGNS TABLES, BSS CALIBRATOR & GOAL-EFFICIENCY LEDGER
+# SEGMENT 12 OF 12: CAMPAIGNS TABLES, BSS CALIBRATOR & MULTI-MARKET LEDGER
 # ==============================================================================
 with tab_tables:
     st.markdown("### 🏆 Campaign Entry Ledger Frameworks")
@@ -601,78 +648,5 @@ with tab_tables:
                     
                     home_sack_bounce, away_sack_bounce = 1.00, 1.00
                     if iteration_games_played[fix["home"]] >= 10:
-                        home_current_ppg = iteration_points_registry[fix["home"]] / iteration_games_played[fix["home"]]
-                        if home_current_ppg < sack_floor_map.get(fix["home"], 1.10) and not manager_sacked_registry[fix["home"]]: manager_sacked_registry[fix["home"]] = True
-                    if manager_sacked_registry[fix["home"]]: home_sack_bounce = 1.10
-                    
-                    if iteration_games_played[fix["away"]] >= 10:
-                        away_current_ppg = iteration_points_registry[fix["away"]] / iteration_games_played[fix["away"]]
-                        if away_current_ppg < sack_floor_map.get(fix["away"], 1.10) and not manager_sacked_registry[fix["away"]]: manager_sacked_registry[fix["away"]] = True
-                    if manager_sacked_registry[fix["away"]]: away_sack_bounce = 1.10
-                    
-                    raw_h_exp = 1.35 * sim_baseline_goals * home_sack_bounce; raw_a_exp = 1.05 * sim_baseline_goals * away_sack_bounce
-                    sim_h_goals = np.random.poisson(raw_h_exp); sim_a_goals = np.random.poisson(raw_a_exp)
-                    
-                    if sim_h_goals > sim_a_goals: iteration_points_registry[fix["home"]] += 3
-                    elif sim_a_goals > sim_h_goals: iteration_points_registry[fix["away"]] += 3
-                    else: iteration_points_registry[fix["home"]] += 1; iteration_points_registry[fix["away"]] += 1
-                        
-                champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
-                outright_simulation_scoreboard[champion_squad] += 1
-
-        outright_results_rows = []
-        for team, win_count in outright_simulation_scoreboard.items():
-            projected_win_probability_pct = float(win_count / 1000.0)
-            b_odds = bookmaker_odds_map.get(team, 25.0)
-            calculated_outright_ev = (projected_win_probability_pct * b_odds) - 1.0
-            verdict = "🔥 HIGH VALUE FUTURES TICKET" if calculated_outright_ev >= 0.070 else "❌ NO BET"
-            outright_results_rows.append({"Competing Squad": team, "Model Probability (%)": f"{projected_win_probability_pct * 100:.1f}%", "Fair Value Odds": f"{1.0 / projected_win_probability_pct:.2f}" if projected_win_probability_pct > 0 else "999.00", "Your Input Odds": f"{b_odds:.2f}", "Outright EV (%)": f"{calculated_outright_ev * 100:+.1f}%", "Trading Verdict": verdict})
+                        home_current_ppg = iteration_points_registry[fix["
         
-        st.write("📈 **Simulated Outright Forecasting & Arbitrage Report Matrix:**")
-        st.dataframe(pd.DataFrame(outright_results_rows), use_container_width=True, hide_index=True)
-
-with tab_history:
-    st.markdown("### Backtest Calibration Analysis (Brier Skill Score Engine)")
-    if not filtered_df.empty and len(settled_past_games) >= 3:
-        try:
-            b_df = engine.run_rolling_window_backtest(settled_past_games, baseline_goals, backtest_window, 7, vol_dampener)
-            if b_df is not None and not b_df.empty:
-                model_brier_sum, reference_brier_sum, valid_audit_count = 0.0, 0.0, 0
-                for idx, b_row in b_df.iterrows():
-                    act_h_win = 1.0 if b_row["actual_home_goals"] > b_row["actual_away_goals"] else 0.0
-                    model_brier_sum += (float(b_row["model_probability"]) - act_h_win) ** 2
-                    reference_brier_sum += ((1.0 / float(odds_1 if odds_1 > 1.0 else 2.10)) - act_h_win) ** 2
-                    valid_audit_count += 1
-                if valid_audit_count > 0: st.metric("Brier Skill Score (BSS)", f"{(1.0 - (model_brier_sum / reference_brier_sum)):+.4f}")
-                st.dataframe(b_df, use_container_width=True)
-                
-                with st.expander("💰 Team Historical Odds Performance Tracker", expanded=False):
-                    all_unique_teams_list = sorted(list(set(settled_past_games["home_team"].unique()).union(set(settled_past_games["away_team"].unique()))))
-                    selected_tracker_team = st.selectbox("Select Target Team to Audit Odds Yield:", all_unique_teams_list)
-                    st.info(f"Auditing odds curves tracking for {selected_tracker_team} loaded.")
-        except: pass
-
-with tab_past:
-    st.markdown("### 📜 Settled Historical Results & Goal-Efficiency Audit")
-    if not filtered_df.empty:
-        past_h = filtered_df.dropna(subset["home_goals", "away_goals"]).copy()
-        if not past_h.empty:
-            past_h["match_timestamp"] = pd.to_datetime(past_h["match_timestamp"]).dt.strftime('%Y-%m-%d')
-            past_h["Home_xG_Proxy"] = round((past_h["home_big_chances"] * 0.38) + (past_h["home_sot"] * 0.12), 2)
-            past_h["Away_xG_Proxy"] = round((past_h["away_big_chances"] * 0.38) + (past_h["away_sot"] * 0.12), 2)
-            past_h["Home_Goal_Delta"] = past_h["home_goals"] - past_h["Home_xG_Proxy"]
-            past_h["Away_Goal_Delta"] = past_h["away_goals"] - past_h["Away_xG_Proxy"]
-            
-            def resolve_efficiency_verdict(delta):
-                if delta >= 0.75: return "🔥 High Clinical Finishing"
-                elif -0.75 < delta < 0.75: return "🟢 Perfectly Rated Performance"
-                else: return "⚠️ Unlucky / Inefficient Finishing Noise"
-                
-            past_h["Home_Finishing_Efficiency"] = past_h["Home_Goal_Delta"].apply(resolve_efficiency_verdict)
-            past_h["Away_Finishing_Efficiency"] = past_h["Away_Goal_Delta"].apply(resolve_efficiency_verdict)
-            efficiency_display_df = past_h.sort_values(by="match_timestamp", ascending=False).reset_index(drop=True)[["match_timestamp", "home_team", "away_team", "home_goals", "Home_xG_Proxy", "Home_Finishing_Efficiency", "away_goals", "Away_xG_Proxy", "Away_Finishing_Efficiency"]]
-            st.write("**Real-Time Matchday Conversion Efficiency Audit Ledger:**")
-            st.dataframe(efficiency_display_df, use_container_width=True, hide_index=True)
-        else: st.info("No historical matches found for this filter combination.")
-    else: st.info("Database matrix workspace is currently unpopulated.")
-    
