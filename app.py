@@ -220,7 +220,7 @@ if api_sync_triggered and resolved_payload_string:
         st.session_state.freeze_matrix["last_error"] = f"API Payload Parsing Exception: {str(api_parse_structural_error)}"
 
 is_valid_data = False
-    # ==============================================================================
+        # ==============================================================================
 # SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
 if uploaded_file is not None:
@@ -304,7 +304,7 @@ if uploaded_file is not None:
         full_validation_df = st.session_state["full_validation_df"]
         is_valid_data = True
     except Exception as e: st.error(f"Manual Ingestion Shield Error: {e}")
-        # ==============================================================================
+# ==============================================================================
 # SEGMENT 6 OF 15: MEMORY-ISOLATED INGESTION LAYER & LOCAL DISK AUTO-MIRROR
 # ==============================================================================
 processed_execution_rows = []
@@ -915,7 +915,7 @@ with c_col_r:
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
     else:
         st.info("No tickets recorded inside this local storage database file path partition yet.")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 15A OF 15: OUTRIGHT ARBITRAGE MATRIX & SQUAD OVERRIDES PANEL
 # ==============================================================================
 
