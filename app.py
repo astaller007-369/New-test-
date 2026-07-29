@@ -44,11 +44,11 @@ LEAGUE_API_IDENTIFIER_REGISTRY = {
 # SEGMENT 3 OF 15: CORPORATE STRUCTURAL BRANDING LAYER & SIDEBAR LAYOUT
 # ==============================================================================
 st.title("🦅 Sisonke Football Predictive Analytics Hub")
-st.markdown("##### *Memory-Isolated Quantitative Ingestion & 22-Market Arbitrage Suite*")
+st.markdown("##### *We Beat The Odds*")
 st.sidebar.image("https://unsplash.com", use_container_width=True)
 st.sidebar.markdown("### 🎛️ Active Data Control Room")
 st.sidebar.caption("Sisonke Engine Status: 🟢 High-Utility Operations Standby")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 4 OF 15: MULTI-LEAGUES MANUAL CSV INGESTION PORT
 # ==============================================================================
 # Accepts tiny 5 kB manual files and processes them in active RAM memory container loops
@@ -261,7 +261,7 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 8 & 9 OF 15: DROPDOWN OVERRIDES & TWO-COLUMN TIDY LAYOUT THEME
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
@@ -278,6 +278,13 @@ with tab_pred:
             past_away = filtered_df[(filtered_df["away_team"] == target["away_team"]) & (filtered_df["match_timestamp"] < target_ts)].sort_values(by="match_timestamp").tail(5)
             home_streak_score = sum([1 if r["home_goals"] > r["away_goals"] else -1 for _, r in past_home.iterrows()])
             away_streak_score = sum([1 if r["away_goals"] > r["home_goals"] else -1 for _, r in past_away.iterrows()])
+            
+            # --- FIXED: GLOBAL VARIABLE SEQUENCING ARMORE ---
+            # Pre-seeds baseline variables before any mathematical segment blocks compile
+            league_key = str(selected_league_filter).lower().strip()
+            baseline_goals = 2.65
+            if 'engine' in globals() and hasattr(engine, 'COMPETITION_MATRIX'):
+                baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
             
             dash_left, dash_right = st.columns(2)
             
@@ -309,7 +316,7 @@ with tab_pred:
                     odds_2 = st.number_input("Away Odds (2):", min_value=1.01, value=3.40, step=0.05, key="o_2")
                     odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
                     odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
-        # ==============================================================================
+    # ==============================================================================
 # SEGMENT 10A OF 15: MEMORY-ISOLATED HISTORICAL FORM LOOKBACK MATRIX PASS
 # ==============================================================================
             h_past_sot = filtered_df[filtered_df["home_team"] == target["home_team"]]["home_sot"].mean() if len(filtered_df) > 0 else 4.0
@@ -407,7 +414,7 @@ with tab_pred:
             dnb_1_p, dnb_2_p = prob_home / dnb_denom, prob_away / dnb_denom
             home_under_15_p, away_under_15_p = 1.0 - home_over_15_p, 1.0 - away_over_15_p
             ah_away_plus_15_p, ah_away_minus_15_p = 1.0 - ah_home_minus_15_p, 1.0 - ah_home_plus_15_p
-            # ==============================================================================
+    # ==============================================================================
 # SEGMENT 11 & 12 OF 15: CLEAN PROJECTIONS SHEET & COMPACT EMBEDDED GRAPHING
 # ==============================================================================
             all_markets_rendered_rows = [
@@ -496,7 +503,7 @@ with c_col_r:
     if not display_replicated_ledger_df.empty:
         display_replicated_ledger_df["Cumulative_Units"] = display_replicated_ledger_df["Net_Profit_Units"].cumsum()
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 15A OF 15: CAMPAIGNS LEDGER PRE-SEASON CONFIGURATIONS
 # ==============================================================================
 with tab_tables:
@@ -557,7 +564,7 @@ with tab_tables:
                         
                 champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
                 outright_simulation_scoreboard[champion_squad] += 1
-        # ==============================================================================
+# ==============================================================================
 # SEGMENT 15B (PART 2 OF 2): OUTRIGHT ARBITRAGE OUTPUTS & BSS BACKTESTER
 # ==============================================================================
         outright_results_rows = []
