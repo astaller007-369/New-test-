@@ -684,10 +684,10 @@ ah_away_plus_15_p, ah_away_minus_15_p = 1.0 - ah_home_minus_15_p, 1.0 - ah_home_
 # SEGMENTS 8-12: PART 2 OF 2 - RIGHT COLUMN VALUE CALCULATOR & ANALYSIS
 # ==============================================================================
             # Execute real-world table lookups to isolate late-season urgency spikes
-            home_motivation_multiplier = 1.00
-            away_motivation_multiplier = 1.00
-            tournament_neutral_active = "Neutral" in tournament_framework_selection or "Knockout" in tournament_framework_selection
-            knockout_volatility_boost = 1.15 if "Knockout" in tournament_framework_selection else 1.00
+        home_motivation_multiplier = 1.00
+        away_motivation_multiplier = 1.00
+        tournament_neutral_active = "Neutral" in tournament_framework_selection or "Knockout" in tournament_framework_selection
+        knockout_volatility_boost = 1.15 if "Knockout" in tournament_framework_selection else 1.00
 
             if 'resolved_standings_df' in globals() and not resolved_standings_df.empty and not tournament_neutral_active:
                 if "Team" in resolved_standings_df.columns:
