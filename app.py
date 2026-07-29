@@ -57,7 +57,7 @@ uploaded_file = st.sidebar.file_uploader(
     "Drop your imidlalo.csv or fixture ledger files here:", 
     type=["csv"], 
     help="Accepts mixed format date columns, shots on target, and big chances data structures natively."
-    )
+)
 # ==============================================================================
 # SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
@@ -261,7 +261,7 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 8 & 9 OF 15: DROPDOWN OVERRIDES & TWO-COLUMN TIDY LAYOUT THEME
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
@@ -279,12 +279,28 @@ with tab_pred:
             home_streak_score = sum([1 if r["home_goals"] > r["away_goals"] else -1 for _, r in past_home.iterrows()])
             away_streak_score = sum([1 if r["away_goals"] > r["home_goals"] else -1 for _, r in past_away.iterrows()])
             
-            # --- FIXED: GLOBAL VARIABLE SEQUENCING ARMORE ---
+            # --- FIXED: RE-SEQUENCING ARMOR INITIALIZATION KEYS ---
             # Pre-seeds baseline variables before any mathematical segment blocks compile
             league_key = str(selected_league_filter).lower().strip()
             baseline_goals = 2.65
             if 'engine' in globals() and hasattr(engine, 'COMPETITION_MATRIX'):
                 baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
+            
+            # Fallback initialization seeds to neutralize early calculation crashes
+            weather_goals_multiplier = 1.00
+            coach_attack_multiplier = 1.00
+            coach_volatility_expansion = 1.00
+            home_injury_penalty = 1.00
+            away_injury_penalty = 1.00
+            home_travel_multiplier = 1.00
+            away_travel_multiplier = 1.00
+            home_lookahead_penalty = 1.00
+            away_lookahead_penalty = 1.00
+            referee_volatility_expansion = 1.00
+            visitor_surface_penalty = 1.00
+            home_pitch_width_modifier = 1.00
+            home_style_modifier = 1.00
+            away_style_modifier = 1.00
             
             dash_left, dash_right = st.columns(2)
             
@@ -324,7 +340,7 @@ with tab_pred:
             h_past_bc = filtered_df[filtered_df["home_team"] == target["home_team"]]["home_big_chances"].mean() if len(filtered_df) > 0 else 1.2
             a_past_bc = filtered_df[filtered_df["away_team"] == target["away_team"]]["away_big_chances"].mean() if len(filtered_df) > 0 else 0.9
             pythagorean_luck_ratio = (h_past_sot ** 2) / (h_past_sot ** 2 + a_past_sot ** 2) if (h_past_sot + a_past_sot) > 0 else 0.50
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 10B OF 15: CONVERSION EFFICIENCY & BIVARIATE SKELLAM CORE ENGINE
 # ==============================================================================
             home_motivation_multiplier, away_motivation_multiplier = 1.00, 1.00
@@ -414,7 +430,7 @@ with tab_pred:
             dnb_1_p, dnb_2_p = prob_home / dnb_denom, prob_away / dnb_denom
             home_under_15_p, away_under_15_p = 1.0 - home_over_15_p, 1.0 - away_over_15_p
             ah_away_plus_15_p, ah_away_minus_15_p = 1.0 - ah_home_minus_15_p, 1.0 - ah_home_plus_15_p
-    # ==============================================================================
+                             # ==============================================================================
 # SEGMENT 11 & 12 OF 15: CLEAN PROJECTIONS SHEET & COMPACT EMBEDDED GRAPHING
 # ==============================================================================
             all_markets_rendered_rows = [
@@ -442,7 +458,7 @@ with tab_pred:
                     st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 13 OF 15: CLEAN OUTGOING-ONLY TELEGRAM BOT VALUE PAGER ALERT
 # ==============================================================================
 st.markdown("---")
@@ -471,7 +487,7 @@ with c_col_l:
             tg_conn.request("GET", f"/bot{telegram_bot_token}/sendMessage?chat_id={telegram_chat_id}&text={encoded_tg_msg}")
             tg_conn.close()
         except: pass
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 14 OF 15: SISONKE INVESTMENT LEDGER & REPLICATED STORAGE ENGINE
 # ==============================================================================
 with c_col_r:
@@ -503,7 +519,7 @@ with c_col_r:
     if not display_replicated_ledger_df.empty:
         display_replicated_ledger_df["Cumulative_Units"] = display_replicated_ledger_df["Net_Profit_Units"].cumsum()
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 15A OF 15: CAMPAIGNS LEDGER PRE-SEASON CONFIGURATIONS
 # ==============================================================================
 with tab_tables:
@@ -524,7 +540,7 @@ with tab_tables:
             transfer_boost_map[squad] = 1.0
             departure_decay_map[squad] = 1.0
             pitch_width_map[squad] = 1.0
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 15B (PART 1 OF 2): MONTE CARLO SIMULATION ENGINE CORE LOOP
 # ==============================================================================
         outright_simulation_scoreboard = {team: 0 for team in all_participating_teams}
@@ -564,7 +580,7 @@ with tab_tables:
                         
                 champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
                 outright_simulation_scoreboard[champion_squad] += 1
-# ==============================================================================
+                                                                                          # ==============================================================================
 # SEGMENT 15B (PART 2 OF 2): OUTRIGHT ARBITRAGE OUTPUTS & BSS BACKTESTER
 # ==============================================================================
         outright_results_rows = []
