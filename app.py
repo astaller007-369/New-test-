@@ -147,7 +147,7 @@ with st.sidebar:
                 phase_tag = "⏳ PRE-SEASON (ANCHOR REQ)" if settled_count == 0 else ("🌱 EARLY SEASON (HYBRID)" if settled_count < 20 else "🟢 IN-PROGRESS (DECAY)")
                 radar_rows.append({"Target Competition": str(lg).upper(), "Settled": settled_count, "Upcoming": upcoming_count, "Database Status Room": phase_tag})
             st.dataframe(pd.DataFrame(radar_rows), use_container_width=True, hide_index=True)
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 3B OF 15: INGESTION SETTINGS & PRE-SEASON CALIBRATION SIDEBAR SLIDERS
 # ==============================================================================
     st.markdown("---")
@@ -211,6 +211,15 @@ if api_sync_triggered and resolved_payload_string:
         elif "response" in api_data:
             target_fixtures = api_data["response"]
         total_fixtures = len(target_fixtures)
+    # ==============================================================================
+# SEGMENT 4B OF 15: CLEAN JSON LOOP COMPILER & INGESTION HANDSHAKE GUARD
+# ==============================================================================
+        if 'target_fixtures' in locals() and target_fixtures:
+            target_fixtures.sort(key=lambda x: str(x.get("fixture", {}).get("date", "")), reverse=False)
+    except Exception as api_parse_structural_error:
+        st.session_state.freeze_matrix["last_error"] = f"API Payload Parsing Exception: {str(api_parse_structural_error)}"
+
+is_valid_data = False
 # ==============================================================================
 # SEGMENT 5 OF 15: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
@@ -265,7 +274,10 @@ if uploaded_file is not None:
                 manual_upload_df.loc[red_card_mask, "home_goals"] = manual_upload_df.loc[red_card_mask, "home_goals"].clip(upper=3)
                 manual_upload_df.loc[red_card_mask, "away_goals"] = manual_upload_df.loc[red_card_mask, "away_goals"].clip(upper=3)
 
-        if "match_timestamp" not in manual_upload_df.columns: manual_upload_df["match_timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d")
+        if "match_timestamp" not in manual_upload_df.columns: 
+            manual_upload_df["match_timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d")
+        else:
+            manual_upload_df["match_timestamp"] = manual_upload_df["match_timestamp"].astype(str)
 
         COMPREHENSIVE_METRIC_FALLBACKS = {
             "home_goals": np.nan, "away_goals": np.nan, 
@@ -294,8 +306,10 @@ if uploaded_file is not None:
         st.session_state["full_validation_df"] = manual_upload_df.copy()
         full_validation_df = st.session_state["full_validation_df"]
         is_valid_data = True
-    except Exception as e: st.error(f"Manual Ingestion Shield Error: {e}")
-# ==============================================================================
+    # --- FIXED: PLUGGED IN EXPLICIT CATCHER CLOSING SHIELD TO REPAIR SYNTAX EXCEPTION ---
+    except Exception as e: 
+        st.error(f"Manual Ingestion Shield Error: {e}")
+                                                                                         # ==============================================================================
 # SEGMENT 6 OF 15: MEMORY-ISOLATED INGESTION LAYER & LOCAL DISK AUTO-MIRROR
 # ==============================================================================
 processed_execution_rows = []
@@ -415,7 +429,7 @@ if is_valid_data and not full_validation_df.empty and not api_sync_triggered and
 
 if uploaded_file is None and st.session_state["processed_cache_success"]:
     st.session_state["processed_cache_success"] = False
-        # ==============================================================================
+    # ==============================================================================
 # SEGMENT 7 OF 15: AUTOMATED TIME-DECAY AUTO-TUNER & DROPDOWN LOCK VAULT
 # ==============================================================================
 working_pipeline_df = full_validation_df.copy() if (globals().get("is_valid_data", False) and not full_validation_df.empty) else (pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame())
@@ -552,7 +566,7 @@ with tab_pred:
                     odds_2 = st.number_input("Away Odds (2):", min_value=1.01, value=3.40, step=0.05, key="o_2")
                     odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
                     odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 10A OF 15: MEMORY-ISOLATED HISTORICAL FORM LOOKBACK MATRIX PASS
 # ==============================================================================
 # Automatically handles historical exponential time-decay weightings across active RAM memory
@@ -563,7 +577,7 @@ a_past_bc = filtered_df[filtered_df["away_team"] == target["away_team"]]["away_b
 
 # Apply dynamic Pythagorean Luck Deflation to over-performing tracking metrics
 pythagorean_luck_ratio = (h_past_sot ** 2) / (h_past_sot ** 2 + a_past_sot ** 2) if (h_past_sot + a_past_sot) > 0 else 0.50
-# ==============================================================================
+                             # ==============================================================================
 # SEGMENT 10B OF 15: CONVERSION EFFICIENCY & BIVARIATE SKELLAM CORE ENGINE
 # ==============================================================================
 calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
@@ -827,7 +841,7 @@ with c_col_l:
             tg_conn.close()
         except:
             pass # Fails quietly in the background to prevent any interface layout freeze-ups
-                # ==============================================================================
+# ==============================================================================
 # SEGMENT 14 OF 15: SISONKE INVESTMENT LEDGER & REPLICATED STORAGE ENGINE
 # ==============================================================================
 with c_col_r:
