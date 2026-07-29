@@ -261,7 +261,7 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
 # ==============================================================================
-# SEGMENT 8 & 9 OF 12: DROPDOWN OVERRIDES & LEFT COLS WORKING ENVIRONMENT
+# SEGMENT 8 & 9 OF 11 (PART 1 OF 2): OVERRIDES FRAMEWORK & STRATEGIC DROPDOWNS
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
 
@@ -278,31 +278,24 @@ with tab_pred:
             home_streak_score = sum([1 if r["home_goals"] > r["away_goals"] else -1 for _, r in past_home.iterrows()])
             away_streak_score = sum([1 if r["away_goals"] > r["home_goals"] else -1 for _, r in past_away.iterrows()])
             
-            # --- STATUS SEQUENCING PROTECTION SHIELD ---
+            # --- GLOBAL VARIABLE SEQUENCING SHIELD ---
             league_key = str(selected_league_filter).lower().strip()
             baseline_goals = 2.65
             if 'engine' in globals() and hasattr(engine, 'COMPETITION_MATRIX'):
                 baseline_goals = engine.COMPETITION_MATRIX.get(league_key, {"baseline_goals": 2.65}).get("baseline_goals", 2.65)
             
-            h_status = "stable"
-            a_status = "stable"
-            
+            h_status, a_status = "stable", "stable"
             weather_goals_multiplier = 1.00
             coach_attack_multiplier = 1.00
             coach_volatility_expansion = 1.00
-            home_injury_penalty = 1.00
-            away_injury_penalty = 1.00
-            home_travel_multiplier = 1.00
-            away_travel_multiplier = 1.00
-            home_lookahead_penalty = 1.00
-            away_lookahead_penalty = 1.00
+            home_injury_penalty, away_injury_penalty = 1.00, 1.00
+            home_travel_multiplier, away_travel_multiplier = 1.00, 1.00
+            home_lookahead_penalty, away_lookahead_penalty = 1.00, 1.00
             referee_volatility_expansion = 1.00
             visitor_surface_penalty = 1.00
             home_pitch_width_modifier = 1.00
-            home_style_modifier = 1.00
-            away_style_modifier = 1.00
-            calibrated_home_attack = 1.00
-            calibrated_away_attack = 1.00
+            home_style_modifier, away_style_modifier = 1.00, 1.00
+            calibrated_home_attack, calibrated_away_attack = 1.00, 1.00
             
             home_tactical_style = "Standard Balanced / Unspecified"
             away_tactical_style = "Standard Balanced / Unspecified"
@@ -311,6 +304,60 @@ with tab_pred:
             coach_stability_selection = "Stable Baseline / Standard Tenure"
             lookahead_match_active = "None / Standard Focus Match"
             referee_strictness_profile = "Standard Baseline / Moderate Official"
+            
+            dash_left, dash_right = st.columns(2)
+            
+            with dash_left:
+                st.markdown("### ⛅ Strategic Overrides & Context")
+                with st.expander("📊 Venue Momentum & Streak Strengths", expanded=True):
+                    st.info(f"🏟️ {target['home_team']} Streak Index: {home_streak_score:+} Units")
+                    st.info(f"🚀 {target['away_team']} Streak Index: {away_streak_score:+} Units")
+                with st.expander("⚙️ Strategic Matchday Weather & Format Conditions", expanded=False):
+                    weather_condition_selection = st.selectbox("Current Matchday Weather Climate:", ["Optimal / Standard Ambient / Indoor Dome", "Heavy Rain / High Pitch Slick Surface", "Extreme High Wind / Aerodynamic Drag Line"])
+                    tournament_framework_selection = st.selectbox("Competition Tournament Format Stage:", ["Standard Domestic League Match", "🏆 Neutral-Site Tournament Group Stage", "💀 Knockout Round (Extra-Time Risk)"])
+                    coach_stability_selection = st.selectbox("Host Team Coach Stability Status:", ["Long-Term Stability (2+ Years)", "Stable Baseline / Standard Tenure", "Recent Appointment / Caretaker Setup", "🚨 Public Dressing Room Friction"])
+                with st.expander("🏥 Team News Injury Sliders & Travel Friction", expanded=False):
+                    home_tactical_style = st.selectbox("Home Tactical Blueprint Style:", ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"])
+                    away_tactical_style = st.selectbox("Away Tactical Blueprint Style:", ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"])
+                    home_heavy_travel = st.checkbox("🚨 Home Team: Long-Distance Travel Exposure Check", value=False)
+                    away_heavy_travel = st.checkbox("🚨 Away Team: Long-Distance Travel Exposure Check", value=False)
+                    home_missing_talent_tier = st.select_slider("Home Key Player Injury / Suspension Severity:", options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"], value="Full Strength Squad")
+                    away_missing_talent_tier = st.select_slider("Away Key Player Injury / Suspension Severity:", options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"], value="Full Strength Squad")
+                with st.expander("🧠 Referee Profiles, Pitch Blueprints & Rivalries", expanded=False):
+                    lookahead_match_active = st.selectbox("Look-Ahead Match Distraction Profile:", ["None / Standard Focus Match", "🏠 Home Team: Massive Impending Cup/Derby Next Week", "✈️ Away Team: Massive Impending Cup/Derby Next Week"])
+                    referee_strictness_profile = st.selectbox("Assigned Referee Strictness Profile:", ["Standard Baseline / Moderate Official", "Lenient / High-Flow Context", "🚨 Strict / Cards & Penalties Inclined"])
+                    asymmetric_pitch_climate_advantage = st.checkbox("Host Artificial Turf Advantage Active Check", value=False)
+                    asymmetric_pitch_width_advantage = st.checkbox("📐 Host Narrow Pitch Blueprint Surface Active Check", value=False)
+                    derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High Intensity Rivalry Check", value=False)
+    # ==============================================================================
+# SEGMENT 8 & 9 OF 11 (PART 2 OF 2): MULTI-MARKET BOOKMAKER ODDS ENTRY VAULT
+# ==============================================================================
+                with st.expander("💰 Bookmaker Entry Lines & Odds Setup", expanded=True):
+                    odds_1 = st.number_input("Home Odds (1):", min_value=1.01, value=2.10, step=0.05, key="o_1")
+                    odds_X = st.number_input("Draw Odds (X):", min_value=1.01, value=3.20, step=0.05, key="o_x")
+                    odds_2 = st.number_input("Away Odds (2):", min_value=1.01, value=3.40, step=0.05, key="o_2")
+                    odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
+                    odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
+                    odds_correct_score = st.number_input("Target Correct Score Odds (e.g., 1-0 or 1-1):", min_value=1.01, value=7.50, step=0.10, key="o_cs")
+                    
+                    with st.expander("🧩 Alternative Lines & Props Entry (Click to Open)", expanded=False):
+                        odds_1X = st.number_input("Double Chance 1X Odds:", min_value=1.01, value=1.35, step=0.02)
+                        odds_X2 = st.number_input("Double Chance X2 Odds:", min_value=1.01, value=1.65, step=0.02)
+                        odds_12 = st.number_input("Double Chance 12 Odds:", min_value=1.01, value=1.25, step=0.02)
+                        odds_dnb1 = st.number_input("Draw No Bet DNB1 Odds:", min_value=1.01, value=1.50, step=0.05)
+                        odds_dnb2 = st.number_input("Draw No Bet DNB2 Odds:", min_value=1.01, value=2.45, step=0.05)
+                        odds_btts_y = st.number_input("BTTS Yes Odds:", min_value=1.01, value=1.80, step=0.05)
+                        odds_btts_n = st.number_input("BTTS No Odds:", min_value=1.01, value=1.95, step=0.05)
+                        odds_home_over_15 = st.number_input("Home Team Over 1.5 Goals Odds:", min_value=1.01, value=2.10, step=0.05)
+                        odds_home_under_15 = st.number_input("Home Team Under 1.5 Goals Odds:", min_value=1.01, value=1.65, step=0.05)
+                        odds_away_over_15 = st.number_input("Away Team Over 1.5 Goals Odds:", min_value=1.01, value=3.10, step=0.05)
+                        odds_away_under_15 = st.number_input("Away Team Under 1.5 Goals Odds:", min_value=1.01, value=1.35, step=0.05)
+                        odds_ah_home_minus_15 = st.number_input("Asian Handicap Home -1.5 Odds:", min_value=1.01, value=3.80, step=0.10)
+                        odds_ah_away_plus_15 = st.number_input("Asian Handicap Away +1.5 Odds:", min_value=1.01, value=1.25, step=0.02)
+                        odds_ah_home_plus_15 = st.number_input("Asian Handicap Home +1.5 Odds:", min_value=1.01, value=1.18, step=0.02)
+                        odds_ah_away_minus_15 = st.number_input("Asian Handicap Away -1.5 Odds:", min_value=1.01, value=5.50, step=0.10)
+                        odds_home_cs_y = st.number_input("Home Clean Sheet Yes Odds:", min_value=1.01, value=2.60, step=0.05)
+                        odds_away_cs_y = st.number_input("Away Clean Sheet Yes Odds:", min_value=1.01, value=3.90, step=0.05)
 # ==============================================================================
 # SEGMENT 10A OF 12: UNIFIED MIDDLE WORKSPACE & DROPDOWNS MANAGEMENT
 # ==============================================================================
@@ -345,7 +392,7 @@ with tab_pred:
                     odds_over = st.number_input("Over 2.5 Goals Odds:", min_value=1.01, value=1.95, step=0.05, key="o_ov")
                     odds_under = st.number_input("Under 2.5 Goals Odds:", min_value=1.01, value=1.85, step=0.05, key="o_un")
                     odds_correct_score = st.number_input("Target Correct Score Odds (e.g., 1-0 or 1-1):", min_value=1.01, value=7.50, step=0.10, key="o_cs")
-            # ==============================================================================
+    # ==============================================================================
 # SEGMENT 10B OF 12: ENGINE THREE-STAGE PROBABILITY OPTIMIZATION LAYER
 # ==============================================================================
             # 📍 SEGMENT 10A: HISTORICAL FORM LOOKBACK MATRIX PASS
@@ -427,7 +474,7 @@ with tab_pred:
             calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
             if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
             if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
-# ==============================================================================
+                       # ==============================================================================
 # SEGMENT 10C (PART 1 OF 2): COMBINATORIAL PASS & MULTI-MARKET ARRAYS
 # ==============================================================================
             # 📍 CORE ENGAGEMENT COMPILATION PASS
@@ -489,7 +536,7 @@ with tab_pred:
             dnb_1_p, dnb_2_p = prob_home / dnb_denom, prob_away / dnb_denom
             home_under_15_p, away_under_15_p = 1.0 - home_over_15_p, 1.0 - away_over_15_p
             ah_away_plus_15_p, ah_away_minus_15_p = 1.0 - ah_home_minus_15_p, 1.0 - ah_home_plus_15_p
-# ==============================================================================
+            # ==============================================================================
 # SEGMENT 10C (PART 2 OF 2): OPTION VALUATION MATRICES SHEET RENDER
 # ==============================================================================
             # Map out your entire expanded 22 global options matrix cleanly
@@ -551,7 +598,7 @@ with tab_pred:
                     st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-    # ==============================================================================
+        # ==============================================================================
 # SEGMENT 11A OF 12: TELEGRAM BOT PAGER & BANKROLL INVESTMENTS LEDGER
 # ==============================================================================
 st.markdown("---")
@@ -610,7 +657,7 @@ with c_col_r:
     if not display_replicated_ledger_df.empty:
         display_replicated_ledger_df["Cumulative_Units"] = display_replicated_ledger_df["Net_Profit_Units"].cumsum()
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 11B (PART 1 OF 2): OUTRIGHT FORECASTING MONTE CARLO SIMULATOR
 # ==============================================================================
 with tab_tables:
@@ -678,7 +725,7 @@ with tab_tables:
                         
                 champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
                 outright_simulation_scoreboard[champion_squad] += 1
-        # ==============================================================================
+            # ==============================================================================
 # SEGMENT 11B (PART 2 OF 2): FUTURES ARBITRAGE, BSS ROOM & EFFICIENCY LEDGER
 # ==============================================================================
         outright_results_rows = []
@@ -750,3 +797,4 @@ with tab_past:
             st.info("No historical matches found for this filter combination.")
     else:
         st.info("Database matrix workspace is currently unpopulated.")
+    
