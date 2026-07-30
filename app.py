@@ -290,7 +290,7 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 8 & 9 OF 11 (PART 1 OF 2): RE-HARDENED UNIQUE ELEMENT WIDGET ARMORE
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
@@ -360,7 +360,7 @@ with tab_pred:
                     asymmetric_pitch_climate_advantage = st.checkbox("Host Artificial Turf Advantage Active Check", value=False, key="cb_turf_final_v1")
                     asymmetric_pitch_width_advantage = st.checkbox("📐 Host Narrow Pitch Blueprint Surface Active Check", value=False, key="cb_width_final_v1")
                     derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High Intensity Rivalry Check", value=False, key="cb_derby_final_v1")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 8 & 9 OF 11 (PART 2 OF 2): MULTI-MARKET BOOKMAKER ODDS ENTRY VAULT
 # ==============================================================================
                 with st.expander("💰 Bookmaker Entry Lines & Odds Setup", expanded=True):
@@ -389,7 +389,7 @@ with tab_pred:
                         odds_ah_away_minus_15 = st.number_input("Asian Handicap Away -1.5 Odds:", min_value=1.01, value=5.50, step=0.10, key="num_oaam15_core")
                         odds_home_cs_y = st.number_input("Home Clean Sheet Yes Odds:", min_value=1.01, value=2.60, step=0.05, key="num_ohcsy_core")
                         odds_away_cs_y = st.number_input("Away Clean Sheet Yes Odds:", min_value=1.01, value=3.90, step=0.05, key="num_oacsy_core")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 10A OF 11: LEFT PANEL INPUT OVERRIDES WORKSPACE
 # ==============================================================================
             # --- STEP 1: OPEN WIDESCREEN GRID CHANNELS ---
@@ -418,7 +418,7 @@ with tab_pred:
                     asymmetric_pitch_climate_advantage = st.checkbox("Host Artificial Turf Advantage Active Check", value=False, key="cb_turf_core")
                     asymmetric_pitch_width_advantage = st.checkbox("📐 Host Narrow Pitch Blueprint Surface Active Check", value=False, key="cb_width_core")
                     derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High Intensity Rivalry Check", value=False, key="cb_derby_core")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 10B OF 11: ENGINE PROBABILITY CALCULATION CORE LAYER
 # ==============================================================================
             # --- STEP 3: RUN THE ADVANCED MATHEMATICAL THREE-STAGE OPTIMIZATION ENGINE ---
@@ -501,7 +501,7 @@ with tab_pred:
             calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
             if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
             if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 10C OF 11 (PART 1 OF 2): ENGINE COMPILATION & MARKETS MATRICES MAPS
 # ==============================================================================
             # 📍 CORE ENGAGEMENT COMPILATION PASS
@@ -527,7 +527,7 @@ with tab_pred:
             home_over_15_p, away_over_15_p = 0.0, 0.0
             ah_home_minus_15_p, ah_home_plus_15_p = 0.0, 0.0
             
-            # --- FIXED: EXPLICITLY EXTRACT TUPLE INDICES BEFORE INT CASTING ---
+            # Extract explicit shape tuple coordinates before casting to prevent errors
             max_r = int(prob_matrix.shape[0])
             max_a = int(prob_matrix.shape[1])
             graph_data_dict = {}
@@ -593,22 +593,25 @@ with tab_pred:
             sd = len(past_home) + len(past_away)
             confidence = min(100, int((sd / 10.0) * 100)) if sd > 0 else 50
             qualified_projections = []
-    # ==============================================================================
+                       # ==============================================================================
 # SEGMENT 10C OF 11 (PART 2 OF 2): RIGHT PANEL INTERFACE DISPLAY LAYOUT
 # ==============================================================================
             # --- STEP 4: RENDER COMPILING TICKETS (RIGHT PANEL) ---
             with dash_right:
                 st.markdown("### 📊 Value Analytics & Tickets")
                 highest_ev_found = (prob_home * odds_1) - 1.0
-                if prob_home * odds_1 > 1.05 and confidence >= confidence_floor_input:
-                    st.success("🔥 ELITE PROJECTIONS UNLOCKED (+5.0% EV Edge Verified)")
+                
+                # RE-GATED PASS AT 3% LOWERED BARRIER
+                if prob_home * odds_1 > 1.03 and confidence >= confidence_floor_input:
+                    st.success("🔥 ELITE PROJECTIONS UNLOCKED (+3.0% EV Edge Verified)")
                     qualified_projections.append(("HOME WIN (1)", highest_ev_found, prob_home, odds_1, 2.50, "HIGH VALUE"))
-                else: st.error("📉 SELECTION REJECTED: Internal profit limits deficit bounds.")
+                else: 
+                    st.error("📉 SELECTION REJECTED: Internal profit limits deficit bounds.")
                     
                 with st.expander("🎯 Exact Scoreline Probability Graph & Distribution", expanded=True):
                     if graph_data_dict: st.bar_chart(pd.DataFrame(list(graph_data_dict.items()), columns=["Scoreline", "Probability (%)"]).set_index("Scoreline"), use_container_width=True)
                 
-                # --- EXACT SCORELINE VALUATION DROPDOWN MATRIX CONTAINER ---
+                # --- EXACT SCORELINE VALUATION DROPDOWN MATRIX ---
                 with st.expander("🎯 Exact Scoreline Valuation Matrix (Top 10 Scenarios)", expanded=False):
                     st.markdown("🔒 *Tucked away safely to eliminate mobile phone scrolling lag.*")
                     if scoreline_scenarios_list:
@@ -630,30 +633,10 @@ with tab_pred:
                     a_avg_conceded = float(a_s.get("avg_goals_conceded", 1.4))
                     
                     conversion_metrics_rows = [
-                        {
-                            "Competing Squad Team": str(target["home_team"]).upper(),
-                            "Action Path Focus": "Attacking (Volume Needed to SCORE 1 Goal)",
-                            "Shots on Target (SOT)": f"{h_past_sot / max(0.1, h_avg_scored):.1f} SOT",
-                            "Big Chances Required": f"{h_past_bc / max(0.1, h_avg_scored):.1f} Choices"
-                        },
-                        {
-                            "Competing Squad Team": str(target["home_team"]).upper(),
-                            "Action Path Focus": "Defensive (Opponent Volume Needed to CONCEDE 1)",
-                            "Shots on Target (SOT)": f"{a_past_sot / max(0.1, h_avg_conceded):.1f} SOT",
-                            "Big Chances Required": f"{a_past_bc / max(0.1, h_avg_conceded):.1f} Choices"
-                        },
-                        {
-                            "Competing Squad Team": str(target["away_team"]).upper(),
-                            "Action Path Focus": "Attacking (Volume Needed to SCORE 1 Goal)",
-                            "Shots on Target (SOT)": f"{a_past_sot / max(0.1, a_avg_scored):.1f} SOT",
-                            "Big Chances Required": f"{a_past_bc / max(0.1, a_avg_scored):.1f} Choices"
-                        },
-                        {
-                            "Competing Squad Team": str(target["away_team"]).upper(),
-                            "Action Path Focus": "Defensive (Opponent Volume Needed to CONCEDE 1)",
-                            "Shots on Target (SOT)": f"{h_past_sot / max(0.1, a_avg_conceded):.1f} SOT",
-                            "Big Chances Required": f"{h_past_bc / max(0.1, a_avg_conceded):.1f} Choices"
-                        }
+                        {"Competing Squad Team": str(target["home_team"]).upper(), "Action Path Focus": "Attacking (Volume Needed to SCORE 1 Goal)", "Shots on Target (SOT)": f"{h_past_sot / max(0.1, h_avg_scored):.1f} SOT", "Big Chances Required": f"{h_past_bc / max(0.1, h_avg_scored):.1f} Choices"},
+                        {"Competing Squad Team": str(target["home_team"]).upper(), "Action Path Focus": "Defensive (Opponent Volume Needed to CONCEDE 1)", "Shots on Target (SOT)": f"{a_past_sot / max(0.1, h_avg_conceded):.1f} SOT", "Big Chances Required": f"{a_past_bc / max(0.1, h_avg_conceded):.1f} Choices"},
+                        {"Competing Squad Team": str(target["away_team"]).upper(), "Action Path Focus": "Attacking (Volume Needed to SCORE 1 Goal)", "Shots on Target (SOT)": f"{a_past_sot / max(0.1, a_avg_scored):.1f} SOT", "Big Chances Required": f"{a_past_bc / max(0.1, a_avg_scored):.1f} Choices"},
+                        {"Competing Squad Team": str(target["away_team"]).upper(), "Action Path Focus": "Defensive (Opponent Volume Needed to CONCEDE 1)", "Shots on Target (SOT)": f"{h_past_sot / max(0.1, a_avg_conceded):.1f} SOT", "Big Chances Required": f"{h_past_bc / max(0.1, a_avg_conceded):.1f} Choices"}
                     ]
                     st.dataframe(pd.DataFrame(conversion_metrics_rows), use_container_width=True, hide_index=True)
 
@@ -661,7 +644,7 @@ with tab_pred:
                     st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-    # ==============================================================================
+                # ==============================================================================
 # SEGMENT 11A OF 11: TELEGRAM BOT PAGER & BANKROLL INVESTMENTS LEDGER
 # ==============================================================================
 st.markdown("---")
@@ -733,7 +716,7 @@ with c_col_r:
     if not display_replicated_ledger_df.empty:
         display_replicated_ledger_df["Cumulative_Units"] = display_replicated_ledger_df["Net_Profit_Units"].cumsum()
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 11B (PART 1 OF 2): FIXED STANDINGS & COMPACT TEAM TURNOVER COLS
 # ==============================================================================
 with tab_tables:
