@@ -41,14 +41,43 @@ LEAGUE_API_IDENTIFIER_REGISTRY = {
     "africa cup of nations": 6, "fifa world cup": 1
 }
 # ==============================================================================
-# SEGMENT 3 OF 11: CORPORATE STRUCTURAL BRANDING LAYER & SIDEBAR LAYOUT
+# SEGMENT 3 OF 11: CORPORATE STRUCTURAL BRANDING LAYER & SIDEBAR VAULT EXPLORER
 # ==============================================================================
 st.title("🦅 Sisonke Football Predictive Analytics Hub")
 st.markdown("##### *We Beat The Odds*")
 st.sidebar.image("https://unsplash.com", use_container_width=True)
 st.sidebar.markdown("### 🎛️ Active Data Control Room")
 st.sidebar.caption("Sisonke Engine Status: 🟢 High-Utility Operations Standby")
-    # ==============================================================================
+
+# --- NEW: SIDEBAR BACKUP VAULT DOWNLOADER GATE ---
+# Automatically extracts your hard-drive duplicates and maps them to a responsive UI download button
+backup_dir_folder_path = "sisonke_vault_backups"
+st.sidebar.markdown("---")
+st.sidebar.markdown("#### 🔒 Hard-Drive Mirror Vault Explorer")
+
+if os.path.exists(backup_dir_folder_path):
+    all_vault_csv_files = sorted([f for f in os.listdir(backup_dir_folder_path) if f.endswith(".csv")], reverse=True)
+    if all_vault_csv_files:
+        selected_download_target_file = st.sidebar.selectbox("Select Vault Backup to Export:", all_vault_csv_files, key="sb_vault_explorer_export")
+        full_target_file_path = f"{backup_dir_folder_path}/{selected_download_target_file}"
+        
+        try:
+            with open(full_target_file_path, "rb") as vault_file_stream:
+                vault_bytes_data = vault_file_stream.read()
+            st.sidebar.download_button(
+                label=f"📥 Download {selected_download_target_file[:18]}...",
+                data=vault_bytes_data,
+                file_name=selected_download_target_file,
+                mime="text/csv",
+                key="btn_vault_file_download_gate"
+            )
+        except Exception as explorer_err:
+            st.sidebar.caption(f"Vault Read Latency: {explorer_err}")
+    else:
+        st.sidebar.info("Vault Standby: Log your first ledger ticket to initialize duplicates.")
+else:
+    st.sidebar.info("Vault Directory Standby: Save a ticket to generate partition folder paths.")
+# ==============================================================================
 # SEGMENT 4 OF 11: MULTI-LEAGUES MANUAL CSV INGESTION PORT
 # ==============================================================================
 # Accepts unplayed future fixtures or recent historical matchday result slates
@@ -261,8 +290,8 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
-# ==============================================================================
-# SEGMENT 8 & 9 OF 11 (PART 1 OF 2): FIXED UNIQUE ELEMENT WIDGET ARMORE
+    # ==============================================================================
+# SEGMENT 8 & 9 OF 11 (PART 1 OF 2): RE-HARDENED UNIQUE ELEMENT WIDGET ARMORE
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
 
@@ -314,23 +343,24 @@ with tab_pred:
                     st.info(f"🏟️ {target['home_team']} Streak Index: {home_streak_score:+} Units")
                     st.info(f"🚀 {target['away_team']} Streak Index: {away_streak_score:+} Units")
                 with st.expander("⚙️ Strategic Matchday Weather & Format Conditions", expanded=False):
-                    weather_condition_selection = st.selectbox("Current Matchday Weather Climate:", ["Optimal / Standard Ambient / Indoor Dome", "Heavy Rain / High Pitch Slick Surface", "Extreme High Wind / Aerodynamic Drag Line"], key="sb_weather_core")
-                    tournament_framework_selection = st.selectbox("Competition Tournament Format Stage:", ["Standard Domestic League Match", "🏆 Neutral-Site Tournament Group Stage", "💀 Knockout Round (Extra-Time Risk)"], key="sb_tournament_core")
-                    coach_stability_selection = st.selectbox("Host Team Coach Stability Status:", ["Long-Term Stability (2+ Years)", "Stable Baseline / Standard Tenure", "Recent Appointment / Caretaker Setup", "🚨 Public Dressing Room Friction"], key="sb_coach_core")
+                    # --- ISOLATED CRITICAL COMPILATION KEY STRINGS TO PREVENT DUPLICATES ---
+                    weather_condition_selection = st.selectbox("Current Matchday Weather Climate:", ["Optimal / Standard Ambient / Indoor Dome", "Heavy Rain / High Pitch Slick Surface", "Extreme High Wind / Aerodynamic Drag Line"], key="sb_weather_final_v1")
+                    tournament_framework_selection = st.selectbox("Competition Tournament Format Stage:", ["Standard Domestic League Match", "🏆 Neutral-Site Tournament Group Stage", "💀 Knockout Round (Extra-Time Risk)"], key="sb_tournament_final_v1")
+                    coach_stability_selection = st.selectbox("Host Team Coach Stability Status:", ["Long-Term Stability (2+ Years)", "Stable Baseline / Standard Tenure", "Recent Appointment / Caretaker Setup", "🚨 Public Dressing Room Friction"], key="sb_coach_final_v1")
                 with st.expander("🏥 Team News Injury Sliders & Travel Friction", expanded=False):
-                    home_tactical_style = st.selectbox("Home Tactical Blueprint Style:", ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"], key="sb_h_style_core")
-                    away_tactical_style = st.selectbox("Away Tactical Blueprint Style:", ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"], key="sb_a_style_core")
-                    home_heavy_travel = st.checkbox("🚨 Home Team: Long-Distance Travel Exposure Check", value=False, key="cb_h_travel_core")
-                    away_heavy_travel = st.checkbox("🚨 Away Team: Long-Distance Travel Exposure Check", value=False, key="cb_a_travel_core")
-                    home_missing_talent_tier = st.select_slider("Home Key Player Injury / Suspension Severity:", options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"], value="Full Strength Squad", key="sl_h_injury_core")
-                    away_missing_talent_tier = st.select_slider("Away Key Player Injury / Suspension Severity:", options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"], value="Full Strength Squad", key="sl_a_injury_core")
+                    home_tactical_style = st.selectbox("Home Tactical Blueprint Style:", ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"], key="sb_h_style_final_v1")
+                    away_tactical_style = st.selectbox("Away Tactical Blueprint Style:", ["Standard Balanced / Unspecified", "High-Possession Pressing", "Fast Transition Counter-Attack", "Deep Ultra-Defensive Low-Block"], key="sb_a_style_final_v1")
+                    home_heavy_travel = st.checkbox("🚨 Home Team: Long-Distance Travel Exposure Check", value=False, key="cb_h_travel_final_v1")
+                    away_heavy_travel = st.checkbox("🚨 Away Team: Long-Distance Travel Exposure Check", value=False, key="cb_a_travel_final_v1")
+                    home_missing_talent_tier = st.select_slider("Home Key Player Injury / Suspension Severity:", options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"], value="Full Strength Squad", key="sl_h_injury_final_v1")
+                    away_missing_talent_tier = st.select_slider("Away Key Player Injury / Suspension Severity:", options=["Full Strength Squad", "Tier 2 Depth Missing (5% Cap)", "Tier 1 Engine Asset Missing (15% Cap)"], value="Full Strength Squad", key="sl_a_injury_final_v1")
                 with st.expander("🧠 Referee Profiles, Pitch Blueprints & Rivalries", expanded=False):
-                    lookahead_match_active = st.selectbox("Look-Ahead Match Distraction Profile:", ["None / Standard Focus Match", "🏠 Home Team: Massive Impending Cup/Derby Next Week", "✈️ Away Team: Massive Impending Cup/Derby Next Week"], key="sb_lookahead_core")
-                    referee_strictness_profile = st.selectbox("Assigned Referee Strictness Profile:", ["Standard Baseline / Moderate Official", "Lenient / High-Flow Context", "🚨 Strict / Cards & Penalties Inclined"], key="sb_ref_core")
-                    asymmetric_pitch_climate_advantage = st.checkbox("Host Artificial Turf Advantage Active Check", value=False, key="cb_turf_core")
-                    asymmetric_pitch_width_advantage = st.checkbox("📐 Host Narrow Pitch Blueprint Surface Active Check", value=False, key="cb_width_core")
-                    derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High Intensity Rivalry Check", value=False, key="cb_derby_core")
-    # ==============================================================================
+                    lookahead_match_active = st.selectbox("Look-Ahead Match Distraction Profile:", ["None / Standard Focus Match", "🏠 Home Team: Massive Impending Cup/Derby Next Week", "✈️ Away Team: Massive Impending Cup/Derby Next Week"], key="sb_lookahead_final_v1")
+                    referee_strictness_profile = st.selectbox("Assigned Referee Strictness Profile:", ["Standard Baseline / Moderate Official", "Lenient / High-Flow Context", "🚨 Strict / Cards & Penalties Inclined"], key="sb_ref_final_v1")
+                    asymmetric_pitch_climate_advantage = st.checkbox("Host Artificial Turf Advantage Active Check", value=False, key="cb_turf_final_v1")
+                    asymmetric_pitch_width_advantage = st.checkbox("📐 Host Narrow Pitch Blueprint Surface Active Check", value=False, key="cb_width_final_v1")
+                    derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High Intensity Rivalry Check", value=False, key="cb_derby_final_v1")
+# ==============================================================================
 # SEGMENT 8 & 9 OF 11 (PART 2 OF 2): MULTI-MARKET BOOKMAKER ODDS ENTRY VAULT
 # ==============================================================================
                 with st.expander("💰 Bookmaker Entry Lines & Odds Setup", expanded=True):
@@ -359,7 +389,7 @@ with tab_pred:
                         odds_ah_away_minus_15 = st.number_input("Asian Handicap Away -1.5 Odds:", min_value=1.01, value=5.50, step=0.10, key="num_oaam15_core")
                         odds_home_cs_y = st.number_input("Home Clean Sheet Yes Odds:", min_value=1.01, value=2.60, step=0.05, key="num_ohcsy_core")
                         odds_away_cs_y = st.number_input("Away Clean Sheet Yes Odds:", min_value=1.01, value=3.90, step=0.05, key="num_oacsy_core")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 10A OF 11: LEFT PANEL INPUT OVERRIDES WORKSPACE
 # ==============================================================================
             # --- STEP 1: OPEN WIDESCREEN GRID CHANNELS ---
@@ -388,7 +418,7 @@ with tab_pred:
                     asymmetric_pitch_climate_advantage = st.checkbox("Host Artificial Turf Advantage Active Check", value=False, key="cb_turf_core")
                     asymmetric_pitch_width_advantage = st.checkbox("📐 Host Narrow Pitch Blueprint Surface Active Check", value=False, key="cb_width_core")
                     derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High Intensity Rivalry Check", value=False, key="cb_derby_core")
-        # ==============================================================================
+# ==============================================================================
 # SEGMENT 10B OF 11: ENGINE PROBABILITY CALCULATION CORE LAYER
 # ==============================================================================
             # --- STEP 3: RUN THE ADVANCED MATHEMATICAL THREE-STAGE OPTIMIZATION ENGINE ---
@@ -471,7 +501,7 @@ with tab_pred:
             calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
             if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
             if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
-# ==============================================================================
+        # ==============================================================================
 # SEGMENT 10C OF 11 (PART 1 OF 2): ENGINE COMPILATION & MARKETS MATRICES MAPS
 # ==============================================================================
             # 📍 CORE ENGAGEMENT COMPILATION PASS
@@ -563,7 +593,7 @@ with tab_pred:
             sd = len(past_home) + len(past_away)
             confidence = min(100, int((sd / 10.0) * 100)) if sd > 0 else 50
             qualified_projections = []
-        # ==============================================================================
+# ==============================================================================
 # SEGMENT 10C OF 11 (PART 2 OF 2): RIGHT PANEL INTERFACE DISPLAY LAYOUT
 # ==============================================================================
             # --- STEP 4: RENDER COMPILING TICKETS (RIGHT PANEL) ---
@@ -703,7 +733,7 @@ with c_col_r:
     if not display_replicated_ledger_df.empty:
         display_replicated_ledger_df["Cumulative_Units"] = display_replicated_ledger_df["Net_Profit_Units"].cumsum()
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
-        # ==============================================================================
+# ==============================================================================
 # SEGMENT 11B (PART 1 OF 2): OUTRIGHT FORECASTING MONTE CARLO SIMULATOR
 # ==============================================================================
 with tab_tables:
@@ -793,7 +823,7 @@ with tab_tables:
                         
                 champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
                 outright_simulation_scoreboard[champion_squad] += 1
-                # ==============================================================================
+# ==============================================================================
 # SEGMENT 11B (PART 2 OF 2): FUTURES ARBITRAGE, BSS ROOM & EFFICIENCY LEDGER
 # ==============================================================================
         outright_results_rows = []
