@@ -151,7 +151,7 @@ if uploaded_file is not None:
         full_validation_df = st.session_state["full_validation_df"]
         is_valid_data = True
     except Exception as e: st.error(f"Manual Ingestion Shield Error: {e}")
-# ==============================================================================
+        # ==============================================================================
 # SEGMENT 6 OF 11: MEMORY-ISOLATED INGESTION LAYER & LOCAL DISK AUTO-MIRROR
 # ==============================================================================
 processed_execution_rows = []
@@ -240,7 +240,7 @@ if uploaded_file is None and st.session_state["processed_cache_success"]:
     st.session_state["processed_cache_success"] = False
 full_validation_df = st.session_state["full_validation_df"]
 # ==============================================================================
-# SEGMENT 7 OF 11: AUTOMATED TIME-DECAY AUTO-TUNER & DROPDOWN LOCK VAULT
+# SEGMENT 7 OF 11: AUTOMATED TIME-DECAY AUTO-TUNER & SELECTIVE PURGE PANEL
 # ==============================================================================
 working_pipeline_df = full_validation_df.copy() if not full_validation_df.empty else (pd.read_csv(storage_path) if os.path.exists(storage_path) else pd.DataFrame())
 
@@ -287,6 +287,47 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
     backtest_window = st.slider("Backtest Window Size (Days)", 90, 365, 180, 5)
     confidence_floor_input = st.slider("Strict Confidence Floor Trigger (%)", 15, 85, 50, 5)
     accuracy_threshold_floor = st.slider("Strict Accuracy Floor (%)", 35, 75, 50, 5) / 100.0
+    
+    # --- UPGRADED: SELECTIVE DATABASE PURGE ENGINE PANEL ---
+    st.markdown("---")
+    st.markdown("##### 🧹 Targeted System Maintenance Guard")
+    st.caption("Isolate and purge specific league datasets from your local drive array natively:")
+    
+    available_leagues_in_file = [str(lg).upper() for lg in uploaded_leagues]
+    leagues_targeted_for_purge = st.multiselect("Select Specific League Workspace(s) to Delete:", available_leagues_in_file, key="ms_purge_leagues_selector")
+    
+    col_purge1, col_purge2 = st.columns(2)
+    with col_purge1:
+        execute_targeted_purge = st.button("🗑️ PURGE SELECTED SLATES", help="Deletes only the selected leagues from storage.", key="btn_selective_purge_trigger")
+    with col_purge2:
+        execute_total_wipe = st.button("🚨 WIPE ALL STORAGE ROWS", help="Wipes out the entire master file from disk.", key="btn_total_wipe_trigger")
+        
+    if execute_targeted_purge and leagues_targeted_for_purge:
+        if os.path.exists(storage_path):
+            current_master_disk_df = pd.read_csv(storage_path)
+            current_master_disk_df.columns = [str(c).strip().lower() for c in current_master_disk_df.columns]
+            
+            # Lowercase selection strings to guarantee accurate matrix indexing filters match
+            target_purge_strings_lowercased = [str(x).lower().strip() for x in leagues_targeted_for_purge]
+            purged_result_disk_df = current_master_disk_df[~current_master_disk_df["league_country"].str.lower().str.strip().isin(target_purge_strings_lowercased)]
+            
+            if not purged_result_disk_df.empty:
+                purged_result_disk_df.to_csv(storage_path, index=False)
+                st.session_state["full_validation_df"] = purged_result_disk_df.copy()
+            else:
+                os.remove(storage_path)
+                st.session_state["full_validation_df"] = pd.DataFrame()
+                
+            st.session_state["processed_cache_success"] = False
+            st.toast("🧹 Selective Purge Complete! Targeted Slates Erased From Drive.")
+            st.rerun()
+            
+    if execute_total_wipe:
+        if os.path.exists(storage_path): os.remove(storage_path)
+        st.session_state["full_validation_df"] = pd.DataFrame()
+        st.session_state["processed_cache_success"] = False
+        st.toast("🚨 Total Drive Partition Reset Complete!")
+        st.rerun()
 
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
@@ -389,7 +430,7 @@ with tab_pred:
                         odds_ah_away_minus_15 = st.number_input("Asian Handicap Away -1.5 Odds:", min_value=1.01, value=5.50, step=0.10, key="num_oaam15_core")
                         odds_home_cs_y = st.number_input("Home Clean Sheet Yes Odds:", min_value=1.01, value=2.60, step=0.05, key="num_ohcsy_core")
                         odds_away_cs_y = st.number_input("Away Clean Sheet Yes Odds:", min_value=1.01, value=3.90, step=0.05, key="num_oacsy_core")
-# ==============================================================================
+                                                      # ==============================================================================
 # SEGMENT 10A OF 11: LEFT PANEL INPUT OVERRIDES WORKSPACE
 # ==============================================================================
             # --- STEP 1: OPEN WIDESCREEN GRID CHANNELS ---
@@ -501,8 +542,8 @@ with tab_pred:
             calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
             if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
             if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
-# ==============================================================================
-# SEGMENT 10C OF 11 (PART 1 OF 2): ENGINE COMPILATION & MARKETS MATRICES MAPS
+    # ==============================================================================
+# SEGMENT 10C OF 11 (PART 1 OF 2): ENGINE COMPILATION & 5-COLUMN OPTIONS SHEET
 # ==============================================================================
             # 📍 CORE ENGAGEMENT COMPILATION PASS
             res = engine.predict_match_probabilities(filtered_df, target["home_team"], target["away_team"], target_ts, calibrated_baseline_goals, calibrated_home_attack, calibrated_away_attack, h_status, a_status, max_score_cap, vol_dampener_adjusted, False)
@@ -536,18 +577,11 @@ with tab_pred:
             for r_idx in range(max_r):
                 for a_idx in range(max_a):
                     cell_p = prob_matrix[r_idx, a_idx]
-                    if r_idx == a_idx and (exp_h_total_goals + exp_a_total_goals) < 2.30: 
-                        prob_matrix[r_idx, a_idx] = cell_p * 1.12
-                    
+                    if r_idx == a_idx and (exp_h_total_goals + exp_a_total_goals) < 2.30: prob_matrix[r_idx, a_idx] = cell_p * 1.12
                     cell_p = prob_matrix[r_idx, a_idx]
                     if cell_p >= 0.001: 
                         graph_data_dict[f"{r_idx}-{a_idx}"] = float(cell_p * 100)
-                        scoreline_scenarios_list.append({
-                            "Scoreline Scenario": f"{r_idx} - {a_idx}",
-                            "Probability": cell_p,
-                            "Fair Value Odds": 1.0 / cell_p if cell_p > 0 else 999.00
-                        })
-                        
+                        scoreline_scenarios_list.append({"Scoreline Scenario": f"{r_idx} - {a_idx}", "Probability": cell_p, "Fair Value Odds": 1.0 / cell_p if cell_p > 0 else 999.00})
                     if r_idx + a_idx > 2.5: over_25_p += cell_p
                     if r_idx > 0 and a_idx > 0: btts_yes_p += cell_p
                     if a_idx == 0: home_cs_p += cell_p
@@ -564,54 +598,54 @@ with tab_pred:
             home_under_15_p, away_under_15_p = 1.0 - home_over_15_p, 1.0 - away_over_15_p
             ah_away_plus_15_p, ah_away_minus_15_p = 1.0 - ah_home_minus_15_p, 1.0 - ah_home_plus_15_p
             
-            # --- EXPANDED 22-MARKET OPTIONS MATRICES MAPS ---
-            all_markets_rendered_rows = [
-                {"Betting Market": "HOME WIN (1)", "Bookmaker Odds": f"{odds_1:.2f}", "Model Probability": f"{prob_home*100:.1f}%"},
-                {"Betting Market": "DRAW MATCH (X)", "Bookmaker Odds": f"{odds_X:.2f}", "Model Probability": f"{prob_draw*100:.1f}%"},
-                {"Betting Market": "AWAY WIN (2)", "Bookmaker Odds": f"{odds_2:.2f}", "Model Probability": f"{prob_away*100:.1f}%"},
-                {"Betting Market": "DOUBLE CHANCE (1X)", "Bookmaker Odds": f"{odds_1X:.2f}", "Model Probability": f"{dc_1X_p*100:.1f}%"},
-                {"Betting Market": "DOUBLE CHANCE (X2)", "Bookmaker Odds": f"{odds_X2:.2f}", "Model Probability": f"{dc_X2_p*100:.1f}%"},
-                {"Betting Market": "DOUBLE CHANCE (12)", "Bookmaker Odds": f"{odds_12:.2f}", "Model Probability": f"{dc_12_p*100:.1f}%"},
-                {"Betting Market": "DRAW NO BET (DNB1)", "Bookmaker Odds": f"{odds_dnb1:.2f}", "Model Probability": f"{dnb_1_p*100:.1f}%"},
-                {"Betting Market": "DRAW NO BET (DNB2)", "Bookmaker Odds": f"{odds_dnb2:.2f}", "Model Probability": f"{dnb_2_p*100:.1f}%"},
-                {"Betting Market": "OVER 2.5 GOALS", "Bookmaker Odds": f"{odds_over:.2f}", "Model Probability": f"{over_25_p*100:.1f}%"},
-                {"Betting Market": "UNDER 2.5 GOALS", "Bookmaker Odds": f"{odds_under:.2f}", "Model Probability": f"{under_25_p*100:.1f}%"},
-                {"Betting Market": "BOTH TEAMS TO SCORE (YES)", "Bookmaker Odds": f"{odds_btts_y:.2f}", "Model Probability": f"{btts_yes_p*100:.1f}%"},
-                {"Betting Market": "BOTH TEAMS TO SCORE (NO)", "Bookmaker Odds": f"{odds_btts_n:.2f}", "Model Probability": f"{btts_no_p*100:.1f}%"},
-                {"Betting Market": "HOME TOTAL GOALS OVER 1.5", "Bookmaker Odds": f"{odds_home_over_15:.2f}", "Model Probability": f"{home_over_15_p*100:.1f}%"},
-                {"Betting Market": "HOME TOTAL GOALS UNDER 1.5", "Bookmaker Odds": f"{odds_home_under_15:.2f}", "Model Probability": f"{home_under_15_p*100:.1f}%"},
-                {"Betting Market": "AWAY TOTAL GOALS OVER 1.5", "Bookmaker Odds": f"{odds_away_over_15:.2f}", "Model Probability": f"{away_over_15_p*100:.1f}%"},
-                {"Betting Market": "AWAY TOTAL GOALS UNDER 1.5", "Bookmaker Odds": f"{odds_away_under_15:.2f}", "Model Probability": f"{away_under_15_p*100:.1f}%"},
-                {"Betting Market": "ASIAN HANDICAP (HOME -1.5)", "Bookmaker Odds": f"{odds_ah_home_minus_15:.2f}", "Model Probability": f"{ah_home_minus_15_p*100:.1f}%"},
-                {"Betting Market": "ASIAN HANDICAP (AWAY +1.5)", "Bookmaker Odds": f"{odds_ah_away_plus_15:.2f}", "Model Probability": f"{ah_away_plus_15_p*100:.1f}%"},
-                {"Betting Market": "ASIAN HANDICAP (HOME +1.5)", "Bookmaker Odds": f"{odds_ah_home_plus_15:.2f}", "Model Probability": f"{ah_home_plus_15_p*100:.1f}%"},
-                {"Betting Market": "ASIAN HANDICAP (AWAY -1.5)", "Bookmaker Odds": f"{odds_ah_away_minus_15:.2f}", "Model Probability": f"{ah_away_minus_15_p*100:.1f}%"},
-                {"Betting Market": "HOME CLEAN SHEET (YES)", "Bookmaker Odds": f"{odds_home_cs_y:.2f}", "Model Probability": f"{home_cs_p*100:.1f}%"},
-                {"Betting Market": "AWAY CLEAN SHEET (YES)", "Bookmaker Odds": f"{odds_away_cs_y:.2f}", "Model Probability": f"{away_cs_p*100:.1f}%"}
+            # --- EXPANDED 22-MARKET OPTIONS RAW ARRAYS SPECIFICATION ---
+            raw_matrix_dictionary_build = [
+                ("HOME WIN (1)", odds_1, prob_home), ("DRAW MATCH (X)", odds_X, prob_draw), ("AWAY WIN (2)", odds_2, prob_away),
+                ("DOUBLE CHANCE (1X)", odds_1X, dc_1X_p), ("DOUBLE CHANCE (X2)", odds_X2, dc_X2_p), ("DOUBLE CHANCE (12)", odds_12, dc_12_p),
+                ("DRAW NO BET (DNB1)", odds_dnb1, dnb_1_p), ("DRAW NO BET (DNB2)", odds_dnb2, dnb_2_p),
+                ("OVER 2.5 GOALS", odds_over, over_25_p), ("UNDER 2.5 GOALS", odds_under, under_25_p),
+                ("BOTH TEAMS TO SCORE (YES)", odds_btts_y, btts_yes_p), ("BOTH TEAMS TO SCORE (NO)", odds_btts_n, btts_no_p),
+                ("HOME TOTAL GOALS OVER 1.5", odds_home_over_15, home_over_15_p), ("HOME TOTAL GOALS UNDER 1.5", odds_home_under_15, home_under_15_p),
+                ("AWAY TOTAL GOALS OVER 1.5", odds_away_over_15, away_over_15_p), ("AWAY TOTAL GOALS UNDER 1.5", odds_away_under_15, away_under_15_p),
+                ("ASIAN HANDICAP (HOME -1.5)", odds_ah_home_minus_15, ah_home_minus_15_p), ("ASIAN HANDICAP (AWAY +1.5)", odds_ah_away_plus_15, ah_away_plus_15_p),
+                ("ASIAN HANDICAP (HOME +1.5)", odds_ah_home_plus_15, ah_home_plus_15_p), ("ASIAN HANDICAP (AWAY -1.5)", odds_ah_away_minus_15, ah_away_minus_15_p),
+                ("HOME CLEAN SHEET (YES)", odds_home_cs_y, home_cs_p), ("AWAY CLEAN SHEET (YES)", odds_away_cs_y, away_cs_p)
             ]
+            
+            # --- DYNAMIC GENERATION COMPILING EDGE AND EV COLUMNS ---
+            all_markets_rendered_rows = []
+            for label, b_odds, m_prob in raw_matrix_dictionary_build:
+                implied_bk_prob = 1.0 / float(b_odds) if b_odds > 0 else 0.0
+                calculated_flat_edge = m_prob - implied_bk_prob
+                calculated_yielding_ev = (m_prob * float(b_odds)) - 1.0
+                
+                all_markets_rendered_rows.append({
+                    "Betting Market": label,
+                    "Bookmaker Odds": f"{b_odds:.2f}",
+                    "Model Probability": f"{m_prob*100:.1f}%",
+                    "Model Edge (%)": f"{calculated_flat_edge*100:+.1f}%",
+                    "Expected Value (EV)": f"{calculated_yielding_ev*100:+.1f}%"
+                })
+
             stress_rows = [{"Friction Profile": "Baseline Execution", "Projected Draw": f"{prob_draw*100:.1f}%"}]
             sd = len(past_home) + len(past_away)
             confidence = min(100, int((sd / 10.0) * 100)) if sd > 0 else 50
             qualified_projections = []
-                       # ==============================================================================
+# ==============================================================================
 # SEGMENT 10C OF 11 (PART 2 OF 2): RIGHT PANEL INTERFACE DISPLAY LAYOUT
 # ==============================================================================
             # --- STEP 4: RENDER COMPILING TICKETS (RIGHT PANEL) ---
             with dash_right:
                 st.markdown("### 📊 Value Analytics & Tickets")
                 highest_ev_found = (prob_home * odds_1) - 1.0
-                
-                # RE-GATED PASS AT 3% LOWERED BARRIER
                 if prob_home * odds_1 > 1.03 and confidence >= confidence_floor_input:
                     st.success("🔥 ELITE PROJECTIONS UNLOCKED (+3.0% EV Edge Verified)")
                     qualified_projections.append(("HOME WIN (1)", highest_ev_found, prob_home, odds_1, 2.50, "HIGH VALUE"))
-                else: 
-                    st.error("📉 SELECTION REJECTED: Internal profit limits deficit bounds.")
+                else: st.error("📉 SELECTION REJECTED: Internal profit limits deficit bounds.")
                     
                 with st.expander("🎯 Exact Scoreline Probability Graph & Distribution", expanded=True):
                     if graph_data_dict: st.bar_chart(pd.DataFrame(list(graph_data_dict.items()), columns=["Scoreline", "Probability (%)"]).set_index("Scoreline"), use_container_width=True)
                 
-                # --- EXACT SCORELINE VALUATION DROPDOWN MATRIX ---
                 with st.expander("🎯 Exact Scoreline Valuation Matrix (Top 10 Scenarios)", expanded=False):
                     st.markdown("🔒 *Tucked away safely to eliminate mobile phone scrolling lag.*")
                     if scoreline_scenarios_list:
@@ -624,7 +658,6 @@ with tab_pred:
                         scoreline_display_df["Fair Value Odds"] = scoreline_display_df["Fair Value Odds"].apply(lambda x: f"{x:.2f}")
                         st.dataframe(scoreline_display_df[["Scoreline Scenario", "Model Probability (%)", "Fair Value Odds", "Your Input Odds", "Calculated EV Edge"]], use_container_width=True, hide_index=True)
 
-                # --- AUTOMATED VOLUME PER GOAL CONVERSION TARGET TABLE ---
                 with st.expander("🎯 Team Form Efficiency Targets (Volume Needed Per 1 Goal)", expanded=True):
                     st.markdown("🔒 *Calculates the fundamental data volume required to score or concede 1 goal.*")
                     h_avg_scored = float(h_s.get("avg_goals_scored", 1.5))
@@ -644,7 +677,7 @@ with tab_pred:
                     st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-                # ==============================================================================
+            # ==============================================================================
 # SEGMENT 11A OF 11: TELEGRAM BOT PAGER & BANKROLL INVESTMENTS LEDGER
 # ==============================================================================
 st.markdown("---")
@@ -772,7 +805,7 @@ with tab_tables:
         mock_schedule_fixtures = [{"home": h, "away": a} for h in all_participating_teams for a in all_participating_teams if h != a]
         preseason_turnover_rate = 1.15 if is_pre_season_active else 1.00
 # ==============================================================================
-# SEGMENT 11B (PART 2 OF 2): FUTURES ARBITRAGE, BSS ROOM & EFFICIENCY LEDGER
+# SEGMENT 11B (PART 2 OF 2): SIMULATOR CORE, BSS CALIBRATION & CLV LINE CHART
 # ==============================================================================
         outright_results_rows = []
         for team, win_count in outright_simulation_scoreboard.items():
@@ -800,10 +833,30 @@ with tab_history:
                 if valid_audit_count > 0: st.metric("Brier Skill Score (BSS)", f"{(1.0 - (model_brier_sum / reference_brier_sum)):+.4f}")
                 st.dataframe(b_df, use_container_width=True)
                 
-                with st.expander("💰 Team Historical Odds Performance Tracker", expanded=False):
+                # --- UPDATED: TEAM ODDS PERFORMANCE & AUTOMATED CLV ADVANTAGE CHART ---
+                with st.expander("💰 Team Historical Odds Performance & CLV Tracker", expanded=False):
                     all_unique_teams_list = sorted(list(set(settled_past_games["home_team"].unique()).union(set(settled_past_games["away_team"].unique()))))
                     selected_tracker_team = st.selectbox("Select Target Team to Audit Odds Yield:", all_unique_teams_list)
-                    st.info(f"Auditing odds curves tracking for {selected_tracker_team} loaded.")
+                    
+                    # Filter ledger history for tickets containing the selected team
+                    if 'display_replicated_ledger_df' in globals() and not display_replicated_ledger_df.empty:
+                        team_ledger_records = display_replicated_ledger_df[display_replicated_ledger_df["Match"].str.contains(selected_tracker_team, case=False, na=False)].copy()
+                        
+                        if not team_ledger_records.empty:
+                            # Clean text strings to calculate raw floats
+                            team_ledger_records["Entry_Odds"] = pd.to_numeric(team_ledger_records["Entry_Odds"], errors="coerce")
+                            team_ledger_records["Closing_Odds"] = pd.to_numeric(team_ledger_records["Closing_Odds"], errors="coerce")
+                            
+                            # Calculate Closing Line Value (CLV) Advantage percentage margin
+                            team_ledger_records["CLV_Advantage_Pct"] = ((team_ledger_records["Entry_Odds"] / team_ledger_records["Closing_Odds"]) - 1.0) * 100
+                            
+                            st.write(f"📈 **Closing Line Value (CLV) Advantage Curve for {selected_tracker_team}:**")
+                            st.caption("Positive percentage lines prove your model locked in higher entry prices than final kickoff odds.")
+                            st.line_chart(team_ledger_records.set_index("Timestamp")["CLV_Advantage_Pct"], use_container_width=True)
+                        else:
+                            st.info(f"No logged ledger tickets found for {selected_tracker_team} on your hard drive.")
+                    else:
+                        st.info("Log settled tickets inside your Sisonke Investment Ledger Room to populate the CLV graph.")
         except: pass
 
 with tab_past:
