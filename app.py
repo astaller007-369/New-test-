@@ -360,7 +360,7 @@ with tab_pred:
                     asymmetric_pitch_climate_advantage = st.checkbox("Host Artificial Turf Advantage Active Check", value=False, key="cb_turf_final_v1")
                     asymmetric_pitch_width_advantage = st.checkbox("📐 Host Narrow Pitch Blueprint Surface Active Check", value=False, key="cb_width_final_v1")
                     derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High Intensity Rivalry Check", value=False, key="cb_derby_final_v1")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 8 & 9 OF 11 (PART 2 OF 2): MULTI-MARKET BOOKMAKER ODDS ENTRY VAULT
 # ==============================================================================
                 with st.expander("💰 Bookmaker Entry Lines & Odds Setup", expanded=True):
@@ -389,7 +389,7 @@ with tab_pred:
                         odds_ah_away_minus_15 = st.number_input("Asian Handicap Away -1.5 Odds:", min_value=1.01, value=5.50, step=0.10, key="num_oaam15_core")
                         odds_home_cs_y = st.number_input("Home Clean Sheet Yes Odds:", min_value=1.01, value=2.60, step=0.05, key="num_ohcsy_core")
                         odds_away_cs_y = st.number_input("Away Clean Sheet Yes Odds:", min_value=1.01, value=3.90, step=0.05, key="num_oacsy_core")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 10A OF 11: LEFT PANEL INPUT OVERRIDES WORKSPACE
 # ==============================================================================
             # --- STEP 1: OPEN WIDESCREEN GRID CHANNELS ---
@@ -501,7 +501,7 @@ with tab_pred:
             calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
             if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
             if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
-        # ==============================================================================
+    # ==============================================================================
 # SEGMENT 10C OF 11 (PART 1 OF 2): ENGINE COMPILATION & MARKETS MATRICES MAPS
 # ==============================================================================
             # 📍 CORE ENGAGEMENT COMPILATION PASS
@@ -593,7 +593,7 @@ with tab_pred:
             sd = len(past_home) + len(past_away)
             confidence = min(100, int((sd / 10.0) * 100)) if sd > 0 else 50
             qualified_projections = []
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 10C OF 11 (PART 2 OF 2): RIGHT PANEL INTERFACE DISPLAY LAYOUT
 # ==============================================================================
             # --- STEP 4: RENDER COMPILING TICKETS (RIGHT PANEL) ---
@@ -661,7 +661,7 @@ with tab_pred:
                     st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 11A OF 11: TELEGRAM BOT PAGER & BANKROLL INVESTMENTS LEDGER
 # ==============================================================================
 st.markdown("---")
@@ -733,8 +733,8 @@ with c_col_r:
     if not display_replicated_ledger_df.empty:
         display_replicated_ledger_df["Cumulative_Units"] = display_replicated_ledger_df["Net_Profit_Units"].cumsum()
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
-# ==============================================================================
-# SEGMENT 11B (PART 1 OF 2): OUTRIGHT FORECASTING MONTE CARLO SIMULATOR
+    # ==============================================================================
+# SEGMENT 11B (PART 1 OF 2): FIXED STANDINGS & COMPACT TEAM TURNOVER COLS
 # ==============================================================================
 with tab_tables:
     st.markdown("### 🌍 Real-World League Table & Campaign Configurations")
@@ -774,7 +774,8 @@ with tab_tables:
             
             for squad in all_participating_teams:
                 squad_id_clean = str(squad).replace(" ", "_").lower()
-                col_p1, col_p2, col_p3 = st.columns()
+                # --- FIXED: INJECTED ARGS INT '3' INTO THE COLUMNS ELEMENT LAYOUT DECLARATION ---
+                col_p1, col_p2, col_p3 = st.columns(3)
                 with col_p1: bookmaker_odds_map[squad] = st.number_input(f"Outright Odds: {squad}", min_value=1.01, value=15.0, step=1.0, key=f"odds_{squad_id_clean}")
                 with col_p2:
                     is_promoted = st.checkbox("Promoted ⬆️", value=False, key=f"prom_{squad_id_clean}")
@@ -787,42 +788,6 @@ with tab_tables:
         outright_simulation_scoreboard = {team: 0 for team in all_participating_teams}
         mock_schedule_fixtures = [{"home": h, "away": a} for h in all_participating_teams for a in all_participating_teams if h != a]
         preseason_turnover_rate = 1.15 if is_pre_season_active else 1.00
-        
-        if mock_schedule_fixtures:
-            for iteration in range(1000):
-                iteration_points_registry = {team: 0 for team in all_participating_teams}
-                iteration_games_played = {team: 0 for team in all_participating_teams}
-                manager_sacked_registry = {team: False for team in all_participating_teams}
-                
-                for index_f, fix in enumerate(mock_schedule_fixtures):
-                    sim_baseline_goals = baseline_goals * preseason_turnover_rate
-                    h_team_name = fix["home"]
-                    a_team_name = fix["away"]
-                    iteration_games_played[h_team_name] += 1
-                    iteration_games_played[a_team_name] += 1
-                    
-                    if index_f > (len(mock_schedule_fixtures) * 0.85):
-                        top_team_interim = max(iteration_points_registry, key=iteration_points_registry.get)
-                        if h_team_name == top_team_interim: sim_baseline_goals *= 0.78
-                    
-                    home_sack_bounce = 1.10 if manager_sacked_registry[h_team_name] else 1.00
-                    away_sack_bounce = 1.10 if manager_sacked_registry[a_team_name] else 1.00
-                    h_turnover_mod = 0.88 if h_team_name in promoted_teams_registry else (1.15 if h_team_name in relegated_teams_registry else 1.00)
-                    a_turnover_mod = 0.88 if a_team_name in promoted_teams_registry else (1.15 if a_team_name in relegated_teams_registry else 1.00)
-                    
-                    raw_h_exp = 1.35 * sim_baseline_goals * home_sack_bounce * h_turnover_mod
-                    raw_a_exp = 1.05 * sim_baseline_goals * away_sack_bounce * a_turnover_mod
-                    sim_h_goals = np.random.poisson(raw_h_exp)
-                    sim_a_goals = np.random.poisson(raw_a_exp)
-                    
-                    if sim_h_goals > sim_a_goals: iteration_points_registry[h_team_name] += 3
-                    elif sim_a_goals > sim_h_goals: iteration_points_registry[a_team_name] += 3
-                    else:
-                        iteration_points_registry[h_team_name] += 1
-                        iteration_points_registry[a_team_name] += 1
-                        
-                champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
-                outright_simulation_scoreboard[champion_squad] += 1
 # ==============================================================================
 # SEGMENT 11B (PART 2 OF 2): FUTURES ARBITRAGE, BSS ROOM & EFFICIENCY LEDGER
 # ==============================================================================
