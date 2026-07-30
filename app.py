@@ -48,7 +48,7 @@ st.markdown("##### *We Beat The Odds*")
 st.sidebar.image("https://unsplash.com", use_container_width=True)
 st.sidebar.markdown("### 🎛️ Active Data Control Room")
 st.sidebar.caption("Sisonke Engine Status: 🟢 High-Utility Operations Standby")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 4 OF 11: MULTI-LEAGUES MANUAL CSV INGESTION PORT
 # ==============================================================================
 # Accepts unplayed future fixtures or recent historical matchday result slates
@@ -330,7 +330,7 @@ with tab_pred:
                     asymmetric_pitch_climate_advantage = st.checkbox("Host Artificial Turf Advantage Active Check", value=False, key="cb_turf_core")
                     asymmetric_pitch_width_advantage = st.checkbox("📐 Host Narrow Pitch Blueprint Surface Active Check", value=False, key="cb_width_core")
                     derby_match_active = st.checkbox("🚨 Flag Entry as Local Derby / High Intensity Rivalry Check", value=False, key="cb_derby_core")
-        # ==============================================================================
+    # ==============================================================================
 # SEGMENT 8 & 9 OF 11 (PART 2 OF 2): MULTI-MARKET BOOKMAKER ODDS ENTRY VAULT
 # ==============================================================================
                 with st.expander("💰 Bookmaker Entry Lines & Odds Setup", expanded=True):
@@ -359,7 +359,7 @@ with tab_pred:
                         odds_ah_away_minus_15 = st.number_input("Asian Handicap Away -1.5 Odds:", min_value=1.01, value=5.50, step=0.10, key="num_oaam15_core")
                         odds_home_cs_y = st.number_input("Home Clean Sheet Yes Odds:", min_value=1.01, value=2.60, step=0.05, key="num_ohcsy_core")
                         odds_away_cs_y = st.number_input("Away Clean Sheet Yes Odds:", min_value=1.01, value=3.90, step=0.05, key="num_oacsy_core")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 10A OF 11: LEFT PANEL INPUT OVERRIDES WORKSPACE
 # ==============================================================================
             # --- STEP 1: OPEN WIDESCREEN GRID CHANNELS ---
@@ -563,7 +563,7 @@ with tab_pred:
             sd = len(past_home) + len(past_away)
             confidence = min(100, int((sd / 10.0) * 100)) if sd > 0 else 50
             qualified_projections = []
-    # ==============================================================================
+        # ==============================================================================
 # SEGMENT 10C OF 11 (PART 2 OF 2): RIGHT PANEL INTERFACE DISPLAY LAYOUT
 # ==============================================================================
             # --- STEP 4: RENDER COMPILING TICKETS (RIGHT PANEL) ---
@@ -703,7 +703,7 @@ with c_col_r:
     if not display_replicated_ledger_df.empty:
         display_replicated_ledger_df["Cumulative_Units"] = display_replicated_ledger_df["Net_Profit_Units"].cumsum()
         st.line_chart(display_replicated_ledger_df["Cumulative_Units"], use_container_width=True)
-# ==============================================================================
+        # ==============================================================================
 # SEGMENT 11B (PART 1 OF 2): OUTRIGHT FORECASTING MONTE CARLO SIMULATOR
 # ==============================================================================
 with tab_tables:
@@ -793,7 +793,7 @@ with tab_tables:
                         
                 champion_squad = max(iteration_points_registry, key=iteration_points_registry.get)
                 outright_simulation_scoreboard[champion_squad] += 1
-# ==============================================================================
+                # ==============================================================================
 # SEGMENT 11B (PART 2 OF 2): FUTURES ARBITRAGE, BSS ROOM & EFFICIENCY LEDGER
 # ==============================================================================
         outright_results_rows = []
