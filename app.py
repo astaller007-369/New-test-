@@ -77,7 +77,7 @@ if os.path.exists(backup_dir_folder_path):
         st.sidebar.info("Vault Standby: Log your first ledger ticket to initialize duplicates.")
 else:
     st.sidebar.info("Vault Directory Standby: Save a ticket to generate partition folder paths.")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 4 OF 11: MULTI-LEAGUES MANUAL CSV INGESTION PORT
 # ==============================================================================
 # Accepts unplayed future fixtures or recent historical matchday result slates
@@ -86,7 +86,7 @@ uploaded_file = st.sidebar.file_uploader(
     "Drop your imidlalo.csv or fixture ledger files here:", 
     type=["csv"], 
     help="Accepts mixed format date columns, shots on target, and big chances data structures natively."
-    )
+)
 # ==============================================================================
 # SEGMENT 5 OF 11: UNIVERSAL SCHEMA TRANSLATION ENGINE & NOMENCLATURE SHIELD
 # ==============================================================================
@@ -331,7 +331,7 @@ with st.expander("🛠️ Advanced Calibration & Mathematical Tuning Vault", exp
 
 for idx, league in enumerate(uploaded_leagues):
     st.session_state.freeze_matrix[league.lower().strip()] = st.checkbox(f"Freeze Decay: {league.upper()}", value=st.session_state.freeze_matrix.get(league.lower().strip(), False), key=f"f_{idx}")
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 8 & 9 OF 11 (PART 1 OF 2): RE-HARDENED UNIQUE ELEMENT WIDGET ARMORE
 # ==============================================================================
 tab_pred, tab_tables, tab_history, tab_past = st.tabs(["📅 PROJECTIONS", "🌍 STANDINGS", "📜 BACKTESTER", "📜 PAST GAMES"])
@@ -430,7 +430,7 @@ with tab_pred:
                         odds_ah_away_minus_15 = st.number_input("Asian Handicap Away -1.5 Odds:", min_value=1.01, value=5.50, step=0.10, key="num_oaam15_core")
                         odds_home_cs_y = st.number_input("Home Clean Sheet Yes Odds:", min_value=1.01, value=2.60, step=0.05, key="num_ohcsy_core")
                         odds_away_cs_y = st.number_input("Away Clean Sheet Yes Odds:", min_value=1.01, value=3.90, step=0.05, key="num_oacsy_core")
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 10A OF 11: LEFT PANEL INPUT OVERRIDES & FORM SHIFT DIAGNOSTIC MONITOR
 # ==============================================================================
             # --- STEP 1: OPEN WIDESCREEN GRID CHANNELS ---
@@ -496,7 +496,7 @@ with tab_pred:
                         {"Squad Focus": f"{target['away_team'].upper()} (AWAY)", "Metric Axis": "Big Chances (BC)", "Raw 5-Game": f"{a_raw_bc:.2f}", "Weighted Engine": f"{a_weighted_bc:.2f}", "Form Trajectory Signal": derive_trajectory_verdict(a_weighted_bc, a_raw_bc)}
                     ]
                     st.dataframe(pd.DataFrame(diagnostic_rows), use_container_width=True, hide_index=True)
-# ==============================================================================
+                       # ==============================================================================
 # SEGMENT 10B OF 11: ENGINE PROBABILITY CALCULATION CORE LAYER
 # ==============================================================================
             # --- STEP 3: RUN THE ADVANCED MATHEMATICAL THREE-STAGE OPTIMIZATION ENGINE ---
@@ -579,7 +579,7 @@ with tab_pred:
             calibrated_baseline_goals = baseline_goals * weather_goals_multiplier
             if "Knockout" in tournament_framework_selection: calibrated_baseline_goals *= 0.88
             if pythagorean_luck_ratio > 0.65: calibrated_baseline_goals *= 0.95 
-    # ==============================================================================
+# ==============================================================================
 # SEGMENT 10C OF 11 (PART 1 OF 2): ENGINE COMPILATION & 5-COLUMN OPTIONS SHEET
 # ==============================================================================
             # 📍 CORE ENGAGEMENT COMPILATION PASS
@@ -714,7 +714,7 @@ with tab_pred:
                     st.dataframe(pd.DataFrame(stress_rows), use_container_width=True, hide_index=True)
                 st.markdown("#### 🎫 Complete 22-Market Options Valuation Sheet")
                 st.dataframe(pd.DataFrame(all_markets_rendered_rows), use_container_width=True, hide_index=True)
-# ==============================================================================
+    # ==============================================================================
 # SEGMENT 11A OF 11: TELEGRAM BOT PAGER & BANKROLL INVESTMENTS LEDGER
 # ==============================================================================
 st.markdown("---")
@@ -889,7 +889,7 @@ with tab_tables:
         outright_simulation_scoreboard = {team: 0 for team in all_participating_teams}
         mock_schedule_fixtures = [{"home": h, "away": a} for h in all_participating_teams for a in all_participating_teams if h != a]
         preseason_turnover_rate = 1.15 if is_pre_season_active else 1.00
-        # ==============================================================================
+# ==============================================================================
 # SEGMENT 11B (PART 2 OF 2): SIMULATOR CORE, BSS CALIBRATION & CLV LINE CHART
 # ==============================================================================
         outright_results_rows = []
